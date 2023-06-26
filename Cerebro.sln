@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33723.286
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cerebro.Api", "src\Cerebro.Api\Cerebro.Api.csproj", "{16A834FD-CE9A-47A1-BC69-FB000F9CAEE9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cerebro.Core", "src\Cerebro.Core\Cerebro.Core.csproj", "{BF76375C-53C8-4C3A-B852-F32365DFE401}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cerebro.Infrastructure", "src\Cerebro.Infrastructure\Cerebro.Infrastructure.csproj", "{27078A51-55F0-40DF-A17F-6151DA56C57E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Routing", "Routing", "{79FACF4F-3CDE-4556-9400-B4D4DFC19FD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cerebro.Grpc", "src\Cerebro.Grpc\Cerebro.Grpc.csproj", "{C6892B32-7F01-4AE1-9FB7-626022970562}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cerebro.SignalR", "src\Cerebro.SignalR\Cerebro.SignalR.csproj", "{878E332B-2D1F-4467-838D-9CDFF4F819DF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cluster", "Cluster", "{924E23EA-8E9D-4E22-9250-AD6F060C3B7F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16A834FD-CE9A-47A1-BC69-FB000F9CAEE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16A834FD-CE9A-47A1-BC69-FB000F9CAEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16A834FD-CE9A-47A1-BC69-FB000F9CAEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16A834FD-CE9A-47A1-BC69-FB000F9CAEE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF76375C-53C8-4C3A-B852-F32365DFE401}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF76375C-53C8-4C3A-B852-F32365DFE401}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF76375C-53C8-4C3A-B852-F32365DFE401}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF76375C-53C8-4C3A-B852-F32365DFE401}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27078A51-55F0-40DF-A17F-6151DA56C57E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27078A51-55F0-40DF-A17F-6151DA56C57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27078A51-55F0-40DF-A17F-6151DA56C57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27078A51-55F0-40DF-A17F-6151DA56C57E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6892B32-7F01-4AE1-9FB7-626022970562}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6892B32-7F01-4AE1-9FB7-626022970562}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6892B32-7F01-4AE1-9FB7-626022970562}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6892B32-7F01-4AE1-9FB7-626022970562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{878E332B-2D1F-4467-838D-9CDFF4F819DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{878E332B-2D1F-4467-838D-9CDFF4F819DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{878E332B-2D1F-4467-838D-9CDFF4F819DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{878E332B-2D1F-4467-838D-9CDFF4F819DF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C6892B32-7F01-4AE1-9FB7-626022970562} = {79FACF4F-3CDE-4556-9400-B4D4DFC19FD6}
+		{878E332B-2D1F-4467-838D-9CDFF4F819DF} = {79FACF4F-3CDE-4556-9400-B4D4DFC19FD6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {59F8087A-97BF-4905-863B-5F4822CDE2F4}
+	EndGlobalSection
+EndGlobal
