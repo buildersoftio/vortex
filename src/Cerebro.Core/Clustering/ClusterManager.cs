@@ -1,4 +1,4 @@
-﻿using Cerebro.Core.Models.Clustering;
+﻿using Cerebro.Core.Models.Entities.Clustering;
 using Microsoft.Extensions.Logging;
 
 namespace Cerebro.Core.Clustering
