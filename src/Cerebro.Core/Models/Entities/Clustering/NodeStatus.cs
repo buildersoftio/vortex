@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.Clustering
+﻿namespace Cerebro.Core.Models.Entities.Clustering
 {
     public enum NodeStatus
     {

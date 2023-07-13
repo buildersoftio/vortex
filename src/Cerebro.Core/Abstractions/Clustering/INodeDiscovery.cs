@@ -1,4 +1,4 @@
-﻿using Cerebro.Core.Models.Clustering;
+﻿using Cerebro.Core.Models.Entities.Clustering;
 
 namespace Cerebro.Core.Clustering
 {

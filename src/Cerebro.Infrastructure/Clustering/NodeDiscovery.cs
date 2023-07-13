@@ -1,5 +1,5 @@
 ﻿using Cerebro.Core.Clustering;
-using Cerebro.Core.Models.Clustering;
+using Cerebro.Core.Models.Entities.Clustering;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Net;
