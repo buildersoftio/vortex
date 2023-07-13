@@ -1,6 +1,8 @@
 
 using Cerebro.Api.DependencyInjection;
+using Cerebro.Api.Middleware;
 using Cerebro.Infrastructure.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 
@@ -23,7 +25,17 @@ builder.Host.UseSerilog();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v4", new OpenApiInfo
+    {
+        Title = "Cerebro | Engine",
+        Version = "v4",
+        Description = "Buildersoft Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integration.",
+        License = new OpenApiLicense() { Name = "Licensed under the Apache License 2.0", Url = new Uri("https://bit.ly/3DqVQbx") }
+
+    });
+});
 
 // Adding IO Services
 builder.Services.AddConfigurations(builder.Configuration);
@@ -37,8 +49,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v4/swagger.json", "Cerebro | Engine v4"));
 }
+
+app.UseMiddleware<RestLoggingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

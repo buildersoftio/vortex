@@ -18,7 +18,7 @@ namespace Cerebro.Core.Models.Entities.Clients.Applications
 
         
         [JsonIgnore]
-        public string? Secret { get; set; }
+        public string? HashedSecret { get; set; }
 
         public DateTimeOffset ExpireDate { get; set; }
         public string? Description { get; set; }

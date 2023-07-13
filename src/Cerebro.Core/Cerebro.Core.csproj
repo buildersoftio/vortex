@@ -7,9 +7,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Compile Remove="Services\App\**" />
+		<EmbeddedResource Remove="Services\App\**" />
+		<None Remove="Services\App\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Folder Include="Abstractions\Factories\" />
 		<Folder Include="Models\Aggregations\Clients\Applications\" />
-		<Folder Include="Services\App\" />
 	</ItemGroup>
 
 	<ItemGroup>
