@@ -1,5 +1,4 @@
 ﻿using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Entities.Addresses;
 using Cerebro.Core.Models.Entities.Clients.Applications;
 using Cerebro.Core.Repositories;
 using Cerebro.Infrastructure.DataAccess.ApplicationStateStore;

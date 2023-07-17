@@ -34,5 +34,17 @@ namespace Cerebro.Api.Controllers.v4
         {
             return Ok(_nodeConfiguration);
         }
+
+        [HttpGet("health")]
+        public ActionResult<string> GetHealthDetails()
+        {
+            return Ok("Healthy");
+        }
+
+        [HttpGet("status")]
+        public ActionResult<string> GetNodeStatus()
+        {
+            return Ok("NOT_IMPLEMENTED; statuses will be [Online, Starting, Offline, Recovering]");
+        }
     }
 }
