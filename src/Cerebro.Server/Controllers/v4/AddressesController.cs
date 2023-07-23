@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cerebro.Api.Controllers.v4
+namespace Cerebro.Server.Controllers.v4
 {
     [Route("api/v4/addresses")]
     [ApiController]

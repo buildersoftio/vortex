@@ -6,14 +6,14 @@ using System.Runtime.InteropServices;
 
 namespace Cerebro.Core.Services
 {
-    public class SystemStarterService
+    public class SystemRunnerService
     {
-        private readonly ILogger<SystemStarterService> _logger;
+        private readonly ILogger<SystemRunnerService> _logger;
         private readonly IRootIOService _rootIOService;
         private readonly IConfigIOService _configIOService;
         private readonly NodeConfiguration _nodeConfiguration;
 
-        public SystemStarterService(ILogger<SystemStarterService> logger, 
+        public SystemRunnerService(ILogger<SystemRunnerService> logger, 
             IRootIOService rootIOService,
             IConfigIOService configIOService, 
             NodeConfiguration nodeConfiguration)

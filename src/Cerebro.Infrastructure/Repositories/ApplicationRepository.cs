@@ -1,7 +1,7 @@
 ﻿using Cerebro.Core.Models.Common.Clients.Applications;
 using Cerebro.Core.Models.Entities.Clients.Applications;
 using Cerebro.Core.Repositories;
-using Cerebro.Infrastructure.DataAccess.ApplicationStateStore;
+using Cerebro.Infrastructure.DataAccess.ServerStateStore;
 using Microsoft.Extensions.Logging;
 
 namespace Cerebro.Infrastructure.Repositories
@@ -9,9 +9,9 @@ namespace Cerebro.Infrastructure.Repositories
     public class ApplicationRepository : IApplicationRepository
     {
         private readonly ILogger<ApplicationRepository> _logger;
-        private readonly ApplicationStateStoreDbContext _applicationStateStoreDbContext;
+        private readonly ServerStateStoreDbContext _applicationStateStoreDbContext;
 
-        public ApplicationRepository(ILogger<ApplicationRepository> logger, ApplicationStateStoreDbContext applicationStateStoreDbContext)
+        public ApplicationRepository(ILogger<ApplicationRepository> logger, ServerStateStoreDbContext applicationStateStoreDbContext)
         {
             _logger = logger;
             _applicationStateStoreDbContext = applicationStateStoreDbContext;
@@ -130,12 +130,24 @@ namespace Cerebro.Infrastructure.Repositories
                 .FirstOrDefault();
         }
 
-        public List<Application> GetApplications()
+        public List<Application> GetApplications(bool sendSoftDeleted = true)
+        {
+            if (sendSoftDeleted != true)
+                return _applicationStateStoreDbContext
+                        .Applications!.Query()
+                        .Where(x => x.IsDeleted != true).ToList();
+
+
+            return _applicationStateStoreDbContext
+                    .Applications!.FindAll()
+                    .ToList();
+        }
+
+        public List<Application> GetActiveApplications()
         {
             return _applicationStateStoreDbContext
-                .Applications!
-                .FindAll()
-                .ToList();
+           .Applications!.Query()
+           .Where(x => x.IsDeleted != true && x.IsActive == true).ToList();
         }
 
         public ApplicationToken? GetApplicationToken(int applicationId, string hashedSecret)

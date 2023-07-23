@@ -2,7 +2,7 @@
 using Cerebro.Core.Models.Configurations;
 using Cerebro.Infrastructure.IO.Services;
 
-namespace Cerebro.Api.DependencyInjection
+namespace Cerebro.Server.DependencyInjection
 {
     public static class IOServiceDependencyInjectionExtensions
     {

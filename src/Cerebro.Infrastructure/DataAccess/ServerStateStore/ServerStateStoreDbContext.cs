@@ -3,13 +3,13 @@ using Cerebro.Core.Models.Entities.Addresses;
 using Cerebro.Core.Models.Entities.Clients.Applications;
 using LiteDB;
 
-namespace Cerebro.Infrastructure.DataAccess.ApplicationStateStore
+namespace Cerebro.Infrastructure.DataAccess.ServerStateStore
 {
-    public class ApplicationStateStoreDbContext
+    public class ServerStateStoreDbContext
     {
         private ILiteDatabase db;
 
-        public ApplicationStateStoreDbContext()
+        public ServerStateStoreDbContext()
         {
             db = new LiteDatabase(ConfigLocations.GetApplicationStateStoreFile());
 
@@ -29,11 +29,11 @@ namespace Cerebro.Infrastructure.DataAccess.ApplicationStateStore
 
         private void EnsureKeys()
         {
-            Addresses!.EnsureIndex("address_unique_name_index", x => x.Name, unique: true);
-            Applications!.EnsureIndex("application_unique_name_index", x => x.Name, unique: true);
-            ApplicationTokens!.EnsureIndex("applicationtoken_applicationid_index", x => x.ApplicationId, unique: false);
+            Addresses!.EnsureIndex(x => x.Name, unique: true);
+            Applications!.EnsureIndex(x => x.Name, unique: true);
+            ApplicationTokens!.EnsureIndex(x => x.ApplicationId, unique: false);
 
-            ApplicationPermissions!.EnsureIndex("applicationid_unique_index", x => x.ApplicationId, unique: true);
+            ApplicationPermissions!.EnsureIndex(x => x.ApplicationId, unique: true);
         }
 
         public ILiteCollection<Address>? Addresses { get; private set; }

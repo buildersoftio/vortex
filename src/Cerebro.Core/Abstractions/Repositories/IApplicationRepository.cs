@@ -10,7 +10,8 @@ namespace Cerebro.Core.Repositories
         bool UpdateApplication(Application application);
         Application? GetApplication(int applicationId);
         Application? GetApplication(string applicationName);
-        List<Application> GetApplications();
+        List<Application> GetApplications(bool sendSoftDeleted = true);
+        List<Application> GetActiveApplications();
 
 
         bool AddApplicationToken(ApplicationToken applicationToken);

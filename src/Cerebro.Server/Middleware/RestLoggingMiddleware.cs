@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Api.Middleware
+﻿namespace Cerebro.Server.Middleware
 {
     public class RestLoggingMiddleware
     {

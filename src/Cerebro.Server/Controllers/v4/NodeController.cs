@@ -3,7 +3,7 @@ using Cerebro.Core.Models.Configurations;
 using Cerebro.Core.Utilities.Consts;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cerebro.Api.Controllers.v4
+namespace Cerebro.Server.Controllers.v4
 {
     [Route("api/v4/node")]
     [ApiController]

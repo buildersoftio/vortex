@@ -45,6 +45,9 @@ namespace Cerebro.Core.Services.States
             if (application == null)
                 return (status: false, message: $"Application {applicationName} doesnot exists");
 
+            if (application.IsDeleted == true)
+                return (status: false, message: $"Application {applicationName} has been softly deleted, description cannot be changed");
+
             application.Description = newDescription;
             application.UpdatedAt = DateTimeOffset.UtcNow;
             application.UpdatedBy = updatedBy;
@@ -54,11 +57,16 @@ namespace Cerebro.Core.Services.States
 
             return (status: false, message: $"Application {applicationName} description couldnot update");
         }
+
         public (bool status, string message) EditApplicationSettings(string applicationName, ApplicationSettings newApplicationSettings, string updatedBy)
         {
             var application = _applicationRepository.GetApplication(applicationName);
             if (application == null)
                 return (status: false, message: $"Application {applicationName} doesnot exists");
+
+            if (application.IsDeleted == true)
+                return (status: false, message: $"Application {applicationName} has been softly deleted, settings of a deleted application cannot be changed");
+
 
             application.Settings = newApplicationSettings;
             application.UpdatedAt = DateTimeOffset.UtcNow;
@@ -69,6 +77,7 @@ namespace Cerebro.Core.Services.States
 
             return (status: false, message: $"Application {applicationName} settings couldnot update");
         }
+
         public (ApplicationDto? application, string message) GetApplication(string applicationName)
         {
             var applicationDetails = _applicationRepository.GetApplication(applicationName);
@@ -88,6 +97,18 @@ namespace Cerebro.Core.Services.States
             });
             return (applicationDtos: applicationDtos, message: "Applications returned");
         }
+
+        public (List<ApplicationDto> applicationDtos, string message) GetActiveApplications()
+        {
+            var applications = _applicationRepository.GetActiveApplications();
+            var applicationDtos = new List<ApplicationDto>();
+            applications.ForEach(x =>
+            {
+                applicationDtos.Add(new ApplicationDto(x));
+            });
+            return (applicationDtos: applicationDtos, message: "Active and non deleted applications returned");
+        }
+
 
         public (bool status, string message) HardDeleteApplication(string applicationName)
         {
@@ -119,6 +140,45 @@ namespace Cerebro.Core.Services.States
             if (isSoftDeleted)
                 return (true, message: $"Application {applicationName} is softly deleted");
             return (false, message: $"Something went wrong, application couldnot be softly deleted");
+        }
+
+        public (bool status, string message) ActivateApplication(string applicationName, string createdBy)
+        {
+            var application = _applicationRepository.GetApplication(applicationName);
+            if (application == null)
+                return (false, message: $"Application {applicationName} doesnot exists");
+
+            if (application.IsDeleted == true)
+                return (status: false, message: $"Application {applicationName} has been softly deleted, activation cannot happen");
+
+            application.IsActive = true;
+            application.UpdatedAt = DateTimeOffset.UtcNow; 
+            application.UpdatedBy = createdBy;
+
+            if (_applicationRepository.UpdateApplication(application))
+                return (status: true, message: $"Application {applicationName} is activated");
+
+            return (status: false, message: $"Application {applicationName} could not be activated");
+
+        }
+
+        public (bool status, string message) DeactivateApplication(string applicationName, string createdBy)
+        {
+            var application = _applicationRepository.GetApplication(applicationName);
+            if (application == null)
+                return (false, message: $"Application {applicationName} doesnot exists");
+
+            if (application.IsDeleted == true)
+                return (status: false, message: $"Application {applicationName} has been softly deleted, deactivation cannot happen");
+
+            application.IsActive = true;
+            application.UpdatedAt = DateTimeOffset.UtcNow;
+            application.UpdatedBy = createdBy;
+
+            if (_applicationRepository.UpdateApplication(application))
+                return (status: true, message: $"Application {applicationName} is deactivated");
+
+            return (status: false, message: $"Application {applicationName} could not be deactivated");
         }
     }
 }
