@@ -1,4 +1,5 @@
-﻿using Cerebro.Core.Models.Entities.Base;
+﻿using Cerebro.Core.Models.Common.Clients.Applications;
+using Cerebro.Core.Models.Entities.Base;
 
 namespace Cerebro.Core.Models.Entities.Clients.Applications
 {

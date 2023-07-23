@@ -1,6 +1,4 @@
-﻿using Cerebro.Core.Models.Common.Clients.Applications;
-
-namespace Cerebro.Core.Models.Entities.Clients.Applications
+﻿namespace Cerebro.Core.Models.Common.Clients.Applications
 {
     public class ApplicationSettings
     {
@@ -9,7 +7,6 @@ namespace Cerebro.Core.Models.Entities.Clients.Applications
 
         public List<string> PublicIpRange { get; set; }
         public List<string> PrivateIpRange { get; set; }
-
 
         public ProductionInstanceTypes DefaultProductionInstanceType { get; set; }
         public SubscriptionTypes DefaultSubscriptionType { get; set; }

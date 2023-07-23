@@ -1,0 +1,124 @@
+﻿using Cerebro.Core.Abstractions.Services;
+using Cerebro.Core.Models.Common.Clients.Applications;
+using Cerebro.Core.Models.Dtos.Applications;
+using Cerebro.Core.Models.Entities.Clients.Applications;
+using Cerebro.Core.Repositories;
+using Microsoft.Extensions.Logging;
+
+namespace Cerebro.Core.Services.States
+{
+    public class ApplicationService : IApplicationService
+    {
+        private readonly ILogger<ApplicationService> _logger;
+        private readonly IApplicationRepository _applicationRepository;
+
+        public ApplicationService(ILogger<ApplicationService> logger, IApplicationRepository applicationRepository)
+        {
+            _logger = logger;
+            _applicationRepository = applicationRepository;
+        }
+
+        public (bool status, string message) CreateApplication(ApplicationDto newApplication, string createdBy)
+        {
+            var application = _applicationRepository.GetApplication(newApplication.Name);
+            if (application != null)
+                return (status: false, message: $"Application {newApplication.Name} already exists");
+
+            application = new Application()
+            {
+                Name = newApplication.Name,
+                Description = newApplication.Description,
+                Settings = newApplication.Settings,
+                CreatedBy = createdBy,
+            };
+
+            if (_applicationRepository.AddApplication(application))
+                return (status: true, message: $"Application has been created successfully with id {application.Id}");
+
+            return (status: false, message: $"Application has not been created.");
+        }
+
+
+        public (bool status, string message) EditApplicationDescription(string applicationName, string newDescription, string updatedBy)
+        {
+            var application = _applicationRepository.GetApplication(applicationName);
+            if (application == null)
+                return (status: false, message: $"Application {applicationName} doesnot exists");
+
+            application.Description = newDescription;
+            application.UpdatedAt = DateTimeOffset.UtcNow;
+            application.UpdatedBy = updatedBy;
+
+            if (_applicationRepository.UpdateApplication(application))
+                return (status: true, message: $"Application {applicationName} description is updated");
+
+            return (status: false, message: $"Application {applicationName} description couldnot update");
+        }
+        public (bool status, string message) EditApplicationSettings(string applicationName, ApplicationSettings newApplicationSettings, string updatedBy)
+        {
+            var application = _applicationRepository.GetApplication(applicationName);
+            if (application == null)
+                return (status: false, message: $"Application {applicationName} doesnot exists");
+
+            application.Settings = newApplicationSettings;
+            application.UpdatedAt = DateTimeOffset.UtcNow;
+            application.UpdatedBy = updatedBy;
+
+            if (_applicationRepository.UpdateApplication(application))
+                return (status: true, message: $"Application {applicationName} settings is updated");
+
+            return (status: false, message: $"Application {applicationName} settings couldnot update");
+        }
+        public (ApplicationDto? application, string message) GetApplication(string applicationName)
+        {
+            var applicationDetails = _applicationRepository.GetApplication(applicationName);
+            if (applicationDetails == null)
+                return (application: null, message: $"Application {applicationName} doesnot exists");
+
+            return (application: new ApplicationDto(applicationDetails), message: $"Application returned");
+        }
+
+        public (List<ApplicationDto> applicationDtos, string message) GetApplications()
+        {
+            var applications = _applicationRepository.GetApplications();
+            var applicationDtos = new List<ApplicationDto>();
+            applications.ForEach(x =>
+            {
+                applicationDtos.Add(new ApplicationDto(x));
+            });
+            return (applicationDtos: applicationDtos, message: "Applications returned");
+        }
+
+        public (bool status, string message) HardDeleteApplication(string applicationName)
+        {
+            var applicationDetails = _applicationRepository.GetApplication(applicationName);
+            if (applicationDetails == null)
+                return (false, message: $"Application {applicationName} doesnot exists");
+
+            var isDeleted = _applicationRepository.DeleteApplication(applicationDetails);
+            if (isDeleted)
+                return (true, message: $"Application deleted");
+
+            return (false, message: $"Something went wrong, application couldnot be deleted");
+
+        }
+
+        public (bool status, string message) SoftDeleteApplication(string applicationName, string updatedBy)
+        {
+            var application = _applicationRepository.GetApplication(applicationName);
+            if (application == null)
+                return (false, message: $"Application {applicationName} doesnot exists");
+
+
+            application.IsActive = false;
+            application.IsDeleted = true;
+            application.UpdatedAt = DateTimeOffset.UtcNow;
+            application.UpdatedBy = updatedBy;
+
+            var isSoftDeleted = _applicationRepository.UpdateApplication(application);
+            if (isSoftDeleted)
+                return (true, message: $"Application {applicationName} is softly deleted");
+            return (false, message: $"Something went wrong, application couldnot be softly deleted");
+        }
+    }
+}

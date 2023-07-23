@@ -130,6 +130,14 @@ namespace Cerebro.Infrastructure.Repositories
                 .FirstOrDefault();
         }
 
+        public List<Application> GetApplications()
+        {
+            return _applicationStateStoreDbContext
+                .Applications!
+                .FindAll()
+                .ToList();
+        }
+
         public ApplicationToken? GetApplicationToken(int applicationId, string hashedSecret)
         {
             return _applicationStateStoreDbContext
