@@ -1,19 +1,10 @@
 ﻿using Cerebro.Core.Models.Entities.Base;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
 namespace Cerebro.Core.Models.Entities.Addresses
 {
-    public class AddressSettings : BaseEntity
+    public class AddressSettings
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
-
-        [ForeignKey("Addresses")]
-        public long AddressId { get; set; }
-
         public int PartitionNumber { get; set; }
-
         public ulong WriteBufferSizeInBytes { get; set; }
         public int MaxWriteBufferNumber { get; set; }
         public int MaxWriteBufferSizeToMaintain { get; set; }

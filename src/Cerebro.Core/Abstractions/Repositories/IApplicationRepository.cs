@@ -12,30 +12,19 @@ namespace Cerebro.Core.Repositories
         Application? GetApplication(string applicationName);
 
 
-        bool AddApplicationSettings(ApplicationSettings applicationSettings);
-        bool DeleteApplicationSettings(ApplicationSettings applicationSettings);
-        bool UpdateApplicationSettings(ApplicationSettings applicationSettings);
-        ApplicationSettings? GetApplicationSettings(int applicationId);
-
-
         bool AddApplicationToken(ApplicationToken applicationToken);
         bool DeleteApplicationToken(ApplicationToken applicationToken);
         bool UpdateApplicationToken(ApplicationToken applicationToken);
         ApplicationToken? GetApplicationToken(int applicationId, string hashedSecret);
-        ApplicationToken? GetApplicationToken(int applicationId, long id);
+        ApplicationToken? GetApplicationToken(Guid key, string hashedSecret);
+        ApplicationToken? GetApplicationToken(int applicationId, Guid id);
         List<ApplicationToken> GetApplicationTokens(int applicationId);
 
-
-        bool AddPermission(Permission permission);
-        bool DeletePermission(Permission permission);
-        bool UpdatePermission(Permission permission);
-        Permission? GetPermission(long permissionId);
-        List<Permission> GetPermissions();
 
         bool AddApplicationPermission(ApplicationPermission applicationPermission);
         bool DeleteApplicationPermission(ApplicationPermission applicationPermission);
         bool UpdateApplicationPermission(ApplicationPermission applicationPermission);
-        List<ApplicationPermission> GetApplicationPermission(int applicationId);
+        ApplicationPermission GetApplicationPermission(int applicationId);
 
         bool AddApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection);
         bool DeleteApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection);
