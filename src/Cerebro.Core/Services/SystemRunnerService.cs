@@ -13,9 +13,9 @@ namespace Cerebro.Core.Services
         private readonly IConfigIOService _configIOService;
         private readonly NodeConfiguration _nodeConfiguration;
 
-        public SystemRunnerService(ILogger<SystemRunnerService> logger, 
+        public SystemRunnerService(ILogger<SystemRunnerService> logger,
             IRootIOService rootIOService,
-            IConfigIOService configIOService, 
+            IConfigIOService configIOService,
             NodeConfiguration nodeConfiguration)
         {
             _logger = logger;
@@ -73,8 +73,6 @@ namespace Cerebro.Core.Services
 
             CheckRootDirectories();
             CheckConfigDirectories();
-
-            //var clusterService = serviceProvider.GetService<IClusterService>();
 
             _logger.LogInformation($"{SystemProperties.ShortName} is ready");
 

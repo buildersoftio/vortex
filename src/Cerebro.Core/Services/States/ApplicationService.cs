@@ -3,6 +3,7 @@ using Cerebro.Core.Models.Common.Clients.Applications;
 using Cerebro.Core.Models.Dtos.Applications;
 using Cerebro.Core.Models.Entities.Clients.Applications;
 using Cerebro.Core.Repositories;
+using Cerebro.Core.Utilities.Validators;
 using Microsoft.Extensions.Logging;
 
 namespace Cerebro.Core.Services.States
@@ -20,20 +21,29 @@ namespace Cerebro.Core.Services.States
 
         public (bool status, string message) CreateApplication(ApplicationDto newApplication, string createdBy)
         {
-            var application = _applicationRepository.GetApplication(newApplication.Name);
+            var application = _applicationRepository.GetApplication(newApplication.Name.ToReplaceDuplicateSymbols());
             if (application != null)
                 return (status: false, message: $"Application {newApplication.Name} already exists");
 
+            if (newApplication!.Settings.PrivateIpRange.IsValidIpAddress() != true)
+                return (status: false, message: $"Application {newApplication.Name} cannot register, PrivateIpRange is not a list of ip addresses");
+
+            if (newApplication!.Settings.PublicIpRange.IsValidIpAddress() != true)
+                return (status: false, message: $"Application {newApplication.Name} cannot register, PublicIpRange is not a list of ip addresses");
+
+            // group ips in case there can be some duplicate
+
             application = new Application()
             {
-                Name = newApplication.Name,
+                // remove duplicate symbols
+                Name = newApplication.Name.ToReplaceDuplicateSymbols(),
                 Description = newApplication.Description,
                 Settings = newApplication.Settings,
                 CreatedBy = createdBy,
             };
 
             if (_applicationRepository.AddApplication(application))
-                return (status: true, message: $"Application has been created successfully with id {application.Id}");
+                return (status: true, message: $"Application {application.Name} has been created successfully with id {application.Id}");
 
             return (status: false, message: $"Application has not been created.");
         }
@@ -66,6 +76,12 @@ namespace Cerebro.Core.Services.States
 
             if (application.IsDeleted == true)
                 return (status: false, message: $"Application {applicationName} has been softly deleted, settings of a deleted application cannot be changed");
+
+            if (newApplicationSettings.PrivateIpRange.IsValidIpAddress() != true)
+                return (status: false, message: $"Application {applicationName} cannot register, PrivateIpRange is not a list of ip addresses");
+
+            if (newApplicationSettings.PublicIpRange.IsValidIpAddress() != true)
+                return (status: false, message: $"Application {applicationName} cannot register, PublicIpRange is not a list of ip addresses");
 
 
             application.Settings = newApplicationSettings;
@@ -152,7 +168,7 @@ namespace Cerebro.Core.Services.States
                 return (status: false, message: $"Application {applicationName} has been softly deleted, activation cannot happen");
 
             application.IsActive = true;
-            application.UpdatedAt = DateTimeOffset.UtcNow; 
+            application.UpdatedAt = DateTimeOffset.UtcNow;
             application.UpdatedBy = createdBy;
 
             if (_applicationRepository.UpdateApplication(application))

@@ -1,4 +1,5 @@
 ﻿using Cerebro.Core.Abstractions.Services;
+using Cerebro.Core.Models.Common.Clients.Applications;
 using Cerebro.Core.Models.Dtos.Applications;
 using Microsoft.AspNetCore.Mvc;
 
@@ -61,6 +62,30 @@ namespace Cerebro.Server.Controllers.v4
                 return NotFound(message);
 
             return Ok(application);
+        }
+
+        [HttpPut("{applicationName}/settings")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> PutApplicationSettings(string applicationName, [FromBody] ApplicationSettings applicationSettings)
+        {
+            (var result, string message) = _applicationService.EditApplicationSettings(applicationName, applicationSettings, "system");
+            if (result == true)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
+        [HttpPut("{applicationName}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> PutApplicationSettings(string applicationName, [FromQuery] string applicationDescription)
+        {
+            (var result, string message) = _applicationService.EditApplicationDescription(applicationName, applicationDescription, "system");
+            if (result == true)
+                return Ok(message);
+
+            return BadRequest(message);
         }
     }
 }
