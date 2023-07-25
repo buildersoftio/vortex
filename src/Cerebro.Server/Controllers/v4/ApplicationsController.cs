@@ -22,14 +22,23 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<string> PostApplication([FromBody] ApplicationDto applicationDto)
+        public ActionResult<string> PostApplication([FromBody] ApplicationDto applicationDto,
+            [FromQuery] bool IsWithPermissions,
+            [FromQuery] string? readAddressPermission,
+            [FromQuery] string? writeAddressPermission,
+            [FromQuery] bool? createAddressPermission)
         {
             if (applicationDto == null)
                 return BadRequest("Body request cannot be null");
 
             (bool isCreated, string message) = _applicationService.CreateApplication(applicationDto, "system");
             if (isCreated)
+            {
+                if (IsWithPermissions == true)
+                    _applicationService.CreateApplicationPermission(applicationDto.Name, readAddressPermission, writeAddressPermission, createAddressPermission, "system");
+
                 return Ok(message);
+            }
 
             return BadRequest(message);
         }

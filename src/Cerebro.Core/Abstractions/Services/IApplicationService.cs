@@ -6,6 +6,7 @@ namespace Cerebro.Core.Abstractions.Services
     public interface IApplicationService
     {
         (bool status, string message) CreateApplication(ApplicationDto newApplication, string createdBy);
+        (bool status, string message) CreateApplicationPermission(string applicationName, string? read, string? write, bool? create, string createdBy);
         (bool status, string message) EditApplicationSettings(string applicationName, ApplicationSettings newApplicationSettings, string updatedBy);
         (bool status, string message) EditApplicationDescription(string applicationName, string newDescription, string updatedBy);
 

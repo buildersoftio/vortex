@@ -56,6 +56,18 @@ namespace Cerebro.Core.Services.States
             return (status: false, message: $"Application has not been created.");
         }
 
+        public (bool status, string message) CreateApplicationPermission(string applicationName, string? read, string? write, bool? create, string createdBy)
+        {
+            if (read != null)
+                EditReadAddressApplicationPermission(applicationName, read, createdBy);
+            if (write != null)
+                EditWriteAddressApplicationPermission(applicationName, write, createdBy);
+            if (create != null)
+                EditCreateAddressApplicationPermission(applicationName, create.Value, createdBy);
+
+            return (true, "Permission updated");
+        }
+
 
         public (bool status, string message) EditApplicationDescription(string applicationName, string newDescription, string updatedBy)
         {
