@@ -1,5 +1,4 @@
 ﻿using Cerebro.Core.Models.Entities.Base;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Cerebro.Core.Models.Entities.Clients.Applications
 {

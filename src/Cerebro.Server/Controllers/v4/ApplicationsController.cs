@@ -1,6 +1,7 @@
 ﻿using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.Models.Common.Clients.Applications;
 using Cerebro.Core.Models.Dtos.Applications;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cerebro.Server.Controllers.v4
@@ -83,6 +84,149 @@ namespace Cerebro.Server.Controllers.v4
         {
             (var result, string message) = _applicationService.EditApplicationDescription(applicationName, applicationDescription, "system");
             if (result == true)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
+        [HttpPut("{applicationName}/deactivate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> PutDeactivateApplication(string applicationName)
+        {
+            (var result, string message) = _applicationService.DeactivateApplication(applicationName, "system");
+            if (result == true)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
+        [HttpPut("{applicationName}/activate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> PutActivateApplication(string applicationName)
+        {
+            (var result, string message) = _applicationService.ActivateApplication(applicationName, "system");
+            if (result == true)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
+        [HttpDelete("applicationName")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> DeleteApplication(string applicationName, [FromQuery] bool isSoftDelete)
+        {
+            bool result;
+            string message;
+            if (isSoftDelete)
+                (result, message) = _applicationService.SoftDeleteApplication(applicationName, "system");
+            else
+                (result, message) = _applicationService.HardDeleteApplication(applicationName);
+
+            if (result == true)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
+
+
+        [HttpPost("{applicationName}/tokens")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<TokenResponse> PostApplicationToken(string applicationName, [FromBody] TokenRequest request)
+        {
+            (var result, string message) = _applicationService.CreateApplicationToken(applicationName, request, "system");
+
+            if (result == null)
+                return BadRequest(message);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{applicationName}/tokens")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<List<ApplicationTokenDto>> GetApplicationTokens(string applicationName)
+        {
+            (var result, string message) = _applicationService.GetApplicationTokens(applicationName);
+            if (result == null)
+                return BadRequest(message);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{applicationName}/tokens/{apiKey}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<ApplicationTokenDto> GetApplicationToken(string applicationName, Guid apiKey)
+        {
+            (var result, string message) = _applicationService.GetApplicationToken(applicationName, apiKey);
+            if (result == null)
+                return BadRequest(message);
+
+            return Ok(result);
+        }
+
+        [HttpPut("{applicationName}/tokens/{apiKey}/revoke")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> RevokeApplicationToken(string applicationName, Guid apiKey)
+        {
+            (var status, string message) = _applicationService.RevokeApplicationToken(applicationName, apiKey, "system");
+            if (status == true)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
+
+        [HttpGet("{applicationName}/permissions")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+
+        public ActionResult<ApplicationPermissionDto> GetApplicationPermissions(string applicationName)
+        {
+            (var result, string message) = _applicationService.GetApplicationPermissions(applicationName);
+            if (result != null)
+                return Ok(result);
+
+            return BadRequest(message);
+        }
+
+        [HttpPut("{applicationName}/permissions/read")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> PutReadAddressPermission(string applicationName, [FromBody] string value)
+        {
+            (var status, string message) = _applicationService.EditReadAddressApplicationPermission(applicationName, value, "system");
+            if (status == true)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
+        [HttpPut("{applicationName}/permissions/write")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> PutWriteAddressPermission(string applicationName, [FromBody] string value)
+        {
+            (var status, string message) = _applicationService.EditWriteAddressApplicationPermission(applicationName, value, "system");
+            if (status == true)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
+        [HttpPut("{applicationName}/permissions/create")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> PutCreateAddressPermission(string applicationName, [FromBody] bool value)
+        {
+            (var status, string message) = _applicationService.EditCreateAddressApplicationPermission(applicationName, value, "system");
+            if (status == true)
                 return Ok(message);
 
             return BadRequest(message);

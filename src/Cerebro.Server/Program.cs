@@ -3,7 +3,6 @@ using Cerebro.Server.Middleware;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
@@ -22,6 +21,11 @@ builder.Host.UseSerilog();
 // Add services to the container.
 
 builder.Services.AddControllers();
+                //.AddJsonOptions(opts =>
+                //{
+                //    opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); // it works but for now, we are not enabling JSON Text for Controllers
+                //});
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {

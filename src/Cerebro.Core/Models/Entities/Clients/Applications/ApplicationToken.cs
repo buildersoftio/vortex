@@ -1,6 +1,5 @@
 ﻿using Cerebro.Core.Models.Common;
 using Cerebro.Core.Models.Entities.Base;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Cerebro.Core.Models.Entities.Clients.Applications
