@@ -20,6 +20,7 @@ namespace Cerebro.Infrastructure.DataAccess.ServerStateStore
         private void InitializeCollections()
         {
             Addresses = db.GetCollection<Address>("addresses", BsonAutoId.Int32);
+
             Applications = db.GetCollection<Application>("applications", BsonAutoId.Int32);
             ApplicationTokens = db.GetCollection<ApplicationToken>("application_tokens", BsonAutoId.Guid);
             ApplicationAddressConnections = db.GetCollection<ApplicationAddressConnection>("application_address_connections", BsonAutoId.Guid);
@@ -30,6 +31,8 @@ namespace Cerebro.Infrastructure.DataAccess.ServerStateStore
         private void EnsureKeys()
         {
             Addresses!.EnsureIndex(x => x.Name, unique: true);
+            Addresses!.EnsureIndex(x => x.Alias, unique: true);
+
             Applications!.EnsureIndex(x => x.Name, unique: true);
             ApplicationTokens!.EnsureIndex(x => x.ApplicationId, unique: false);
 
@@ -37,6 +40,7 @@ namespace Cerebro.Infrastructure.DataAccess.ServerStateStore
         }
 
         public ILiteCollection<Address>? Addresses { get; private set; }
+
         public ILiteCollection<Application>? Applications { get; private set; }
         public ILiteCollection<ApplicationToken>? ApplicationTokens { get; private set; }
 
