@@ -1,24 +1,22 @@
 ﻿using Cerebro.Core.Models.Common;
 using Cerebro.Core.Models.Entities.Base;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Cerebro.Core.Models.Entities.Clients.Applications
 {
     public class ApplicationToken : BaseEntity
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        // Id is being used as API Key (Application Token Key)
+        public Guid Id { get; set; }
 
-        [ForeignKey("Applications")]
+        // foreign key
         public int ApplicationId { get; set; }
 
         public CryptographyTypes CryptographyType { get; set; }
 
         
         [JsonIgnore]
-        public string? Secret { get; set; }
+        public string? HashedSecret { get; set; }
 
         public DateTimeOffset ExpireDate { get; set; }
         public string? Description { get; set; }

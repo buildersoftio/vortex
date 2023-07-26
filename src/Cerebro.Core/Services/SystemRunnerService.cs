@@ -6,16 +6,16 @@ using System.Runtime.InteropServices;
 
 namespace Cerebro.Core.Services
 {
-    public class SystemStarterService
+    public class SystemRunnerService
     {
-        private readonly ILogger<SystemStarterService> _logger;
+        private readonly ILogger<SystemRunnerService> _logger;
         private readonly IRootIOService _rootIOService;
         private readonly IConfigIOService _configIOService;
         private readonly NodeConfiguration _nodeConfiguration;
 
-        public SystemStarterService(ILogger<SystemStarterService> logger, 
+        public SystemRunnerService(ILogger<SystemRunnerService> logger,
             IRootIOService rootIOService,
-            IConfigIOService configIOService, 
+            IConfigIOService configIOService,
             NodeConfiguration nodeConfiguration)
         {
             _logger = logger;
@@ -34,14 +34,14 @@ namespace Cerebro.Core.Services
             Console.WriteLine($"                   Starting {SystemProperties.Name}");
             Console.WriteLine("                   Set your information in motion.");
             Console.WriteLine("");
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("  ###"); Console.ForegroundColor = generalColor; Console.WriteLine("      ###");
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.Write("    ###"); Console.ForegroundColor = generalColor; Console.Write("  ###");
             Console.WriteLine($"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with (love) by Buildersoft LLC.");
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("      ####         "); Console.ForegroundColor = generalColor; Console.WriteLine("Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx");
-            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("    ###  ###");
             Console.Write("  ###      ###     "); Console.ForegroundColor = generalColor; Console.WriteLine("Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integrations.");
             Console.WriteLine("");
@@ -74,8 +74,6 @@ namespace Cerebro.Core.Services
             CheckRootDirectories();
             CheckConfigDirectories();
 
-            //var clusterService = serviceProvider.GetService<IClusterService>();
-
             _logger.LogInformation($"{SystemProperties.ShortName} is ready");
 
         }
@@ -84,7 +82,7 @@ namespace Cerebro.Core.Services
         {
             if (_rootIOService.IsLogsRootDirectoryCreated() != true)
             {
-                _logger.LogInformation("Creating 'LOGS' root directory");
+                _logger.LogInformation("'logs' root directory is created");
                 _rootIOService.CreateLogsRootDirectory();
             }
         }
@@ -135,19 +133,19 @@ namespace Cerebro.Core.Services
         {
             if (_rootIOService.IsDataRootDirectoryCreated() != true)
             {
-                _logger.LogInformation("'DATA' root directory created");
+                _logger.LogInformation("'data' root directory is created");
                 _rootIOService.CreateDataRootDirectory();
             }
 
             if (_rootIOService.IsConfigRootDirectoryCreated() != true)
             {
-                _logger.LogInformation("'CONFIG' root directory created");
+                _logger.LogInformation("'config' root directory is created");
                 _rootIOService.CreateConfigRootDirectory();
             }
 
             if (_rootIOService.IsTempRootDirectoryCreated() != true)
             {
-                _logger.LogInformation("'LOGS' root directory created");
+                _logger.LogInformation("'logs' root directory is created");
                 _rootIOService.CreateTempRootDirectory();
             }
         }
@@ -156,7 +154,7 @@ namespace Cerebro.Core.Services
         {
             if (_configIOService.IsActiveDirectoryCreated() != true)
             {
-                _logger.LogInformation("'CONFIG/ACTIVE' directory created");
+                _logger.LogInformation("'config/active' directory is created");
                 _configIOService.CreateActiveDirectory();
             }
         }
@@ -165,7 +163,7 @@ namespace Cerebro.Core.Services
         {
             if (_rootIOService.IsInitialConfiguration() == true)
             {
-                _logger.LogInformation("Doing Initial configuration");
+                _logger.LogInformation("Doing initial configuration");
             }
         }
     }

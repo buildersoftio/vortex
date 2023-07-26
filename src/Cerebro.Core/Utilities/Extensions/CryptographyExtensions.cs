@@ -5,6 +5,17 @@ namespace Cerebro.Core.Utilities.Extensions
 {
     public static class CryptographyExtensions
     {
+
+        public static string GenerateApiSecret()
+        {
+            var key = new byte[64];
+            using (var generator = RandomNumberGenerator.Create())
+                generator.GetBytes(key);
+
+            return Convert.ToBase64String(key);
+        }
+
+
         public static string ToSHA512_HashString(this string text, string stalt = "")
         {
             if (String.IsNullOrEmpty(text))
