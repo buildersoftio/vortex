@@ -13,7 +13,7 @@ namespace Cerebro.Core.Models.Dtos.Applications
 
         [Required]
         [StringLength(30)]
-        [ApplicationNameRegexValidation(ErrorMessage = "Application name should contain only letters, numbers, underscores and dashes can be used")]
+        [NameRegexValidation(ErrorMessage = "Application name can contain only letters, numbers, underscores and dashes")]
         public string Name { get; set; }
 
         [StringLength(200)]

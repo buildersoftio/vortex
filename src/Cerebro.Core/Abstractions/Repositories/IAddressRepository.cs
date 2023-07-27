@@ -5,17 +5,12 @@ namespace Cerebro.Core.Repositories
     public interface IAddressRepository
     {
         bool AddAddress(Address address);
-        bool DeleteAddress(int addressId);
-        bool DeleteAddress(string addressName);
-        bool UpdateAddress(int addressId, Address address);
-        bool UpdateAddress(string addressName,  Address address);
-        Address GetAddress(int addressId);
-        Address GetAddress(string addressName);
+        bool UpdateAddress(Address address);
+        bool DeleteAddress(Address address);
 
-        bool AddAddressSettings(int addressId, AddressSettings addressSettings);
-        bool DeleteAddressSettings(int addressId);
-        bool UpdateAddressSettings(int addressId, AddressSettings addressSettings);
-
-        AddressSettings GetAddressSettings(int addressId);
+        Address? GetAddressById(int addressId);
+        Address? GetAddressByAlias(string addressAlias);
+        Address? GetAddressByName(string addressName);
+        List<Address> GetAddresses();
     }
 }

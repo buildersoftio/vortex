@@ -24,7 +24,6 @@ namespace Cerebro.Core.Services
             _nodeConfiguration = nodeConfiguration;
 
             Start();
-
         }
 
         public void Start()
@@ -89,25 +88,33 @@ namespace Cerebro.Core.Services
 
         private void ExposePorts()
         {
-            var exposedUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")!.Split(';');
-            foreach (var url in exposedUrls)
+            try
             {
-                try
+                var exposedUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")!.Split(';');
+                foreach (var url in exposedUrls)
                 {
-                    var u = new Uri(url);
-                    if (u.Scheme == "https")
-                        Console.WriteLine($"                   Port exposed {u.Port} SSL");
-                    else
-                        Console.WriteLine($"                   Port exposed {u.Port}");
-                }
-                catch (Exception)
-                {
-                    if (url.StartsWith("https://"))
-                        Console.WriteLine($"                   Port exposed {url.Split(':').Last()} SSL");
-                    else
-                        Console.WriteLine($"                   Port exposed {url.Split(':').Last()}");
+                    try
+                    {
+                        var u = new Uri(url);
+                        if (u.Scheme == "https")
+                            Console.WriteLine($"                   Port exposed {u.Port} SSL");
+                        else
+                            Console.WriteLine($"                   Port exposed {u.Port}");
+                    }
+                    catch (Exception)
+                    {
+                        if (url.StartsWith("https://"))
+                            Console.WriteLine($"                   Port exposed {url.Split(':').Last()} SSL");
+                        else
+                            Console.WriteLine($"                   Port exposed {url.Split(':').Last()}");
+                    }
                 }
             }
+            catch (Exception)
+            {
+                Console.WriteLine($"                   Cerebro is running in IIS Server");
+            }
+
         }
         private string GetOSName()
         {

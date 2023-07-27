@@ -15,6 +15,7 @@ namespace Cerebro.Server.DependencyInjection
         public static void AddServerRepositories(this IServiceCollection services)
         {
             services.AddSingleton<IApplicationRepository, ApplicationRepository>();
+            services.AddSingleton<IAddressRepository, AddressRepository>();
         }
     }
 }
