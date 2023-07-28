@@ -1,7 +1,6 @@
 ﻿using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.Models.Common.Clients.Applications;
 using Cerebro.Core.Models.Dtos.Applications;
-using Cerebro.Core.Models.Entities.Addresses;
 using Cerebro.Core.Models.Entities.Clients.Applications;
 using Cerebro.Core.Repositories;
 using Cerebro.Core.Utilities.Consts;

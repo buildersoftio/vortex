@@ -24,6 +24,7 @@ namespace Cerebro.Server.DependencyInjection
         {
             services.AddSingleton<IRootIOService, RootIOService>();
             services.AddSingleton<IConfigIOService, ConfigIOService>();
+            services.AddSingleton<IDataIOService, DataIOService>();
         }
     }
 }

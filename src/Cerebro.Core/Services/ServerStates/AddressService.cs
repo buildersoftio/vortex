@@ -1,4 +1,5 @@
-﻿using Cerebro.Core.Abstractions.Services;
+﻿using Cerebro.Core.Abstractions.Background;
+using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.Models.Common.Addresses;
 using Cerebro.Core.Models.Dtos.Addresses;
 using Cerebro.Core.Models.Entities.Addresses;
@@ -11,11 +12,13 @@ namespace Cerebro.Core.Services.ServerStates
     {
         private readonly ILogger<AddressService> _logger;
         private readonly IAddressRepository _addressRepository;
+        private readonly IBackgroundServerStateService<Address> _backgroundServerStateService;
 
-        public AddressService(ILogger<AddressService> logger, IAddressRepository addressRepository)
+        public AddressService(ILogger<AddressService> logger, IAddressRepository addressRepository, IBackgroundServerStateService<Address> backgroundServerStateService)
         {
             _logger = logger;
             _addressRepository = addressRepository;
+            _backgroundServerStateService = backgroundServerStateService;
         }
 
         public (bool status, string message) CreateAddress(AddressCreationRequest addressCreationRequest, string createdBy)
@@ -31,12 +34,19 @@ namespace Cerebro.Core.Services.ServerStates
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = createdBy,
                 Settings = addressCreationRequest.Settings,
-                Status = AddressStatuses.WAITING_TO_CREATE_FILES,
+                Status = AddressStatuses.CreateAddressDirectory,
             };
 
             var result = _addressRepository.AddAddress(address);
             if (result == true)
+            {
+                // We are enqueueing the address for directory creation and rocks-db_partition and replication services
+
+                _logger.LogInformation($"Address [{address.Name}] is created successfully");
+
+                _backgroundServerStateService.EnqueueRequest(address);
                 return (true, $"Address [{addressCreationRequest.Name}] created sucessfully at [{address.Id}]");
+            }
 
             return (false, $"Something went wrong, Address [{addressCreationRequest.Name}] isnot created");
         }
@@ -78,11 +88,21 @@ namespace Cerebro.Core.Services.ServerStates
                 return (status: false, message: $"New partition number cannot be smaller than existing partition number");
 
             address.Settings.PartitionSettings = addressPartitionSettings;
+            address.Status = AddressStatuses.ChangePartitions;
+
             address.UpdatedAt = DateTime.UtcNow;
             address.UpdatedBy = updatedBy;
 
             if (_addressRepository.UpdateAddress(address))
+            {
+                // We are enqueueing the address for partition creation
+
+                _logger.LogInformation($"Address [{address.Name}] partitions change at {addressPartitionSettings.PartitionNumber} requested");
+                _logger.LogInformation($"Address [{address.Name}] initializing new partitions");
+
+                _backgroundServerStateService.EnqueueRequest(address);
                 return (status: true, message: $"Address {alias} partition settings changed");
+            }
 
             return (status: false, message: $"Something went wrong, address {alias} partition settings is not updated");
         }

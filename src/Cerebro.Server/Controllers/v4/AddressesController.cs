@@ -1,7 +1,6 @@
 ﻿using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.Models.Common.Addresses;
 using Cerebro.Core.Models.Dtos.Addresses;
-using Cerebro.Core.Models.Dtos.Applications;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cerebro.Server.Controllers.v4
