@@ -16,7 +16,7 @@ namespace Cerebro.Core.IO
 
         public static string GetIndexStateFile()
         {
-            return Path.Combine(GetIndexesDirectory(), "indexes_state.cbs");
+            return Path.Combine(GetIndexesDirectory(), "indexes_entries_catalog_store.cbs");
         }
 
         public static string GetAddressDirectory(int addressId)
