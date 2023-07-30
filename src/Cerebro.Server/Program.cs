@@ -48,6 +48,7 @@ builder.Services.AddIOServices();
 builder.Services.AddServerStateStore();
 builder.Services.AddServerRepositories();
 builder.Services.AddServerStateServices();
+builder.Services.AddBackgroundServerStateServices();
 
 
 var app = builder.Build();

@@ -7,6 +7,7 @@
         public const string RootLogLocation = "CEREBRO_ROOT_LOG_LOCATION";
         public const string RootTempLocation = "CEREBRO_ROOT_TEMP_LOCATION";
 
-
+        public const string CertificateFileName = "CEREBRO_X509CERTIFICATE_FILE_NAME";
+        public const string CertificatePassword = "CEREBRO_X509CERTIFICATE_PASSWORD";
     }
 }

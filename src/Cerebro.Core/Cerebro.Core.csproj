@@ -14,7 +14,6 @@
 
 	<ItemGroup>
 		<Folder Include="Abstractions\Factories\" />
-		<Folder Include="Models\Aggregations\Clients\Applications\" />
 	</ItemGroup>
 
 	<ItemGroup>

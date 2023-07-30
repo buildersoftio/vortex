@@ -3,18 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace Cerebro.Core.Utilities.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property)]
-    public class ApplicationNameRegexValidationAttribute : ValidationAttribute
+    public class AddressRegexValidationAttribute : ValidationAttribute
     {
         private readonly string _pattern;
-
-        public ApplicationNameRegexValidationAttribute()
+        public AddressRegexValidationAttribute()
         {
-            _pattern = @"[^a-zA-Z0-9_.\-]";
-        }
-        public ApplicationNameRegexValidationAttribute(string pattern)
-        {
-            _pattern = pattern;
+            _pattern = @"^\/[a-zA-Z0-9_/-]+$";
         }
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
@@ -23,12 +17,7 @@ namespace Cerebro.Core.Utilities.Attributes
             {
                 string stringValue = value.ToString();
 
-                if (Regex.IsMatch(stringValue, _pattern))
-                {
-                    return new ValidationResult(ErrorMessage);
-                }
-
-                if (Regex.IsMatch(stringValue, @"^\.*$"))
+                if (!Regex.IsMatch(stringValue, _pattern))
                 {
                     return new ValidationResult(ErrorMessage);
                 }

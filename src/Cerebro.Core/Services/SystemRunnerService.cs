@@ -11,20 +11,22 @@ namespace Cerebro.Core.Services
         private readonly ILogger<SystemRunnerService> _logger;
         private readonly IRootIOService _rootIOService;
         private readonly IConfigIOService _configIOService;
+        private readonly IDataIOService _dataIOService;
         private readonly NodeConfiguration _nodeConfiguration;
 
         public SystemRunnerService(ILogger<SystemRunnerService> logger,
             IRootIOService rootIOService,
             IConfigIOService configIOService,
+            IDataIOService dataIOService,
             NodeConfiguration nodeConfiguration)
         {
             _logger = logger;
             _rootIOService = rootIOService;
             _configIOService = configIOService;
+            _dataIOService = dataIOService;
             _nodeConfiguration = nodeConfiguration;
 
             Start();
-
         }
 
         public void Start()
@@ -38,7 +40,7 @@ namespace Cerebro.Core.Services
             Console.Write("  ###"); Console.ForegroundColor = generalColor; Console.WriteLine("      ###");
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Write("    ###"); Console.ForegroundColor = generalColor; Console.Write("  ###");
-            Console.WriteLine($"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with (love) by Buildersoft LLC.");
+            Console.WriteLine($"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC.");
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.Write("      ####         "); Console.ForegroundColor = generalColor; Console.WriteLine("Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx");
             Console.ForegroundColor = ConsoleColor.Red;
@@ -89,25 +91,33 @@ namespace Cerebro.Core.Services
 
         private void ExposePorts()
         {
-            var exposedUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")!.Split(';');
-            foreach (var url in exposedUrls)
+            try
             {
-                try
+                var exposedUrls = Environment.GetEnvironmentVariable("ASPNETCORE_URLS")!.Split(';');
+                foreach (var url in exposedUrls)
                 {
-                    var u = new Uri(url);
-                    if (u.Scheme == "https")
-                        Console.WriteLine($"                   Port exposed {u.Port} SSL");
-                    else
-                        Console.WriteLine($"                   Port exposed {u.Port}");
-                }
-                catch (Exception)
-                {
-                    if (url.StartsWith("https://"))
-                        Console.WriteLine($"                   Port exposed {url.Split(':').Last()} SSL");
-                    else
-                        Console.WriteLine($"                   Port exposed {url.Split(':').Last()}");
+                    try
+                    {
+                        var u = new Uri(url);
+                        if (u.Scheme == "https")
+                            Console.WriteLine($"                   Port exposed {u.Port} SSL");
+                        else
+                            Console.WriteLine($"                   Port exposed {u.Port}");
+                    }
+                    catch (Exception)
+                    {
+                        if (url.StartsWith("https://"))
+                            Console.WriteLine($"                   Port exposed {url.Split(':').Last()} SSL");
+                        else
+                            Console.WriteLine($"                   Port exposed {url.Split(':').Last()}");
+                    }
                 }
             }
+            catch (Exception)
+            {
+                Console.WriteLine($"                   Cerebro is running in IIS Server");
+            }
+
         }
         private string GetOSName()
         {
@@ -136,6 +146,20 @@ namespace Cerebro.Core.Services
                 _logger.LogInformation("'data' root directory is created");
                 _rootIOService.CreateDataRootDirectory();
             }
+
+            // create data/store directory
+            if (_dataIOService.IsDataRootAddressesDirCreated() != true)
+            {
+                _logger.LogInformation("'data/store' root directory is created");
+                _dataIOService.CreateDataRootAddressesDir();
+            }
+
+            if (_dataIOService.IsIndexesDirectoryCreated() != true)
+            {
+                _logger.LogInformation("'data/store/indexes' root directory is created");
+                _dataIOService.CreateIndexesDirectory();
+            }
+
 
             if (_rootIOService.IsConfigRootDirectoryCreated() != true)
             {

@@ -9,17 +9,17 @@ namespace Cerebro.Infrastructure.Repositories
     public class ApplicationRepository : IApplicationRepository
     {
         private readonly ILogger<ApplicationRepository> _logger;
-        private readonly ServerStateStoreDbContext _applicationStateStoreDbContext;
+        private readonly ServerStateStoreDbContext _serverStateStoreDbContext;
 
-        public ApplicationRepository(ILogger<ApplicationRepository> logger, ServerStateStoreDbContext applicationStateStoreDbContext)
+        public ApplicationRepository(ILogger<ApplicationRepository> logger, ServerStateStoreDbContext serverStateStoreDbContext)
         {
             _logger = logger;
-            _applicationStateStoreDbContext = applicationStateStoreDbContext;
+            _serverStateStoreDbContext = serverStateStoreDbContext;
         }
 
         public bool AddApplication(Application application)
         {
-            var id = _applicationStateStoreDbContext.Applications!.Insert(application);
+            var id = _serverStateStoreDbContext.Applications!.Insert(application);
             if (id != 0)
                 return true;
 
@@ -28,7 +28,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public bool AddApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection)
         {
-            var id = _applicationStateStoreDbContext.ApplicationAddressConnections!.Insert(applicationAddressConnection);
+            var id = _serverStateStoreDbContext.ApplicationAddressConnections!.Insert(applicationAddressConnection);
             if (id != 0)
                 return true;
 
@@ -37,7 +37,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public bool AddApplicationPermission(ApplicationPermission applicationPermission)
         {
-            var id = _applicationStateStoreDbContext.ApplicationPermissions!.Insert(applicationPermission);
+            var id = _serverStateStoreDbContext.ApplicationPermissions!.Insert(applicationPermission);
             if (id != 0)
                 return true;
 
@@ -46,7 +46,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public bool AddApplicationToken(ApplicationToken applicationToken)
         {
-            var id = _applicationStateStoreDbContext.ApplicationTokens!.Insert(applicationToken);
+            var id = _serverStateStoreDbContext.ApplicationTokens!.Insert(applicationToken);
             if (id != 0)
                 return true;
 
@@ -55,42 +55,42 @@ namespace Cerebro.Infrastructure.Repositories
 
         public bool DeleteApplication(Application application)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .Applications!
                 .Delete(application.Id);
         }
 
         public bool DeleteApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationAddressConnections!
                 .Delete(applicationAddressConnection.Id);
         }
 
         public bool DeleteApplicationPermission(ApplicationPermission applicationPermission)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationPermissions!
                 .Delete(applicationPermission.ApplicationId);
         }
 
         public bool DeleteApplicationToken(ApplicationToken applicationToken)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                  .ApplicationTokens!
                  .Delete(applicationToken.Id);
         }
 
         public Application? GetApplication(int applicationId)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .Applications!
                 .FindById(applicationId);
         }
 
         public Application? GetApplication(string applicationName)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .Applications!
                 .Query().Where(x => x.Name == applicationName)
                 .FirstOrDefault();
@@ -98,7 +98,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public ApplicationAddressConnection? GetApplicationAddressConnection(int applicationId, int addressId, ApplicationConnectionTypes applicationConnectionTypes)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationAddressConnections!
                 .Query()
                 .Where(x => x.ApplicationId == applicationId && x.AddressId == addressId && x.ApplicationConnectionType == applicationConnectionTypes)
@@ -107,7 +107,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public List<ApplicationAddressConnection>? GetApplicationAddressConnectionsByAddress(int addressId)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationAddressConnections!
                 .Query()
                 .Where(x => x.AddressId == addressId)
@@ -116,7 +116,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public List<ApplicationAddressConnection>? GetApplicationAddressConnectionsByApplication(int applicationId)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationAddressConnections!
                 .Query()
                 .Where(x => x.ApplicationId == applicationId)
@@ -125,7 +125,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public ApplicationPermission GetApplicationPermission(int applicationId)
         {
-            return _applicationStateStoreDbContext.ApplicationPermissions!
+            return _serverStateStoreDbContext.ApplicationPermissions!
                 .Query().Where(x => x.ApplicationId == applicationId)
                 .FirstOrDefault();
         }
@@ -133,26 +133,26 @@ namespace Cerebro.Infrastructure.Repositories
         public List<Application> GetApplications(bool sendSoftDeleted = true)
         {
             if (sendSoftDeleted != true)
-                return _applicationStateStoreDbContext
+                return _serverStateStoreDbContext
                         .Applications!.Query()
                         .Where(x => x.IsDeleted != true).ToList();
 
 
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                     .Applications!.FindAll()
                     .ToList();
         }
 
         public List<Application> GetActiveApplications()
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
            .Applications!.Query()
            .Where(x => x.IsDeleted != true && x.IsActive == true).ToList();
         }
 
         public ApplicationToken? GetApplicationToken(int applicationId, string hashedSecret)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationTokens!
                 .Query().Where(x => x.ApplicationId == applicationId && x.HashedSecret == hashedSecret)
                 .FirstOrDefault();
@@ -160,7 +160,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public ApplicationToken? GetApplicationToken(int applicationId, Guid id)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationTokens!
                 .Query().Where(x => x.ApplicationId == applicationId && x.Id == id)
                 .FirstOrDefault();
@@ -168,7 +168,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public ApplicationToken? GetApplicationToken(Guid key, string hashedSecret)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                   .ApplicationTokens!
                   .Query().Where(x => x.HashedSecret == hashedSecret && x.Id == key)
                   .FirstOrDefault();
@@ -176,7 +176,7 @@ namespace Cerebro.Infrastructure.Repositories
 
         public List<ApplicationToken> GetApplicationTokens(int applicationId)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                   .ApplicationTokens!
                   .Query().Where(x => x.ApplicationId == applicationId)
                   .ToList();
@@ -184,28 +184,28 @@ namespace Cerebro.Infrastructure.Repositories
 
         public bool UpdateApplication(Application application)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .Applications!
                 .Update(application);
         }
 
         public bool UpdateApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationAddressConnections!
                 .Update(applicationAddressConnection);
         }
 
         public bool UpdateApplicationPermission(ApplicationPermission applicationPermission)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationPermissions!
                 .Update(applicationPermission);
         }
 
         public bool UpdateApplicationToken(ApplicationToken applicationToken)
         {
-            return _applicationStateStoreDbContext
+            return _serverStateStoreDbContext
                 .ApplicationTokens!
                 .Update(applicationToken);
         }

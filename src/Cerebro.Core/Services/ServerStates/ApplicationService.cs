@@ -8,7 +8,7 @@ using Cerebro.Core.Utilities.Extensions;
 using Cerebro.Core.Utilities.Validators;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Core.Services.States
+namespace Cerebro.Core.Services.ServerStates
 {
     public class ApplicationService : IApplicationService
     {
@@ -128,26 +128,22 @@ namespace Cerebro.Core.Services.States
 
         public (List<ApplicationDto> applicationDtos, string message) GetApplications()
         {
-            var applications = _applicationRepository.GetApplications();
-            var applicationDtos = new List<ApplicationDto>();
-            applications.ForEach(x =>
-            {
-                applicationDtos.Add(new ApplicationDto(x));
-            });
-            return (applicationDtos: applicationDtos, message: "Applications returned");
+            var applications = _applicationRepository
+                .GetApplications()
+                .Select(a => new ApplicationDto(a))
+                .ToList();
+            return (applicationDtos: applications, message: "Applications returned");
         }
 
         public (List<ApplicationDto> applicationDtos, string message) GetActiveApplications()
         {
-            var applications = _applicationRepository.GetActiveApplications();
-            var applicationDtos = new List<ApplicationDto>();
-            applications.ForEach(x =>
-            {
-                applicationDtos.Add(new ApplicationDto(x));
-            });
-            return (applicationDtos: applicationDtos, message: "Active and non deleted applications returned");
+            var applications = _applicationRepository
+                .GetActiveApplications()
+                .Select(a => new ApplicationDto(a))
+                .ToList();
+ 
+            return (applicationDtos: applications, message: "Active and non deleted applications returned");
         }
-
 
         public (bool status, string message) HardDeleteApplication(string applicationName)
         {

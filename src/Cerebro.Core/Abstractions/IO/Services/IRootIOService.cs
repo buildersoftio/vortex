@@ -9,6 +9,7 @@
 
 
         bool CreateDataRootDirectory();
+
         bool CreateConfigRootDirectory();
         bool CreateLogsRootDirectory();
         bool CreateTempRootDirectory();
