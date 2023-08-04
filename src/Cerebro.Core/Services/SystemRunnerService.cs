@@ -100,16 +100,16 @@ namespace Cerebro.Core.Services
                     {
                         var u = new Uri(url);
                         if (u.Scheme == "https")
-                            Console.WriteLine($"                   Port exposed {u.Port} SSL");
+                            Console.WriteLine($"                   HTTPS Port exposed {u.Port} SSL");
                         else
-                            Console.WriteLine($"                   Port exposed {u.Port}");
+                            Console.WriteLine($"                   HTTP  Port exposed {u.Port}");
                     }
                     catch (Exception)
                     {
                         if (url.StartsWith("https://"))
-                            Console.WriteLine($"                   Port exposed {url.Split(':').Last()} SSL");
+                            Console.WriteLine($"                   HTTPS Port exposed {url.Split(':').Last()} SSL");
                         else
-                            Console.WriteLine($"                   Port exposed {url.Split(':').Last()}");
+                            Console.WriteLine($"                   HTTP  Port exposed {url.Split(':').Last()}");
                     }
                 }
             }

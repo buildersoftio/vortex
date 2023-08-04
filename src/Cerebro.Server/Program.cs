@@ -43,6 +43,10 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddConfigurations(builder.Configuration);
 builder.Services.AddSystemStarterService();
 builder.Services.AddIOServices();
+builder.Services.AddOrchestators();
+
+// Adding Factories
+builder.Services.AddFactories();
 
 // Adding Server State related components
 builder.Services.AddServerStateStore();

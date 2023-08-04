@@ -11,7 +11,10 @@ namespace Cerebro.Core.Models.Dtos.Addresses
         public string Alias { get; set; }
 
         [Required]
-        [AddressRegexValidation( ErrorMessage = "Address should start with / and should not contain letters, numbers and underscoor and dash")]
+        [AddressRegexValidation(ErrorMessage = "Address should start with / and should not contain letters, numbers and underscoor and dash")]
         public string Name { get; set; }
+
+        [Range(1, 20)]
+        public int PartitionNumber { get; set; }
     }
 }

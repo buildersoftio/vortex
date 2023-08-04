@@ -1,6 +1,7 @@
 ﻿using Cerebro.Core.Abstractions.Background;
 using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.Models.Common.Addresses;
+using Cerebro.Core.Models.Configurations;
 using Cerebro.Core.Models.Dtos.Addresses;
 using Cerebro.Core.Models.Entities.Addresses;
 using Cerebro.Core.Repositories;
@@ -12,13 +13,18 @@ namespace Cerebro.Core.Services.ServerStates
     {
         private readonly ILogger<AddressService> _logger;
         private readonly IAddressRepository _addressRepository;
-        private readonly IBackgroundServerStateService<Address> _backgroundServerStateService;
+        private readonly IBackgroundQueueService<Address> _backgroundServerStateService;
+        private readonly NodeConfiguration _nodeConfiguration;
 
-        public AddressService(ILogger<AddressService> logger, IAddressRepository addressRepository, IBackgroundServerStateService<Address> backgroundServerStateService)
+        public AddressService(ILogger<AddressService> logger,
+            IAddressRepository addressRepository,
+            IBackgroundQueueService<Address> backgroundServerStateService,
+            NodeConfiguration nodeConfiguration)
         {
             _logger = logger;
             _addressRepository = addressRepository;
             _backgroundServerStateService = backgroundServerStateService;
+            _nodeConfiguration = nodeConfiguration;
         }
 
         public (bool status, string message) CreateAddress(AddressCreationRequest addressCreationRequest, string createdBy)
@@ -57,8 +63,8 @@ namespace Cerebro.Core.Services.ServerStates
             {
                 EnforceSchemaValidation = false,
                 MessageIndexType = MessageIndexTypes.DAILY,
-                PartitionSettings = new AddressPartitionSettings() { PartitionNumber = 1 },
-                ReplicationSettings = new AddressReplicationSettings() { NodeIdLeader = "this_leader", FollowerReplicationReplicas = "-1" },
+                PartitionSettings = new AddressPartitionSettings() { PartitionNumber = addressDefaultCreationRequest.PartitionNumber },
+                ReplicationSettings = new AddressReplicationSettings() { NodeIdLeader = _nodeConfiguration.NodeId, FollowerReplicationReplicas = "-1" },
                 RetentionSettings = new AddressRetentionSettings() { RetentionType = RetentionTypes.DELETE, TimeToLiveInMinutes = -1 },
                 SchemaSettings = new AddressSchemaSettings(),
                 StorageSettings = new AddressStorageSettings(), // we will get default settings from the file for each of these settings
@@ -201,7 +207,7 @@ namespace Cerebro.Core.Services.ServerStates
                 .GetAddresses()
                 .Select(a => new AddressDto(a))
                 .ToList();
-       
+
             return (addresses: addresses, message: "Addresses Returned");
         }
 
