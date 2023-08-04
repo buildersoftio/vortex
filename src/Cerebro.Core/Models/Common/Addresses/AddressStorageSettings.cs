@@ -4,6 +4,13 @@
     {
 
         public CompressionTypes MessageCompressionType { get; set; }
+
+
+        public ulong KeepLogFileNumber { get; set; }
+        public uint DumpStatsInSeconds { get; set; }
+        public ulong MaxLogFileSizeInBytes { get; set; }
+
+
         public ulong WriteBufferSizeInBytes { get; set; }
         public int MaxWriteBufferNumber { get; set; }
         public int MaxWriteBufferSizeToMaintain { get; set; }
@@ -14,6 +21,10 @@
         public AddressStorageSettings()
         {
             MessageCompressionType = CompressionTypes.NONE;
+
+            KeepLogFileNumber = 5;
+            MaxLogFileSizeInBytes = 104857600;
+            DumpStatsInSeconds = 60;
 
             //64MB
             WriteBufferSizeInBytes = 64000000;

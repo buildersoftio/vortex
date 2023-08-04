@@ -1,8 +1,10 @@
 ﻿using Cerebro.Core.Abstractions.Background;
 using Cerebro.Core.Abstractions.Services;
+using Cerebro.Core.Abstractions.Services.Orchestrations;
 using Cerebro.Core.Models.Entities.Addresses;
 using Cerebro.Core.Services.Background;
 using Cerebro.Core.Services.Entries;
+using Cerebro.Core.Services.Orchestrations;
 using Cerebro.Core.Services.ServerStates;
 
 namespace Cerebro.Server.DependencyInjection
@@ -16,9 +18,14 @@ namespace Cerebro.Server.DependencyInjection
             services.AddSingleton<IPartitionEntryService, PartitionEntryService>();
         }
 
+        public static void AddOrchestators(this IServiceCollection services)
+        {
+            services.AddSingleton<IServerCoreStateManager, ServerCoreStateManager>();
+        }
+
         public static void AddBackgroundServerStateServices(this IServiceCollection services)
         {
-            services.AddSingleton<IBackgroundServerStateService<Address>, AddressBackgroundServerStateService>();
+            services.AddSingleton<IBackgroundQueueService<Address>, AddressBackgroundServerStateService>();
         }
     }
 }

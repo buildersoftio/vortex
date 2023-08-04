@@ -50,5 +50,20 @@ namespace Cerebro.Core.Services.Entries
 
             return _partitionEntryRepository.AddPartitionEntry(partitionEntry);
         }
+
+        public List<PartitionEntry> GetPartitionEntries(int addressId)
+        {
+            return _partitionEntryRepository.GetPartitionEntries(addressId);
+        }
+
+        public PartitionEntry? GetPartitionEntry(int addressId, int partitionId)
+        {
+            return _partitionEntryRepository.GetPartitionEntry(addressId, partitionId);
+        }
+
+        public bool UpdatePartitionEntry(PartitionEntry entry)
+        {
+            return _partitionEntryRepository.UpdatePartitionEntry(entry);
+        }
     }
 }

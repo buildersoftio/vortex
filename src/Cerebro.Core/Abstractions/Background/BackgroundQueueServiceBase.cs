@@ -2,13 +2,13 @@
 
 namespace Cerebro.Core.Abstractions.Background
 {
-    public abstract class BackgroundServerStateServiceBase<TRequest> : IBackgroundServerStateService<TRequest>
+    public abstract class BackgroundQueueServiceBase<TRequest> : IBackgroundQueueService<TRequest>
     {
         private readonly ConcurrentQueue<TRequest> requestQueue;
         private readonly object queueLock;
         private CancellationTokenSource? cancellationTokenSource;
 
-        public BackgroundServerStateServiceBase()
+        public BackgroundQueueServiceBase()
         {
             requestQueue = new ConcurrentQueue<TRequest>();
             queueLock = new object();

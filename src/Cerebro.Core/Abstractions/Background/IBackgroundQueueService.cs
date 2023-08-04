@@ -1,6 +1,6 @@
 ﻿namespace Cerebro.Core.Abstractions.Background
 {
-    public interface IBackgroundServerStateService<TRequest>
+    public interface IBackgroundQueueService<TRequest>
     {
         void EnqueueRequest(TRequest request);
         void Handle(TRequest request);

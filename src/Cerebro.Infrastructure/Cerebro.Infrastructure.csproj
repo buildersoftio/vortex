@@ -7,11 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Folder Include="DataAccess\PartitionData\RocksDb\" />
 		<Folder Include="ExternalServices\" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="LiteDB" Version="5.0.17" />
+		<PackageReference Include="RocksDB" Version="8.3.2.39829" />
 	</ItemGroup>
 
 	<ItemGroup>
