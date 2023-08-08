@@ -26,9 +26,9 @@ namespace Cerebro.Infrastructure.Repositories
             return false;
         }
 
-        public bool AddApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection)
+        public bool AddApplicationAddressConnection(ClientConnection applicationAddressConnection)
         {
-            var id = _serverStateStoreDbContext.ApplicationAddressConnections!.Insert(applicationAddressConnection);
+            var id = _serverStateStoreDbContext.ClientConnections!.Insert(applicationAddressConnection);
             if (id != 0)
                 return true;
 
@@ -60,10 +60,10 @@ namespace Cerebro.Infrastructure.Repositories
                 .Delete(application.Id);
         }
 
-        public bool DeleteApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection)
+        public bool DeleteApplicationAddressConnection(ClientConnection applicationAddressConnection)
         {
             return _serverStateStoreDbContext
-                .ApplicationAddressConnections!
+                .ClientConnections!
                 .Delete(applicationAddressConnection.Id);
         }
 
@@ -96,28 +96,28 @@ namespace Cerebro.Infrastructure.Repositories
                 .FirstOrDefault();
         }
 
-        public ApplicationAddressConnection? GetApplicationAddressConnection(int applicationId, int addressId, ApplicationConnectionTypes applicationConnectionTypes)
+        public ClientConnection? GetClientConnection(int applicationId, int addressId, ApplicationConnectionTypes applicationConnectionTypes)
         {
             return _serverStateStoreDbContext
-                .ApplicationAddressConnections!
+                .ClientConnections!
                 .Query()
                 .Where(x => x.ApplicationId == applicationId && x.AddressId == addressId && x.ApplicationConnectionType == applicationConnectionTypes)
                 .FirstOrDefault();
         }
 
-        public List<ApplicationAddressConnection>? GetApplicationAddressConnectionsByAddress(int addressId)
+        public List<ClientConnection>? GetClientConnectionsByAddress(int addressId)
         {
             return _serverStateStoreDbContext
-                .ApplicationAddressConnections!
+                .ClientConnections!
                 .Query()
                 .Where(x => x.AddressId == addressId)
                 .ToList();
         }
 
-        public List<ApplicationAddressConnection>? GetApplicationAddressConnectionsByApplication(int applicationId)
+        public List<ClientConnection>? GetClientConnectionsByApplication(int applicationId)
         {
             return _serverStateStoreDbContext
-                .ApplicationAddressConnections!
+                .ClientConnections!
                 .Query()
                 .Where(x => x.ApplicationId == applicationId)
                 .ToList();
@@ -189,10 +189,10 @@ namespace Cerebro.Infrastructure.Repositories
                 .Update(application);
         }
 
-        public bool UpdateApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection)
+        public bool UpdateApplicationAddressConnection(ClientConnection applicationAddressConnection)
         {
             return _serverStateStoreDbContext
-                .ApplicationAddressConnections!
+                .ClientConnections!
                 .Update(applicationAddressConnection);
         }
 

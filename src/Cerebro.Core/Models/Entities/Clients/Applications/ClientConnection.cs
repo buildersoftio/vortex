@@ -3,7 +3,7 @@ using Cerebro.Core.Models.Entities.Base;
 
 namespace Cerebro.Core.Models.Entities.Clients.Applications
 {
-    public class ApplicationAddressConnection : BaseEntity
+    public class ClientConnection : BaseEntity
     {
         public Guid Id { get; set; }
 
