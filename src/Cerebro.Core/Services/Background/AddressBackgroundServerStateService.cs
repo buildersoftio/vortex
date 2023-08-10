@@ -9,7 +9,6 @@ using Cerebro.Core.Repositories;
 using Cerebro.Core.Services.Data;
 using Cerebro.Core.Utilities.Extensions;
 using Microsoft.Extensions.Logging;
-using System.Net;
 
 namespace Cerebro.Core.Services.Background
 {

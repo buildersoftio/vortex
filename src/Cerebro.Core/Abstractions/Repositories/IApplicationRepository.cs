@@ -28,13 +28,13 @@ namespace Cerebro.Core.Repositories
         bool UpdateApplicationPermission(ApplicationPermission applicationPermission);
         ApplicationPermission GetApplicationPermission(int applicationId);
 
-        bool AddApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection);
-        bool DeleteApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection);
-        bool UpdateApplicationAddressConnection(ApplicationAddressConnection applicationAddressConnection);
+        bool AddApplicationAddressConnection(ClientConnection applicationAddressConnection);
+        bool DeleteApplicationAddressConnection(ClientConnection applicationAddressConnection);
+        bool UpdateApplicationAddressConnection(ClientConnection applicationAddressConnection);
 
-        ApplicationAddressConnection? GetApplicationAddressConnection(int applicationId, int addressId, ApplicationConnectionTypes applicationConnectionTypes);
-        List<ApplicationAddressConnection>? GetApplicationAddressConnectionsByApplication(int applicationId);
-        List<ApplicationAddressConnection>? GetApplicationAddressConnectionsByAddress(int addressId);
+        ClientConnection? GetClientConnection(int applicationId, int addressId, ApplicationConnectionTypes applicationConnectionTypes);
+        List<ClientConnection>? GetClientConnectionsByApplication(int applicationId);
+        List<ClientConnection>? GetClientConnectionsByAddress(int addressId);
 
     }
 }

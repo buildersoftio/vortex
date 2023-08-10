@@ -16,6 +16,7 @@ namespace Cerebro.Server.DependencyInjection
             services.AddSingleton<IApplicationService, ApplicationService>();
             services.AddSingleton<IAddressService, AddressService>();
             services.AddSingleton<IPartitionEntryService, PartitionEntryService>();
+            services.AddSingleton<IClientConnectionService, ClientConnectionService>();
         }
 
         public static void AddOrchestators(this IServiceCollection services)

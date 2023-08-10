@@ -1,4 +1,5 @@
 ﻿using Cerebro.Core.Models.Entities.Addresses;
+using Cerebro.Core.Models.Entities.Clients.Applications;
 using Cerebro.Core.Repositories;
 using Cerebro.Infrastructure.DataAccess.ServerStateStore;
 using Microsoft.Extensions.Logging;
@@ -61,6 +62,22 @@ namespace Cerebro.Infrastructure.Repositories
               .Addresses!
               .Query()
               .ToList();
+        }
+
+        public List<ClientConnection> GetClientConnectionsByAddressId(int addressId)
+        {
+            return _serverStateStoreDbContext
+                .ClientConnections!
+                .Query()
+                .Where(x=>x.AddressId == addressId).ToList();
+        }
+
+        public List<ClientConnection> GetClientConnectionsByApplicationId(int applicationId)
+        {
+            return _serverStateStoreDbContext
+               .ClientConnections!
+               .Query()
+               .Where(x => x.ApplicationId == applicationId).ToList();
         }
 
         public bool UpdateAddress(Address address)

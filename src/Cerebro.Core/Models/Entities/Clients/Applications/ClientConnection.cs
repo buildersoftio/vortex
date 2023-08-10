@@ -3,7 +3,7 @@ using Cerebro.Core.Models.Entities.Base;
 
 namespace Cerebro.Core.Models.Entities.Clients.Applications
 {
-    public class ApplicationAddressConnection : BaseEntity
+    public class ClientConnection : BaseEntity
     {
         public Guid Id { get; set; }
 
@@ -15,12 +15,14 @@ namespace Cerebro.Core.Models.Entities.Clients.Applications
 
         public ApplicationConnectionTypes ApplicationConnectionType { get; set; }
 
-        public DateTimeOffset FirstConnectionDate { get; set; }
+        public DateTimeOffset? FirstConnectionDate { get; set; }
         public DateTimeOffset? LastConnectionDate { get; set; }
 
         public bool IsConnected { get; set; }
 
+
         public ProductionInstanceTypes ProductionInstanceType { get; set; }
+
         public SubscriptionTypes SubscriptionType { get; set; }
         public SubscriptionModes SubscriptionMode { get; set; }
         public ReadInitialPositions ReadInitialPosition { get; set; }

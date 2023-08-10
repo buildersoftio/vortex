@@ -23,7 +23,7 @@ namespace Cerebro.Infrastructure.DataAccess.ServerStateStore
 
             Applications = db.GetCollection<Application>("applications", BsonAutoId.Int32);
             ApplicationTokens = db.GetCollection<ApplicationToken>("application_tokens", BsonAutoId.Guid);
-            ApplicationAddressConnections = db.GetCollection<ApplicationAddressConnection>("application_address_connections", BsonAutoId.Guid);
+            ClientConnections = db.GetCollection<ClientConnection>("client_connections", BsonAutoId.Guid);
 
             ApplicationPermissions = db.GetCollection<ApplicationPermission>("application_permissions", BsonAutoId.Int32);
         }
@@ -44,7 +44,7 @@ namespace Cerebro.Infrastructure.DataAccess.ServerStateStore
         public ILiteCollection<Application>? Applications { get; private set; }
         public ILiteCollection<ApplicationToken>? ApplicationTokens { get; private set; }
 
-        public ILiteCollection<ApplicationAddressConnection>? ApplicationAddressConnections { get; private set; }
+        public ILiteCollection<ClientConnection>? ClientConnections { get; private set; }
         public ILiteCollection<ApplicationPermission>? ApplicationPermissions { get; private set; }
     }
 }
