@@ -1,11 +1,18 @@
-﻿namespace Cerebro.Core.Models.Configurations
+﻿using Cerebro.Core.Models.Common.Addresses;
+
+namespace Cerebro.Core.Models.Configurations
 {
     public class StorageDefaultConfiguration
     {
-
+        public CompressionTypes DefaultMessageCompressionType { get; set; }
         public ulong DefaultKeepLogFileNumber { get; set; }
         public uint DefaultDumpStatsInSeconds { get; set; }
         public ulong DefaultMaxLogFileSizeInBytes { get; set; }
+
+        public ulong DeleteObsoleteFilesPeriodMilliseconds { get; set; }
+        public bool EnableWriteThreadAdaptiveYield { get; set; }
+        public int MaxFileOpeningThreads { get; set; }
+
 
         // Flushing options
         // write_buffer_size sets the size of a single memtable. Once memtable exceeds this size, it is marked immutable and a new one is created, for now we are creating as 64MB SIZE
@@ -23,7 +30,12 @@
 
         public StorageDefaultConfiguration()
         {
-            // TODO: These default settings will be managed from the users in .JSON file
+            DefaultMessageCompressionType = CompressionTypes.NONE;
+
+            DeleteObsoleteFilesPeriodMilliseconds = 30 * 1000 * 60;
+            EnableWriteThreadAdaptiveYield = true;
+            MaxFileOpeningThreads = 4;
+
 
             DefaultKeepLogFileNumber = 5;
             DefaultMaxLogFileSizeInBytes = 104857600;
@@ -38,6 +50,29 @@
 
             DefaultMaxBackgroundCompactionsThreads = 1;
             DefaultMaxBackgroundFlushesThreads = 1;
+        }
+
+        public void UpdateStorageDefaultConfigs(StorageDefaultConfiguration storageDefaultConfiguration)
+        {
+            DefaultMessageCompressionType = storageDefaultConfiguration.DefaultMessageCompressionType;
+            DefaultKeepLogFileNumber = storageDefaultConfiguration.DefaultKeepLogFileNumber;
+            DefaultDumpStatsInSeconds = storageDefaultConfiguration.DefaultDumpStatsInSeconds;
+            DefaultMaxLogFileSizeInBytes = storageDefaultConfiguration.DefaultMaxLogFileSizeInBytes;
+
+            DeleteObsoleteFilesPeriodMilliseconds = storageDefaultConfiguration.DeleteObsoleteFilesPeriodMilliseconds;
+            EnableWriteThreadAdaptiveYield = storageDefaultConfiguration.EnableWriteThreadAdaptiveYield;
+            MaxFileOpeningThreads = storageDefaultConfiguration.MaxFileOpeningThreads;
+
+            DefaultWriteBufferSizeInBytes = storageDefaultConfiguration.DefaultWriteBufferSizeInBytes;
+            DefaultMaxWriteBufferNumber = storageDefaultConfiguration.DefaultMaxWriteBufferNumber;
+
+            DefaultMaxWriteBufferSizeToMaintain = storageDefaultConfiguration.DefaultMaxWriteBufferSizeToMaintain;
+
+            DefaultMaxWriteBufferSizeToMaintain = storageDefaultConfiguration.DefaultMaxWriteBufferSizeToMaintain;
+
+            DefaultMinWriteBufferNumberToMerge = storageDefaultConfiguration.DefaultMinWriteBufferNumberToMerge;
+            DefaultMaxBackgroundCompactionsThreads = storageDefaultConfiguration.DefaultMaxBackgroundCompactionsThreads;
+            DefaultMaxBackgroundFlushesThreads = storageDefaultConfiguration.DefaultMaxBackgroundFlushesThreads;
         }
     }
 }
