@@ -7,6 +7,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="assets\settings\storage_initial.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="assets\settings\storage_initial.json">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
 		<Folder Include="DataAccess\PartitionData\RocksDb\" />
 		<Folder Include="ExternalServices\" />
 	</ItemGroup>

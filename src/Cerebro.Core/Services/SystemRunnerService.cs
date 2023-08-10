@@ -14,40 +14,36 @@ namespace Cerebro.Core.Services
         private readonly IDataIOService _dataIOService;
         private readonly NodeConfiguration _nodeConfiguration;
 
-        public SystemRunnerService(ILogger<SystemRunnerService> logger,
+        // from here we are changing the default state of the storage configuration
+        private readonly StorageDefaultConfiguration _storageDefaultConfiguration;
+
+        public SystemRunnerService(
+            ILogger<SystemRunnerService> logger,
             IRootIOService rootIOService,
             IConfigIOService configIOService,
             IDataIOService dataIOService,
-            NodeConfiguration nodeConfiguration)
+            NodeConfiguration nodeConfiguration,
+            StorageDefaultConfiguration storageDefaultConfiguration)
         {
             _logger = logger;
             _rootIOService = rootIOService;
             _configIOService = configIOService;
             _dataIOService = dataIOService;
             _nodeConfiguration = nodeConfiguration;
+            _storageDefaultConfiguration = storageDefaultConfiguration;
 
             Start();
         }
 
         public void Start()
         {
-            var generalColor = Console.ForegroundColor;
-
-            Console.WriteLine($"                   Starting {SystemProperties.Name}");
-            Console.WriteLine("                   Set your information in motion.");
-            Console.WriteLine("");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("  ###"); Console.ForegroundColor = generalColor; Console.WriteLine("      ###");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Write("    ###"); Console.ForegroundColor = generalColor; Console.Write("  ###");
-            Console.WriteLine($"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC.");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.Write("      ####         "); Console.ForegroundColor = generalColor; Console.WriteLine("Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("    ###  ###");
-            Console.Write("  ###      ###     "); Console.ForegroundColor = generalColor; Console.WriteLine("Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integrations.");
-            Console.WriteLine("");
-
+            Console.WriteLine("\r\n\r\n           ____                  _                 " + $"       Starting {SystemProperties.Name}" +
+                "\r\n          / ___| ___  _ __  ___ | |__   _ __  ___  " + "       Set your information in motion." +
+                "\r\n         | |    / _ \\| '__|/ _ \\| '_ \\ | '__|/ _ " +
+                "\\ \r\n         | |___|  __/| |  |  __/| |_) || |  | (_) |" + $"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC." +
+                "\r\n          \\____|\\___||_|   \\___||_.__/ |_|   \\___/ " + $"       Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx" +
+                "\r\n                                                   " + "       Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integrations." +
+                "\r\n");
 
             ExposePorts();
 
@@ -75,6 +71,8 @@ namespace Cerebro.Core.Services
 
             CheckRootDirectories();
             CheckConfigDirectories();
+
+            UpdateStateOfDefaultConfiguration();
 
             _logger.LogInformation($"{SystemProperties.ShortName} is ready");
 
@@ -143,33 +141,33 @@ namespace Cerebro.Core.Services
         {
             if (_rootIOService.IsDataRootDirectoryCreated() != true)
             {
-                _logger.LogInformation("'data' root directory is created");
+                _logger.LogInformation("Root directory [/data] is created");
                 _rootIOService.CreateDataRootDirectory();
             }
 
             // create data/store directory
             if (_dataIOService.IsDataRootAddressesDirCreated() != true)
             {
-                _logger.LogInformation("'data/store' root directory is created");
+                _logger.LogInformation("Root directory [/data/store] is created");
                 _dataIOService.CreateDataRootAddressesDir();
             }
 
             if (_dataIOService.IsIndexesDirectoryCreated() != true)
             {
-                _logger.LogInformation("'data/store/indexes' root directory is created");
+                _logger.LogInformation("Root directory [/data/store/indexes] is created");
                 _dataIOService.CreateIndexesDirectory();
             }
 
 
             if (_rootIOService.IsConfigRootDirectoryCreated() != true)
             {
-                _logger.LogInformation("'config' root directory is created");
+                _logger.LogInformation("Root directory [/config] is created");
                 _rootIOService.CreateConfigRootDirectory();
             }
 
             if (_rootIOService.IsTempRootDirectoryCreated() != true)
             {
-                _logger.LogInformation("'logs' root directory is created");
+                _logger.LogInformation("Root directory [/logs] is created");
                 _rootIOService.CreateTempRootDirectory();
             }
         }
@@ -178,9 +176,19 @@ namespace Cerebro.Core.Services
         {
             if (_configIOService.IsActiveDirectoryCreated() != true)
             {
-                _logger.LogInformation("'config/active' directory is created");
+                _logger.LogInformation("Directory [/config/active] is created");
                 _configIOService.CreateActiveDirectory();
+
+                _configIOService.CreateStorageDefaultActiveFile();
             }
+
+
+        }
+
+        private void UpdateStateOfDefaultConfiguration()
+        {
+            // updating the default storage configuration
+            _storageDefaultConfiguration.UpdateStorageDefaultConfigs(_configIOService.GetStorageDefaultConfiguration()!);
         }
 
         private void CheckInitialStartingUp()

@@ -15,16 +15,19 @@ namespace Cerebro.Core.Services.ServerStates
         private readonly IAddressRepository _addressRepository;
         private readonly IBackgroundQueueService<Address> _backgroundServerStateService;
         private readonly NodeConfiguration _nodeConfiguration;
+        private readonly StorageDefaultConfiguration _storageDefaultConfiguration;
 
         public AddressService(ILogger<AddressService> logger,
             IAddressRepository addressRepository,
             IBackgroundQueueService<Address> backgroundServerStateService,
-            NodeConfiguration nodeConfiguration)
+            NodeConfiguration nodeConfiguration,
+            StorageDefaultConfiguration storageDefaultConfiguration)
         {
             _logger = logger;
             _addressRepository = addressRepository;
             _backgroundServerStateService = backgroundServerStateService;
             _nodeConfiguration = nodeConfiguration;
+            _storageDefaultConfiguration = storageDefaultConfiguration;
         }
 
         public (bool status, string message) CreateAddress(AddressCreationRequest addressCreationRequest, string createdBy)
@@ -67,7 +70,7 @@ namespace Cerebro.Core.Services.ServerStates
                 ReplicationSettings = new AddressReplicationSettings() { NodeIdLeader = _nodeConfiguration.NodeId, FollowerReplicationReplicas = "-1" },
                 RetentionSettings = new AddressRetentionSettings() { RetentionType = RetentionTypes.DELETE, TimeToLiveInMinutes = -1 },
                 SchemaSettings = new AddressSchemaSettings(),
-                StorageSettings = new AddressStorageSettings(), // we will get default settings from the file for each of these settings
+                StorageSettings = new AddressStorageSettings(_storageDefaultConfiguration),
 
             };
 
