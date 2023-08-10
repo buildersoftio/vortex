@@ -9,9 +9,9 @@ namespace Cerebro.Core.Utilities.Consts
 
             var permissions = new Dictionary<string, string>
             {
-                { "READ_ADDRESSES", "*:{*}" },
-                { "WRITE_ADDRESSES", "*:{*}" },
-                { "CREATE_ADDRESSES", "True" }
+                { READ_ADDRESS_PERMISSION_KEY, "*:{*}" },
+                { WRITE_ADDRESS_PERMISSION_KEY, "*:{*}" },
+                { CREATE_ADDRESS_PERMISSION_KEY, "True" }
             };
 
             return new ApplicationPermission()
@@ -22,6 +22,10 @@ namespace Cerebro.Core.Utilities.Consts
                 Permissions = permissions
             };
         }
+
+        public const string READ_ADDRESS_PERMISSION_KEY = "READ_ADDRESSES";
+        public const string WRITE_ADDRESS_PERMISSION_KEY = "WRITE_ADDRESSES";
+        public const string CREATE_ADDRESS_PERMISSION_KEY = "CREATE_ADDRESSES";
 
     }
 }
