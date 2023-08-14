@@ -12,7 +12,7 @@ namespace Cerebro.Core.Abstractions.Clustering
         void EditNode(string nodeId, Node node);
         void UpdateHeartBeat(string nodeId);
         void UpdateNodeStatus(string nodeId, NodeStatus nodeStatus);
-        void UpdateNodeState(string nodeId, NodeState nodeState);
+        //void UpdateNodeState(string nodeId, NodeState nodeState);
 
         ConcurrentDictionary<string, Node> GetNodes();
         ConcurrentDictionary<string, INodeExchangeClient> GetNodeClients();

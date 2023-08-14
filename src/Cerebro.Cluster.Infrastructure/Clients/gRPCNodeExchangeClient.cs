@@ -1,8 +1,9 @@
 ﻿using Cerebro.Core.Abstractions.Clustering;
 using Cerebro.Core.Models.Common.Clusters;
 using Cerebro.Core.Models.Configurations;
+using Cerebro.Core.Models.Dtos.Addresses;
+using Cerebro.Core.Utilities.Json;
 using Grpc.Core;
-using System.Xml.Linq;
 
 namespace Cerebro.Cluster.Infrastructure.Clients
 {
@@ -32,11 +33,10 @@ namespace Cerebro.Cluster.Infrastructure.Clients
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Failed to connect to node {_node.Id}, error details: {ex.Message}");
-            }
 
+            }
 
             return false;
         }
@@ -45,6 +45,43 @@ namespace Cerebro.Cluster.Infrastructure.Clients
         {
             //TODO: figure it out how to disconnect the client
             return Task.CompletedTask;
+        }
+
+        public async Task<bool> RequestAddressCreation(AddressClusterScopeRequest request)
+        {
+            try
+            {
+                var response = await _client.RequestAddressCreationAsync(new NodeExchange.AddressCreationRequest()
+                {
+                    Address = request.AddressCreationRequest.ToJson(),
+                    AddressClusterScopeRequestState = (int)request.AddressClusterScopeRequestState,
+                    CreatedBy = request.RequestedBy
+                });
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestAddressPartitionChange(string alias, int partitionNumber, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestAccountPartitionChangeAsync(new NodeExchange.AddressPartitionChangeRequest()
+                {
+                    Alias = alias,
+                    PartitionNumber = partitionNumber,
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> RequestHeartBeatAsync()

@@ -98,13 +98,13 @@ namespace Cerebro.Core.Repositories.Clustering
             _currentClusterState.Nodes[nodeId].LastHeartbeat = DateTime.Now;
         }
 
-        public void UpdateNodeState(string nodeId, NodeState nodeState)
-        {
-            if (_currentClusterState.Nodes.ContainsKey(nodeId) != true)
-                return;
+        //public void UpdateNodeState(string nodeId, NodeState nodeState)
+        //{
+        //    if (_currentClusterState.Nodes.ContainsKey(nodeId) != true)
+        //        return;
 
-            _currentClusterState.Nodes[nodeId].State = nodeState;
-        }
+        //    _currentClusterState.Nodes[nodeId].State = nodeState;
+        //}
 
         public void UpdateNodeStatus(string nodeId, NodeStatus nodeStatus)
         {

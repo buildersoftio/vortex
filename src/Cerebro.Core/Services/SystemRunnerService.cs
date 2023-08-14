@@ -14,10 +14,12 @@ namespace Cerebro.Core.Services
         private readonly IConfigIOService _configIOService;
         private readonly IDataIOService _dataIOService;
         private readonly NodeConfiguration _nodeConfiguration;
+        private INodeExchangeServer? _nodeExchangeServer;
 
         // from here we are changing the default state of the storage configuration
         private readonly StorageDefaultConfiguration _storageDefaultConfiguration;
         private readonly IClusterManager _clusterManager;
+        private readonly IServiceProvider _serviceProvider;
 
         public SystemRunnerService(
             ILogger<SystemRunnerService> logger,
@@ -26,7 +28,8 @@ namespace Cerebro.Core.Services
             IDataIOService dataIOService,
             NodeConfiguration nodeConfiguration,
             StorageDefaultConfiguration storageDefaultConfiguration,
-            IClusterManager clusterManager)
+            IClusterManager clusterManager,
+            IServiceProvider serviceProvider)
         {
             _logger = logger;
             _rootIOService = rootIOService;
@@ -35,6 +38,8 @@ namespace Cerebro.Core.Services
             _nodeConfiguration = nodeConfiguration;
             _storageDefaultConfiguration = storageDefaultConfiguration;
             _clusterManager = clusterManager;
+
+            _serviceProvider = serviceProvider;
 
             Start();
         }
@@ -212,6 +217,8 @@ namespace Cerebro.Core.Services
 
         private void RunCluster()
         {
+            _nodeExchangeServer = _serviceProvider.GetService(typeof(INodeExchangeServer)) as INodeExchangeServer;
+            _nodeExchangeServer!.Start();
             _clusterManager.Start();
         }
     }
