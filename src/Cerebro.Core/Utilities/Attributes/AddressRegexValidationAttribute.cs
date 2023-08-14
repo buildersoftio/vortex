@@ -21,6 +21,11 @@ namespace Cerebro.Core.Utilities.Attributes
                 {
                     return new ValidationResult(ErrorMessage);
                 }
+
+                if (stringValue.EndsWith("/"))
+                {
+                    return new ValidationResult(ErrorMessage);
+                }
             }
 
             return ValidationResult.Success;

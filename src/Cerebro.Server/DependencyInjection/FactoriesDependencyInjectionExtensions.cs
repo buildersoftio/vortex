@@ -1,4 +1,5 @@
-﻿using Cerebro.Core.Abstractions.Factories;
+﻿using Cerebro.Cluster.Infrastructure.Factories;
+using Cerebro.Core.Abstractions.Factories;
 using Cerebro.Infrastructure.Factories;
 
 namespace Cerebro.Server.DependencyInjection
@@ -8,6 +9,7 @@ namespace Cerebro.Server.DependencyInjection
         public static void AddFactories(this IServiceCollection services)
         {
             services.AddSingleton<IPartitionDataFactory, PartitionDataFactory>();
+            services.AddSingleton<INodeExchangeClientFactory, NodeExchangeClientFactory>();
         }
     }
 }

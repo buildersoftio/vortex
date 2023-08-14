@@ -7,7 +7,9 @@ namespace Cerebro.Core.IO.Services
         bool IsActiveDirectoryCreated();
         bool CreateActiveDirectory();
         bool CreateStorageDefaultActiveFile();
-
         StorageDefaultConfiguration? GetStorageDefaultConfiguration();
+
+        bool CreateClusterActiveFile();
+        ClusterConfiguration? GetClusterConfiguration();
     }
 }

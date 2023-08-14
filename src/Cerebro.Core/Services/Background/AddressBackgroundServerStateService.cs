@@ -35,7 +35,6 @@ namespace Cerebro.Core.Services.Background
 
         public override void Handle(Address request)
         {
-            // ADD states for each step, create_directories, create_rocks_db_for_partitions, create_replication_state_storage, create_indexes_state;
             // use base.EnqueueRequest for each change in status, in this form we can control the narrative of creating the address.
             if (request.Status == AddressStatuses.CreateAddressDirectory)
             {

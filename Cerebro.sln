@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cluster", "Cluster", "{924E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cerebro.Server", "src\Cerebro.Server\Cerebro.Server.csproj", "{B5D25767-3B5E-41DA-B959-966397A38B05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cerebro.Cluster.Infrastructure", "src\Cerebro.Cluster.Infrastructure\Cerebro.Cluster.Infrastructure.csproj", "{303A1A1C-7577-4456-8B79-7AF3C506C472}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{B5D25767-3B5E-41DA-B959-966397A38B05}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B5D25767-3B5E-41DA-B959-966397A38B05}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B5D25767-3B5E-41DA-B959-966397A38B05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{303A1A1C-7577-4456-8B79-7AF3C506C472}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{303A1A1C-7577-4456-8B79-7AF3C506C472}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{303A1A1C-7577-4456-8B79-7AF3C506C472}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{303A1A1C-7577-4456-8B79-7AF3C506C472}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{C6892B32-7F01-4AE1-9FB7-626022970562} = {79FACF4F-3CDE-4556-9400-B4D4DFC19FD6}
 		{878E332B-2D1F-4467-838D-9CDFF4F819DF} = {79FACF4F-3CDE-4556-9400-B4D4DFC19FD6}
+		{303A1A1C-7577-4456-8B79-7AF3C506C472} = {924E23EA-8E9D-4E22-9250-AD6F060C3B7F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59F8087A-97BF-4905-863B-5F4822CDE2F4}
