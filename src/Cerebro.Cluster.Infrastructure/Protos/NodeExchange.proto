@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package NodeExchange;
+
+service NodeExchangeService {
+	rpc RegisterNode(NodeInfo) returns (NodeRegistrationResponse);
+	rpc SendHeartbeat(Heartbeat) returns (HeartbeatResponse);
+
+	// Here we will add new implementations like
+	// Create Address in cluster
+	// Create Application in cluster
+	// SendData to Node Leader
+	// SendData to Replica
+	// SendData to Distributed Shard (Partition Leader)
+
+	// Promote Address to Address in cluster
+	// Promote Application to Application in cluster
+}
+
+message NodeInfo {
+	string node_id = 1;
+}
+
+message NodeRegistrationResponse {
+	bool success = 1;
+	string message = 2;
+}
+
+message Heartbeat {
+	string node_Id = 1;
+}
+
+message HeartbeatResponse {
+	bool success = 1;
+	string message = 2;
+}

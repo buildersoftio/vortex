@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json.Bson;
-
-namespace Cerebro.Core.Abstractions.Background
+﻿namespace Cerebro.Core.Abstractions.Background
 {
-    public abstract class TimedBackgroundServiceBase : ITimedBackgroundService
+    public abstract class TimedBackgroundServiceBase<HeartbeatTimerRequest> : ITimedBackgroundService<HeartbeatTimerRequest>
     {
         private readonly TimeSpan _period;
         private Timer _timer;
@@ -10,7 +8,6 @@ namespace Cerebro.Core.Abstractions.Background
         public TimedBackgroundServiceBase(TimeSpan period)
         {
             _period = period;
-            _timer = new Timer(TimerCallBack, null, TimeSpan.Zero, period);
         }
 
         private void TimerCallBack(object? state)
@@ -19,5 +16,10 @@ namespace Cerebro.Core.Abstractions.Background
         }
 
         public abstract void OnTimer_Callback(object? state);
+
+        public void Start()
+        {
+            _timer = new Timer(TimerCallBack, null, TimeSpan.Zero, _period);
+        }
     }
 }

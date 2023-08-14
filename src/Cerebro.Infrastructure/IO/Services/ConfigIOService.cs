@@ -28,6 +28,26 @@ namespace Cerebro.Infrastructure.IO.Services
             }
         }
 
+        public bool CreateClusterActiveFile()
+        {
+            try
+            {
+                if (File.Exists(ConfigLocations.GetActiveClusterConfigurationFile()) != true)
+                {
+                    // Create new active file
+                    File.Copy(ConfigLocations.GetClusterConfigurationFile(), ConfigLocations.GetActiveClusterConfigurationFile(), overwrite: true);
+                    _logger.LogInformation("Cluster configuration has been copied successfully");
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"clusters_initial_config.json configuration file is missing at {ConfigLocations.GetClusterConfigurationFile()} or cannot parse, error details:{ex.Message}");
+                return false;
+            }
+        }
+
         public bool CreateStorageDefaultActiveFile()
         {
             try
@@ -36,7 +56,7 @@ namespace Cerebro.Infrastructure.IO.Services
                 {
                     // Create new active file
                     File.Copy(ConfigLocations.GetDefaultStorageConfigurationFile(), ConfigLocations.GetActiveDefaultStorageConfigurationFile(), overwrite: true);
-                    _logger.LogInformation("Initial storage configuration has been copied successfully");
+                    _logger.LogInformation("Default Storage configuration has been copied successfully");
                 }
                 return true;
             }
@@ -44,6 +64,37 @@ namespace Cerebro.Infrastructure.IO.Services
             {
                 _logger.LogError($"storage_initial.json configuration file is missing at {ConfigLocations.GetDefaultStorageConfigurationFile()} or cannot parse, error details:{ex.Message}");
                 return false;
+            }
+        }
+
+        public ClusterConfiguration? GetClusterConfiguration()
+        {
+            try
+            {
+                var storage = new ClusterConfiguration();
+                storage = JsonConvert.DeserializeObject<ClusterConfiguration>(File.ReadAllText(ConfigLocations.GetActiveClusterConfigurationFile()));
+
+                return storage;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Trying to read from cluster settings from {ConfigLocations.GetClusterConfigurationFile()}");
+                _logger.LogError($"clusters_config.json configuration cannot parse, error details:{ex.Message}");
+            }
+
+            try
+            {
+                var storage = new ClusterConfiguration();
+                storage = JsonConvert.DeserializeObject<ClusterConfiguration>(File.ReadAllText(ConfigLocations.GetClusterConfigurationFile()));
+
+                return storage;
+
+            }
+            catch (Exception ex)
+            {
+
+                _logger.LogError($"clusters_initial_config.json configuration cannot parse, error details:{ex.Message}");
+                return null;
             }
         }
 
@@ -62,7 +113,6 @@ namespace Cerebro.Infrastructure.IO.Services
                 _logger.LogError($"storage_config.json configuration cannot parse, error details:{ex.Message}");
                 return null;
             }
-            
         }
 
         public bool IsActiveDirectoryCreated()

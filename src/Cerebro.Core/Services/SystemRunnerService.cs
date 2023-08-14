@@ -1,4 +1,5 @@
-﻿using Cerebro.Core.IO.Services;
+﻿using Cerebro.Core.Abstractions.Clustering;
+using Cerebro.Core.IO.Services;
 using Cerebro.Core.Models.Configurations;
 using Cerebro.Core.Utilities.Consts;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,7 @@ namespace Cerebro.Core.Services
 
         // from here we are changing the default state of the storage configuration
         private readonly StorageDefaultConfiguration _storageDefaultConfiguration;
+        private readonly IClusterManager _clusterManager;
 
         public SystemRunnerService(
             ILogger<SystemRunnerService> logger,
@@ -23,7 +25,8 @@ namespace Cerebro.Core.Services
             IConfigIOService configIOService,
             IDataIOService dataIOService,
             NodeConfiguration nodeConfiguration,
-            StorageDefaultConfiguration storageDefaultConfiguration)
+            StorageDefaultConfiguration storageDefaultConfiguration,
+            IClusterManager clusterManager)
         {
             _logger = logger;
             _rootIOService = rootIOService;
@@ -31,16 +34,17 @@ namespace Cerebro.Core.Services
             _dataIOService = dataIOService;
             _nodeConfiguration = nodeConfiguration;
             _storageDefaultConfiguration = storageDefaultConfiguration;
+            _clusterManager = clusterManager;
 
             Start();
         }
 
         public void Start()
         {
-            Console.WriteLine("\r\n\r\n           ____                  _                 " + $"       Starting {SystemProperties.Name}" +
+            Console.WriteLine("\r\n           ____                  _                 " + $"       Starting {SystemProperties.Name}" +
                 "\r\n          / ___| ___  _ __  ___ | |__   _ __  ___  " + "       Set your information in motion." +
                 "\r\n         | |    / _ \\| '__|/ _ \\| '_ \\ | '__|/ _ " +
-                "\\ \r\n         | |___|  __/| |  |  __/| |_) || |  | (_) |" + $"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC." +
+                "\r\n         | |___|  __/| |  |  __/| |_) || |  | (_) |" + $"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC." +
                 "\r\n          \\____|\\___||_|   \\___||_.__/ |_|   \\___/ " + $"       Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx" +
                 "\r\n                                                   " + "       Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integrations." +
                 "\r\n");
@@ -56,6 +60,7 @@ namespace Cerebro.Core.Services
 
             _logger.LogInformation($"Starting {SystemProperties.Name}...");
             Console.WriteLine("");
+
             _logger.LogInformation($"Server environment:os.name: {GetOSName()}");
             _logger.LogInformation($"Server environment:os.platform: {Environment.OSVersion.Platform}");
             _logger.LogInformation($"Server environment:os.version: {Environment.OSVersion}");
@@ -74,15 +79,16 @@ namespace Cerebro.Core.Services
 
             UpdateStateOfDefaultConfiguration();
 
-            _logger.LogInformation($"{SystemProperties.ShortName} is ready");
+            RunCluster();
 
+            _logger.LogInformation($"{SystemProperties.ShortName} is ready");
         }
 
         private void CreateLoggingDirectory()
         {
             if (_rootIOService.IsLogsRootDirectoryCreated() != true)
             {
-                _logger.LogInformation("'logs' root directory is created");
+                _logger.LogInformation("Root directory [/logs] is created");
                 _rootIOService.CreateLogsRootDirectory();
             }
         }
@@ -113,9 +119,13 @@ namespace Cerebro.Core.Services
             }
             catch (Exception)
             {
-                Console.WriteLine($"                   Cerebro is running in IIS Server");
+                Console.WriteLine($"                   Cerebro is running on IIS Server");
             }
 
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionPort) != null)
+                Console.WriteLine($"                CLUSTER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionPort)}");
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionSSLPort) != null)
+                Console.WriteLine($"                CLUSTER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionSSLPort)} SSL");
         }
         private string GetOSName()
         {
@@ -180,9 +190,9 @@ namespace Cerebro.Core.Services
                 _configIOService.CreateActiveDirectory();
 
                 _configIOService.CreateStorageDefaultActiveFile();
+
+                _configIOService.CreateClusterActiveFile();
             }
-
-
         }
 
         private void UpdateStateOfDefaultConfiguration()
@@ -197,6 +207,12 @@ namespace Cerebro.Core.Services
             {
                 _logger.LogInformation("Doing initial configuration");
             }
+        }
+
+
+        private void RunCluster()
+        {
+            _clusterManager.Start();
         }
     }
 }

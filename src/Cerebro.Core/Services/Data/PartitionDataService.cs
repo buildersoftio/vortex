@@ -1,9 +1,7 @@
 ﻿using Cerebro.Core.Abstractions.Factories;
-using Cerebro.Core.Abstractions.Repositories;
 using Cerebro.Core.Abstractions.Repositories.Data;
 using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.Abstractions.Services.Data;
-using Cerebro.Core.Models.Configurations;
 using Cerebro.Core.Models.Data;
 using Cerebro.Core.Models.Entities.Addresses;
 using Cerebro.Core.Models.Entities.Entries;

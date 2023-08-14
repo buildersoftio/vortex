@@ -41,6 +41,9 @@ builder.Services.AddSwaggerGen(c =>
 
 // Adding IO Services
 builder.Services.AddConfigurations(builder.Configuration);
+
+builder.Services.AddGRPCClusterServer();
+
 builder.Services.AddSystemStarterService();
 builder.Services.AddIOServices();
 builder.Services.AddOrchestators();
@@ -53,6 +56,8 @@ builder.Services.AddServerStateStore();
 builder.Services.AddServerRepositories();
 builder.Services.AddServerStateServices();
 builder.Services.AddBackgroundServerStateServices();
+builder.Services.AddBackgroundTimerServerStateServices();
+
 
 
 var app = builder.Build();

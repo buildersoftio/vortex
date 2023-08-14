@@ -1,7 +1,9 @@
 ﻿namespace Cerebro.Core.Abstractions.Clustering
 {
-    public interface IClusterManager
+    public interface INodeExchangeServer
     {
         void Start();
+        Task ShutdownAsync();
+
     }
 }
