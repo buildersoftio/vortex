@@ -1,8 +1,10 @@
 ﻿using Cerebro.Core.Abstractions.Clustering;
+using Cerebro.Core.Models.Common.Addresses;
 using Cerebro.Core.Models.Common.Clusters;
 using Cerebro.Core.Models.Configurations;
+using Cerebro.Core.Models.Dtos.Addresses;
+using Cerebro.Core.Utilities.Json;
 using Grpc.Core;
-using System.Xml.Linq;
 
 namespace Cerebro.Cluster.Infrastructure.Clients
 {
@@ -32,11 +34,10 @@ namespace Cerebro.Cluster.Infrastructure.Clients
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Failed to connect to node {_node.Id}, error details: {ex.Message}");
-            }
 
+            }
 
             return false;
         }
@@ -45,6 +46,133 @@ namespace Cerebro.Cluster.Infrastructure.Clients
         {
             //TODO: figure it out how to disconnect the client
             return Task.CompletedTask;
+        }
+
+        public async Task<bool> RequestAddressCreation(AddressClusterScopeRequest request)
+        {
+            try
+            {
+                var response = await _client.RequestAddressCreationAsync(new NodeExchange.AddressCreationRequest()
+                {
+                    Address = request.AddressCreationRequest.ToJson(),
+                    AddressClusterScopeRequestState = (int)request.AddressClusterScopeRequestState,
+                    CreatedBy = request.RequestedBy
+                });
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestAddressDeletion(string alias)
+        {
+            try
+            {
+                var response = await _client.RequestAddressDeletionAsync(new NodeExchange.AddressDeletionRequest() { Alias = alias });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestAddressPartitionChange(string alias, int partitionNumber, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestAddressPartitionChangeAsync(new NodeExchange.AddressPartitionChangeRequest()
+                {
+                    Alias = alias,
+                    PartitionNumber = partitionNumber,
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestAddressReplicationSettingsChange(string alias, AddressReplicationSettings addressReplicationSettings, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestAddressReplicationSettingsChangeAsync(new NodeExchange.AddressReplicationSettingsChangeRequest()
+                {
+                    Alias = alias,
+                    ReplicationSettingsJson = addressReplicationSettings.ToJson(),
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestAddressRetentionSettingsChange(string alias, AddressRetentionSettings addressRetentionSettings, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestAddressRetentionSettingsChangeAsync(new NodeExchange.AddressRetentionSettingsChangeRequest()
+                {
+                    Alias = alias,
+                    RetentionSettingsJson = addressRetentionSettings.ToJson(),
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestAddressSchemaSettingsChange(string alias, AddressSchemaSettings addressSchemaSettings, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestAddressSchemaSettingsChangeAsync(new NodeExchange.AddressSchemaSettingsChangeRequest()
+                {
+                    Alias = alias,
+                    SchemaSettingsJson = addressSchemaSettings.ToJson(),
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestAddressStorageSettingsChange(string alias, AddressStorageSettings addressStorageSettings, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestAddressStorageSettingsChangeAsync(new NodeExchange.AddressStorageSettingsChangeRequest()
+                {
+                    Alias = alias,
+                    StorageSettingsJson = addressStorageSettings.ToJson(),
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<bool> RequestHeartBeatAsync()

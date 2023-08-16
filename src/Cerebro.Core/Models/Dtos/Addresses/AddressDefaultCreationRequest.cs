@@ -1,4 +1,5 @@
-﻿using Cerebro.Core.Utilities.Attributes;
+﻿using Cerebro.Core.Models.Common.Addresses;
+using Cerebro.Core.Utilities.Attributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace Cerebro.Core.Models.Dtos.Addresses
@@ -13,6 +14,9 @@ namespace Cerebro.Core.Models.Dtos.Addresses
         [Required]
         [AddressRegexValidation(ErrorMessage = "Address should start with / and should contain letters, numbers, underscoor, dash. Also, address should not end with /")]
         public string Name { get; set; }
+
+        [Required]
+        public AddressScope Scope { get; set; }
 
         [Range(1, 20)]
         public int PartitionNumber { get; set; }

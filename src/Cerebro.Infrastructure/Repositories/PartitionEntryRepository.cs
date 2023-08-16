@@ -39,13 +39,6 @@ namespace Cerebro.Infrastructure.Repositories
                 .FirstOrDefault();
         }
 
-        public PartitionEntry? GetPartitionEntry(string addressAlias, int partitionId)
-        {
-            return _indexCatalogDbContext.PartitionEntries!.Query()
-                  .Where(x => x.AddressAlias == addressAlias && x.PartitionId == partitionId)
-                  .FirstOrDefault();
-        }
-
         public List<PartitionEntry> GetPartitionEntries(int addressId)
         {
             return _indexCatalogDbContext.PartitionEntries!.Query()
@@ -58,6 +51,13 @@ namespace Cerebro.Infrastructure.Repositories
             return _indexCatalogDbContext.PartitionEntries!.Query()
                   .Where(x => x.AddressAlias == addressAlias)
                   .ToList();
+        }
+
+        public bool DeletePartitionEntry(PartitionEntry partitionEntry)
+        {
+            return _indexCatalogDbContext
+                .PartitionEntries!
+                .Delete(partitionEntry.Id);
         }
     }
 }

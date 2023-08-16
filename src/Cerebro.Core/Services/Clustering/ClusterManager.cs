@@ -14,7 +14,6 @@ namespace Cerebro.Core.Services.Clustering
     {
         private readonly ILogger<ClusterManager> _logger;
         private readonly IClusterStateRepository _clusterStateRepository;
-        private readonly INodeExchangeServer _nodeExchangeServer;
         private readonly IConfigIOService _configIOService;
         private readonly NodeConfiguration _nodeConfiguration;
         private readonly INodeExchangeClientFactory _nodeExchangeClientFactory;
@@ -22,7 +21,6 @@ namespace Cerebro.Core.Services.Clustering
 
         public ClusterManager(ILogger<ClusterManager> logger,
             IClusterStateRepository clusterStateRepository,
-            INodeExchangeServer nodeExchangeServer,
             IConfigIOService configIOService,
             NodeConfiguration nodeConfiguration,
             INodeExchangeClientFactory nodeExchangeClientFactory,
@@ -30,7 +28,6 @@ namespace Cerebro.Core.Services.Clustering
         {
             _logger = logger;
             _clusterStateRepository = clusterStateRepository;
-            _nodeExchangeServer = nodeExchangeServer;
             _configIOService = configIOService;
             _nodeConfiguration = nodeConfiguration;
             _nodeExchangeClientFactory = nodeExchangeClientFactory;
@@ -63,9 +60,6 @@ namespace Cerebro.Core.Services.Clustering
                 // Node is part of more than one Cluster
                 _clusterStateRepository.UpdateClusterStatus(ClusterStatus.Initializing);
 
-                // Starting server
-                _nodeExchangeServer.Start();
-
                 _logger.LogInformation($"Cluster configuration contains multiple node configurations");
                 int k = 0;
 
@@ -79,7 +73,7 @@ namespace Cerebro.Core.Services.Clustering
                         Id = node.Key,
                         Address = node.Value.Address,
                         Port = node.Value.Port,
-                        State = NodeState.Follower,
+                        //State = NodeState.Follower,
                         LastHeartbeat = DateTime.Now,
                         Status = NodeStatus.Offline
                     };

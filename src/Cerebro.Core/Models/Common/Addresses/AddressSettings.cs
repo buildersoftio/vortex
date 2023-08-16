@@ -2,6 +2,9 @@
 {
     public class AddressSettings
     {
+        // 
+        public AddressScope Scope { get; set; }
+
         public bool EnforceSchemaValidation { get; set; }
 
         // we will use this property to store in LiteDB based on the type the starting Id of that time.
@@ -20,6 +23,8 @@
         public AddressSettings()
         {
             // the default values should come from AddressService
+            Scope = AddressScope.SingleScope;
+
             EnforceSchemaValidation = false;
             MessageIndexType = MessageIndexTypes.DAILY;
 

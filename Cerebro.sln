@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cluster", "Cluster", "{924E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cerebro.Server", "src\Cerebro.Server\Cerebro.Server.csproj", "{B5D25767-3B5E-41DA-B959-966397A38B05}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cerebro.Cluster.Infrastructure", "src\Cerebro.Cluster.Infrastructure\Cerebro.Cluster.Infrastructure.csproj", "{303A1A1C-7577-4456-8B79-7AF3C506C472}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cerebro.Cluster.Infrastructure", "src\Cerebro.Cluster.Infrastructure\Cerebro.Cluster.Infrastructure.csproj", "{303A1A1C-7577-4456-8B79-7AF3C506C472}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

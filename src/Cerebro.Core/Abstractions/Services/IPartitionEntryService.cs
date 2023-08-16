@@ -10,5 +10,6 @@ namespace Cerebro.Core.Abstractions.Services
         List<PartitionEntry> GetPartitionEntries(int addressId);
 
         bool UpdatePartitionEntry(PartitionEntry entry);
+        bool DeletePartitionEntries(int addressId);
     }
 }

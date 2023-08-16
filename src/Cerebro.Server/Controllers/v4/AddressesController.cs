@@ -160,5 +160,29 @@ namespace Cerebro.Server.Controllers.v4
 
             return BadRequest(message);
         }
+
+        [HttpPost("{alias}/promote")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> PromoteAddress(string alias)
+        {
+            (bool isPromoted, string message) = _addressService.PromoteAddress(alias, "system");
+            if (isPromoted)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
+        [HttpDelete("{alias}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> DeleteAddress(string alias)
+        {
+            (bool isDeleted, string message) = _addressService.DeleteAddress(alias);
+            if (isDeleted)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
     }
 }
