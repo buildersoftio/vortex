@@ -101,6 +101,20 @@ namespace Cerebro.Core.Services.Background
                 request.Status = AddressStatuses.Ready;
                 _addressRepository.UpdateAddress(request);
             }
+
+            if (request.Status == AddressStatuses.DeletePartitions)
+            {
+                _logger.LogInformation($"Address [{request.Name}] partition deletion requested");
+
+                if (_partitionEntryService.DeletePartitionEntries(request.Id))
+                {
+                    _logger.LogInformation($"Address [{request.Name}] partition deletion completed");
+                    return;
+                }
+
+                base.EnqueueRequest(request);
+                return;
+            }
         }
     }
 }

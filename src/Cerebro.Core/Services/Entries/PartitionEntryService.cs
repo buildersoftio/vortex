@@ -51,6 +51,18 @@ namespace Cerebro.Core.Services.Entries
             return _partitionEntryRepository.AddPartitionEntry(partitionEntry);
         }
 
+        public bool DeletePartitionEntries(int addressId)
+        {
+            var partitionEntries = _partitionEntryRepository.GetPartitionEntries(addressId);
+
+            foreach (var partition in partitionEntries)
+            {
+                if (_partitionEntryRepository.DeletePartitionEntry(partition) != true)
+                    return false;
+            }
+            return true;
+        }
+
         public List<PartitionEntry> GetPartitionEntries(int addressId)
         {
             return _partitionEntryRepository.GetPartitionEntries(addressId);

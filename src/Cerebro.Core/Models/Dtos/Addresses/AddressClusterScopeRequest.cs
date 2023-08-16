@@ -1,6 +1,4 @@
-﻿using Cerebro.Core.Models.Entities.Addresses;
-
-namespace Cerebro.Core.Models.Dtos.Addresses
+﻿namespace Cerebro.Core.Models.Dtos.Addresses
 {
     public class AddressClusterScopeRequest
     {
@@ -19,7 +17,10 @@ namespace Cerebro.Core.Models.Dtos.Addresses
     {
         AddressCreationRequested,
         AddressDeletionRequested,
-        AddressChangeRequested,
         AddressPartitionChangeRequested,
+        AddressReplicationSettingsChangeRequested,
+        AddressRetentionSettingsChangeRequested,
+        AddressSchemaSettingsChangeRequested,
+        AddressStorageSettingsChangeRequested,
     }
 }

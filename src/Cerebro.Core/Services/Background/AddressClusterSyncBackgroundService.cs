@@ -18,16 +18,142 @@ namespace Cerebro.Core.Services.Background
 
         public override void Handle(AddressClusterScopeRequest request)
         {
+
             switch (request.AddressClusterScopeRequestState)
             {
                 case AddressClusterScopeRequestState.AddressCreationRequested:
                     RequestAddressCreationInOtherNodes(request);
                     break;
+                case AddressClusterScopeRequestState.AddressDeletionRequested:
+                    RequestAddressDeletionInOtherNodes(request);
+                    break;
                 case AddressClusterScopeRequestState.AddressPartitionChangeRequested:
                     RequestAddressPartitionChangeInOtherNodes(request);
                     break;
+                case AddressClusterScopeRequestState.AddressReplicationSettingsChangeRequested:
+                    RequestAddressReplicationSettingsChangeInOtherNodes(request);
+                    break;
+                case AddressClusterScopeRequestState.AddressRetentionSettingsChangeRequested:
+                    RequestAddressRetentionSettingsChangeInOtherNodes(request);
+                    break;
+                case AddressClusterScopeRequestState.AddressSchemaSettingsChangeRequested:
+                    RequestAddressSchemaSettingsChangeInOtherNodes(request);
+                    break;
+                case AddressClusterScopeRequestState.AddressStorageSettingsChangeRequested:
+                    RequestAddressStorageSettingsChangeInOtherNodes(request);
+                    break;
                 default:
                     break;
+            }
+
+        }
+
+        private async void RequestAddressDeletionInOtherNodes(AddressClusterScopeRequest request)
+        {
+            _logger.LogInformation($"Requesting Address [{request.AddressCreationRequest.Name}] deletion to neighbor nodes");
+            foreach (var nodeClient in _clusterStateRepository.GetNodeClients())
+            {
+                try
+                {
+                    var success = await nodeClient.Value.RequestAddressDeletion(request.AddressCreationRequest.Alias);
+                    if (success == true)
+                        continue;
+                }
+                catch (Exception)
+                {
+
+                }
+
+                _logger.LogWarning($"Address deletion failed at {nodeClient.Key}, request is saved temporary");
+            }
+        }
+
+        private async void RequestAddressRetentionSettingsChangeInOtherNodes(AddressClusterScopeRequest request)
+        {
+            _logger.LogInformation($"Requesting Retention settings change for [{request.AddressCreationRequest.Name}] to neighbor nodes");
+            foreach (var nodeClient in _clusterStateRepository.GetNodeClients())
+            {
+                try
+                {
+                    var success = await nodeClient.Value.RequestAddressRetentionSettingsChange(request.AddressCreationRequest.Alias,
+                        request.AddressCreationRequest.Settings.RetentionSettings, request.RequestedBy);
+
+                    if (success == true)
+                        continue;
+                }
+                catch (Exception)
+                {
+
+                }
+
+                _logger.LogWarning($"Address retention settings change failed at {nodeClient.Key}, request is saved temporary");
+            }
+
+        }
+
+        private async void RequestAddressSchemaSettingsChangeInOtherNodes(AddressClusterScopeRequest request)
+        {
+            _logger.LogInformation($"Requesting Schema settings change for [{request.AddressCreationRequest.Name}] to neighbor nodes");
+            foreach (var nodeClient in _clusterStateRepository.GetNodeClients())
+            {
+                try
+                {
+                    var success = await nodeClient.Value.RequestAddressSchemaSettingsChange(request.AddressCreationRequest.Alias,
+                        request.AddressCreationRequest.Settings.SchemaSettings, request.RequestedBy);
+
+                    if (success == true)
+                        continue;
+                }
+                catch (Exception)
+                {
+
+                }
+
+                _logger.LogWarning($"Address schema settings change failed at {nodeClient.Key}, request is saved temporary");
+            }
+        }
+
+        private async void RequestAddressStorageSettingsChangeInOtherNodes(AddressClusterScopeRequest request)
+        {
+            _logger.LogInformation($"Requesting Storage settings change for [{request.AddressCreationRequest.Name}] to neighbor nodes");
+            foreach (var nodeClient in _clusterStateRepository.GetNodeClients())
+            {
+                try
+                {
+                    var success = await nodeClient.Value.RequestAddressStorageSettingsChange(request.AddressCreationRequest.Alias,
+                        request.AddressCreationRequest.Settings.StorageSettings, request.RequestedBy);
+
+                    if (success == true)
+                        continue;
+                }
+                catch (Exception)
+                {
+
+                }
+
+                _logger.LogWarning($"Address storage settings change failed at {nodeClient.Key}, request is saved temporary");
+            }
+        }
+
+        private async void RequestAddressReplicationSettingsChangeInOtherNodes(AddressClusterScopeRequest request)
+        {
+            _logger.LogInformation($"Requesting Replication settings change for [{request.AddressCreationRequest.Name}] to neighbor nodes");
+            foreach (var nodeClient in _clusterStateRepository.GetNodeClients())
+            {
+                try
+                {
+                    var success = await nodeClient.Value.RequestAddressReplicationSettingsChange(request.AddressCreationRequest.Alias,
+                        request.AddressCreationRequest.Settings.ReplicationSettings, request.RequestedBy);
+
+                    if (success == true)
+                        continue;
+                }
+                catch (Exception)
+                {
+
+                }
+
+                _logger.LogWarning($"Address replication settings change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
 
@@ -38,7 +164,7 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
-                    var success = await nodeClient.Value.RequestAddressPartitionChange(request.AddressCreationRequest.Alias, 
+                    var success = await nodeClient.Value.RequestAddressPartitionChange(request.AddressCreationRequest.Alias,
                         request.AddressCreationRequest.Settings.PartitionSettings.PartitionNumber, request.RequestedBy);
                     if (success == true)
                         continue;
@@ -55,7 +181,6 @@ namespace Cerebro.Core.Services.Background
         private async void RequestAddressCreationInOtherNodes(AddressClusterScopeRequest request)
         {
             _logger.LogInformation($"Requesting Address creating for [{request.AddressCreationRequest.Name}] to neighbor nodes");
-
             foreach (var nodeClient in _clusterStateRepository.GetNodeClients())
             {
                 try

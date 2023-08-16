@@ -99,11 +99,45 @@ namespace Cerebro.Core.Services.ServerStates
                 Settings = defaultSettings
             };
 
-            (bool status, string message) = CreateAddress(addressCreationRequest, createdBy);
+            (bool status, string message) = CreateAddress(addressCreationRequest, createdBy, requestedByOtherNode);
 
             return (status, message);
         }
 
+        public (bool status, string message) DeleteAddress(string alias, bool requestedByOtherNode = false)
+        {
+            var address = _addressRepository.GetAddressByAlias(alias);
+            if (address == null)
+                return (status: false, message: $"Address alias {alias} doesnot exists");
+
+            if (_addressRepository.DeleteAddress(address))
+            {
+
+                address.Status = AddressStatuses.DeletePartitions;
+                _backgroundServerStateService.EnqueueRequest(address);
+
+                // in case of cluster scope, inform other nodes to create address
+                if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
+                {
+
+                    // TODO: figure it out how to remove partition data from the disk.
+                    //..
+                    //..
+
+                    _backgroundAddressClusterService.EnqueueRequest(new AddressClusterScopeRequest()
+                    {
+                        AddressCreationRequest = new AddressCreationRequest() { Alias = address.Alias, Name = address.Name, Settings = address.Settings },
+                        AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressDeletionRequested,
+                        RequestedBy = "delete_sys"
+                    });
+                }
+
+                return (status: true, message: $"Address [{address.Name}] has been removed successfully");
+            }
+
+
+            return (status: false, message: $"Something went wrong, address [{address.Name}] cannot be deleted");
+        }
 
         public (bool status, string message) EditAddressPartitionSettings(string alias, AddressPartitionSettings addressPartitionSettings, string updatedBy, bool requestedByOtherNode = false)
         {
@@ -130,25 +164,25 @@ namespace Cerebro.Core.Services.ServerStates
                 _backgroundServerStateService.EnqueueRequest(address);
 
 
-                // in case of cluster scope, inform other nodes to create address
+                // in case of cluster scope, inform other nodes
                 if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
                 {
                     _backgroundAddressClusterService.EnqueueRequest(new AddressClusterScopeRequest()
                     {
-                        AddressCreationRequest = new AddressCreationRequest() { Alias = address.Alias, Settings = address.Settings },
+                        AddressCreationRequest = new AddressCreationRequest() { Alias = address.Alias, Name = address.Name, Settings = address.Settings },
                         AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressPartitionChangeRequested,
                         RequestedBy = updatedBy
                     });
                 }
 
 
-                return (status: true, message: $"Address {alias} partition settings changed");
+                return (status: true, message: $"Address [{address.Name}] partition settings changed");
             }
 
-            return (status: false, message: $"Something went wrong, address {alias} partition settings is not updated");
+            return (status: false, message: $"Something went wrong, address [{address.Name}] partition settings is not updated");
         }
 
-        public (bool status, string message) EditAddressReplicationSettings(string alias, AddressReplicationSettings addressReplicationSettings, string updatedBy)
+        public (bool status, string message) EditAddressReplicationSettings(string alias, AddressReplicationSettings addressReplicationSettings, string updatedBy, bool requestedByOtherNode = false)
         {
             var address = _addressRepository.GetAddressByAlias(alias);
             if (address == null)
@@ -159,12 +193,24 @@ namespace Cerebro.Core.Services.ServerStates
             address.UpdatedBy = updatedBy;
 
             if (_addressRepository.UpdateAddress(address))
-                return (status: true, message: $"Address {alias} replication settings changed");
+            {
+                if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
+                {
+                    _backgroundAddressClusterService.EnqueueRequest(new AddressClusterScopeRequest()
+                    {
+                        AddressCreationRequest = new AddressCreationRequest() { Alias = address.Alias, Name = address.Name, Settings = address.Settings },
+                        AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressReplicationSettingsChangeRequested,
+                        RequestedBy = updatedBy
+                    });
+                }
 
-            return (status: false, message: $"Something went wrong, address {alias} replication settings is not updated");
+                return (status: true, message: $"Address [{address.Name}] replication settings changed");
+            }
+
+            return (status: false, message: $"Something went wrong, address [{address.Name}] replication settings is not updated");
         }
 
-        public (bool status, string message) EditAddressRetentionSettings(string alias, AddressRetentionSettings addressReplicationSettings, string updatedBy)
+        public (bool status, string message) EditAddressRetentionSettings(string alias, AddressRetentionSettings addressReplicationSettings, string updatedBy, bool requestedByOtherNode = false)
         {
             var address = _addressRepository.GetAddressByAlias(alias);
             if (address == null)
@@ -178,12 +224,25 @@ namespace Cerebro.Core.Services.ServerStates
             address.UpdatedBy = updatedBy;
 
             if (_addressRepository.UpdateAddress(address))
-                return (status: true, message: $"Address {alias} retention settings changed");
+            {
+                // in case of cluster scope, inform other nodes
+                if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
+                {
+                    _backgroundAddressClusterService.EnqueueRequest(new AddressClusterScopeRequest()
+                    {
+                        AddressCreationRequest = new AddressCreationRequest() { Alias = address.Alias, Name = address.Name, Settings = address.Settings },
+                        AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressRetentionSettingsChangeRequested,
+                        RequestedBy = updatedBy
+                    });
+                }
 
-            return (status: false, message: $"Something went wrong, address {alias} retention settings is not updated");
+                return (status: true, message: $"Address [{address.Name}] retention settings changed");
+            }
+
+            return (status: false, message: $"Something went wrong, address [{address.Name}] retention settings is not updated");
         }
 
-        public (bool status, string message) EditAddressSchemaSettings(string alias, AddressSchemaSettings addressSchemaSettings, string updatedBy)
+        public (bool status, string message) EditAddressSchemaSettings(string alias, AddressSchemaSettings addressSchemaSettings, string updatedBy, bool requestedByOtherNode = false)
         {
             var address = _addressRepository.GetAddressByAlias(alias);
             if (address == null)
@@ -195,12 +254,25 @@ namespace Cerebro.Core.Services.ServerStates
             address.UpdatedBy = updatedBy;
 
             if (_addressRepository.UpdateAddress(address))
-                return (status: true, message: $"Address {alias} schema settings changed");
+            {
+                // in case of cluster scope, inform other nodes
+                if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
+                {
+                    _backgroundAddressClusterService.EnqueueRequest(new AddressClusterScopeRequest()
+                    {
+                        AddressCreationRequest = new AddressCreationRequest() { Alias = address.Alias, Name = address.Name, Settings = address.Settings },
+                        AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressSchemaSettingsChangeRequested,
+                        RequestedBy = updatedBy
+                    });
+                }
 
-            return (status: false, message: $"Something went wrong, address {alias} schema settings is not updated");
+                return (status: true, message: $"Address [{address.Name}] schema settings changed");
+            }
+
+            return (status: false, message: $"Something went wrong, address [{address.Name}] schema settings is not updated");
         }
 
-        public (bool status, string message) EditAddressStorageSettings(string alias, AddressStorageSettings addressStorageSettings, string updatedBy)
+        public (bool status, string message) EditAddressStorageSettings(string alias, AddressStorageSettings addressStorageSettings, string updatedBy, bool requestedByOtherNode = false)
         {
             var address = _addressRepository.GetAddressByAlias(alias);
             if (address == null)
@@ -212,9 +284,22 @@ namespace Cerebro.Core.Services.ServerStates
             address.UpdatedBy = updatedBy;
 
             if (_addressRepository.UpdateAddress(address))
-                return (status: true, message: $"Address {alias} storage settings changed, it might take sometime for the update to take place");
+            {
+                // in case of cluster scope, inform other nodes
+                if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
+                {
+                    _backgroundAddressClusterService.EnqueueRequest(new AddressClusterScopeRequest()
+                    {
+                        AddressCreationRequest = new AddressCreationRequest() { Alias = address.Alias, Name = address.Name, Settings = address.Settings },
+                        AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressStorageSettingsChangeRequested,
+                        RequestedBy = updatedBy
+                    });
+                }
 
-            return (status: false, message: $"Something went wrong, address {alias} storage settings is not updated");
+                return (status: true, message: $"Address [{address.Name}] storage settings changed, it might take sometime for the update to take place");
+            }
+
+            return (status: false, message: $"Something went wrong, address [{address.Name}] storage settings is not updated");
         }
 
 
@@ -244,6 +329,39 @@ namespace Cerebro.Core.Services.ServerStates
                 .ToList();
 
             return (addresses: addresses, message: "Addresses Returned");
+        }
+
+        public (bool status, string message) PromoteAddress(string alias, string updatedBy, bool requestedByOtherNode = false)
+        {
+            var address = _addressRepository.GetAddressByAlias(alias);
+            if (address == null)
+                return (status: false, message: $"Address alias {alias} doesnot exists");
+
+            if (address.Settings.Scope == AddressScope.ClusterScope)
+                return (status: false, message: $"Address [{address.Name}] is already promoted");
+
+            address.Settings.Scope = AddressScope.ClusterScope;
+            address.UpdatedAt = DateTimeOffset.UtcNow;
+            address.UpdatedBy = updatedBy;
+
+            if (_addressRepository.UpdateAddress(address) == true)
+            {
+                // in case of cluster scope, inform other nodes to create address
+                if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
+                {
+                    // Sending Address Creation Request in case of promoting, that means the address should not exists in other nodes.
+                    _backgroundAddressClusterService.EnqueueRequest(new AddressClusterScopeRequest()
+                    {
+                        AddressCreationRequest = new AddressCreationRequest() { Alias = address.Alias, Name = address.Name, Settings = address.Settings },
+                        AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressCreationRequested,
+                        RequestedBy = updatedBy
+                    });
+                }
+
+                return (status: true, message: $"Address [{address.Name}] has been removed successfully");
+            }
+
+            return (status: false, message: $"Something went wrong, address [{address.Name}] cannot be be promoted to ClusterScope");
         }
 
         private (Address? address, string message) GetAddressByAliasAndName(string alias, string name)

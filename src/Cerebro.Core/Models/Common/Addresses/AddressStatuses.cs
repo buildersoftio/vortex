@@ -10,5 +10,6 @@
         NoStorageLeft,
         Blocked,
         ChangePartitions,
+        DeletePartitions
     }
 }
