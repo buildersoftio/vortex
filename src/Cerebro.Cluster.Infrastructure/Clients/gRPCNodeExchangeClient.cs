@@ -1,8 +1,11 @@
 ﻿using Cerebro.Core.Abstractions.Clustering;
 using Cerebro.Core.Models.Common.Addresses;
+using Cerebro.Core.Models.Common.Clients.Applications;
 using Cerebro.Core.Models.Common.Clusters;
 using Cerebro.Core.Models.Configurations;
 using Cerebro.Core.Models.Dtos.Addresses;
+using Cerebro.Core.Models.Dtos.Applications;
+using Cerebro.Core.Models.Entities.Clients.Applications;
 using Cerebro.Core.Utilities.Json;
 using Grpc.Core;
 
@@ -47,6 +50,8 @@ namespace Cerebro.Cluster.Infrastructure.Clients
             //TODO: figure it out how to disconnect the client
             return Task.CompletedTask;
         }
+
+        #region Address Sync Region
 
         public async Task<bool> RequestAddressCreation(AddressClusterScopeRequest request)
         {
@@ -175,10 +180,192 @@ namespace Cerebro.Cluster.Infrastructure.Clients
             }
         }
 
+        #endregion
+
+
+        #region Application Sync Region
+        public async Task<bool> RequestApplicationCreation(ApplicationDto applicationDto, string createdBy)
+        {
+            try
+            {
+                var response = await _client.RequestApplicationCreationAsync(new NodeExchange.ApplicationCreationRequest()
+                {
+                    Name = applicationDto.Name,
+                    Description = applicationDto.Description,
+                    SettingsJson = applicationDto.Settings.ToJson(),
+                    CreatedBy = createdBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestApplicationDescriptionChange(string applicationName, string description, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestApplicationUpdateAsync(new NodeExchange.ApplicationUpdateRequest()
+                {
+                    Name = applicationName,
+                    Description = description,
+                    SettingsJson = "DESCRIPTION_ONLY",
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestApplicationSettingsChange(string applicationName, ApplicationSettings applicationSettings, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestApplicationUpdateAsync(new NodeExchange.ApplicationUpdateRequest()
+                {
+                    Name = applicationName,
+                    Description = "SETTINGS_ONLY",
+                    SettingsJson = applicationSettings.ToJson(),
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestApplicationHardDeletion(string applicationName)
+        {
+            try
+            {
+                var response = await _client.RequestApplicationDeletionAsync(new NodeExchange.ApplicationDeletionRequest()
+                {
+                    ApplicationName = applicationName,
+                    IsHardDelete = true,
+                    UpdatedBy = "na"
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestApplicationSoftDeletion(string applicationName, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestApplicationDeletionAsync(new NodeExchange.ApplicationDeletionRequest()
+                {
+                    ApplicationName = applicationName,
+                    IsHardDelete = false,
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestApplicationStatusChange(string applicationName, bool status, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestApplicationStatusChangeAsync(new NodeExchange.ApplicationActivationRequest()
+                {
+                    Name = applicationName,
+                    IsActive = status,
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestApplicationTokenCreation(string applicationName, ApplicationToken applicationToken, string createdBy)
+        {
+            try
+            {
+                var response = await _client.RequestApplicationTokenCreationAsync(new NodeExchange.AddApplicationTokenRequest()
+                {
+                    ApplicationName = applicationName,
+                    ApplicationTokenEntityJson = applicationToken.ToJson(),
+                    CreatedBy = createdBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestApplicationTokenRevocation(string applicationName, Guid apiKey, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestApplicationTokenRevocationAsync(new NodeExchange.RevokeApplicationTokenRequest()
+                {
+                    ApplicationName = applicationName,
+                    ApiKey = apiKey.ToString(),
+                    UpdatedBy = updatedBy
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestApplicationPermissionChange(string applicationName, string permissionType, string value, string updatedBy)
+        {
+            try
+            {
+                var response = await _client.RequestApplicationPermissionChangeAsync(new NodeExchange.ChangeApplicationPermissionRequest()
+                {
+                    ApplicationName = applicationName,
+                    PermissionType = permissionType,
+                    UpdatedBy = updatedBy,
+                    Value = value
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
         public async Task<bool> RequestHeartBeatAsync()
         {
             var result = await _client.SendHeartbeatAsync(new NodeExchange.Heartbeat() { NodeId = _serverNodeConfiguration.NodeId });
             return true;
         }
+
     }
 }

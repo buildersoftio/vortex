@@ -7,6 +7,8 @@ service NodeExchangeService {
 	rpc RegisterNode(NodeInfo) returns (NodeRegistrationResponse);
 	rpc SendHeartbeat(Heartbeat) returns (HeartbeatResponse);
 
+	
+	/// Address Methods
 	rpc RequestAddressCreation(AddressCreationRequest) returns (AddressCreationResponse);
 	rpc RequestAddressPartitionChange(AddressPartitionChangeRequest) returns (AddressResponse);
 
@@ -16,6 +18,21 @@ service NodeExchangeService {
 	rpc RequestAddressSchemaSettingsChange(AddressSchemaSettingsChangeRequest) returns (AddressResponse);
 
 	rpc RequestAddressDeletion(AddressDeletionRequest) returns (AddressResponse);
+	///
+
+	/// Application Methods
+	rpc RequestApplicationCreation(ApplicationCreationRequest) returns (ApplicationResponse);
+	rpc RequestApplicationDeletion(ApplicationDeletionRequest) returns (ApplicationResponse);
+	rpc RequestApplicationUpdate(ApplicationUpdateRequest) returns (ApplicationResponse);
+
+	rpc RequestApplicationStatusChange(ApplicationActivationRequest) returns (ApplicationResponse);
+
+	rpc RequestApplicationTokenCreation(AddApplicationTokenRequest) returns (ApplicationResponse);
+	rpc RequestApplicationTokenRevocation(RevokeApplicationTokenRequest) returns (ApplicationResponse);
+	rpc RequestApplicationPermissionChange(ChangeApplicationPermissionRequest) returns (ApplicationResponse);
+
+
+	///
 
 	// SendData to Node Leader
 	// SendData to Replica
@@ -87,8 +104,58 @@ message AddressDeletionRequest{
 		string Alias = 1;
 }
 
-
 message AddressResponse {
+	bool success = 1;
+	string message = 2;
+}
+
+message ApplicationCreationRequest {
+	string Name = 1;
+	string Description = 2;
+	string SettingsJson = 3;
+	string CreatedBy = 4;
+}
+
+message ApplicationDeletionRequest {
+	bool IsHardDelete = 1;
+	string applicationName = 2;
+	string UpdatedBy = 3;
+}
+
+message ApplicationUpdateRequest {
+	string Name = 1;
+	string Description = 2;
+	string SettingsJson = 3;
+	string UpdatedBy = 4;
+}
+
+message ApplicationActivationRequest{
+	string Name = 1;
+	bool IsActive = 2;
+	string UpdatedBy = 3;
+}
+
+message AddApplicationTokenRequest {
+	string ApplicationName = 1;
+	string ApplicationTokenEntityJson = 2;
+	string CreatedBy = 3;
+}
+
+message RevokeApplicationTokenRequest {
+	string ApplicationName = 1;
+	string ApiKey = 2;
+	string UpdatedBy = 3;
+}
+
+message ChangeApplicationPermissionRequest {
+	string ApplicationName = 1;
+	// PermissionType CAN READ, WRITE, CREATE
+	string PermissionType = 2;
+	string Value = 3;
+	string UpdatedBy = 4;
+}
+
+message ApplicationResponse {
 	bool success = 1;
 	string message = 2;
 }

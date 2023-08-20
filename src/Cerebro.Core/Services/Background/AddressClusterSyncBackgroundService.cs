@@ -64,7 +64,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
-                _logger.LogWarning($"Address deletion failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] deletion failed at {nodeClient.Key}, request is saved temporary");
             }
         }
 
@@ -86,7 +86,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
-                _logger.LogWarning($"Address retention settings change failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] retention settings change failed at {nodeClient.Key}, request is saved temporary");
             }
 
         }
@@ -109,7 +109,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
-                _logger.LogWarning($"Address schema settings change failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] schema settings change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
 
@@ -131,7 +131,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
-                _logger.LogWarning($"Address storage settings change failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] storage settings change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
 
@@ -153,7 +153,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
-                _logger.LogWarning($"Address replication settings change failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] replication settings change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
 
@@ -174,13 +174,13 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
-                _logger.LogWarning($"Address partition change failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] partition change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
 
         private async void RequestAddressCreationInOtherNodes(AddressClusterScopeRequest request)
         {
-            _logger.LogInformation($"Requesting Address creating for [{request.AddressCreationRequest.Name}] to neighbor nodes");
+            _logger.LogInformation($"Requesting Address creation for [{request.AddressCreationRequest.Name}] to neighbor nodes");
             foreach (var nodeClient in _clusterStateRepository.GetNodeClients())
             {
                 try
@@ -194,7 +194,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
-                _logger.LogWarning($"Address creation failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] creation failed at {nodeClient.Key}, request is saved temporary");
             }
         }
     }

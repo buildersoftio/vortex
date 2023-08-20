@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Text.Json.Serialization;
 
 namespace Cerebro.Core.Models.Common.Clients.Applications
 {
     public class ApplicationSettings
     {
+        public ApplicationScope Scope { get; set; }
+
         public bool IsAuthorizationEnabled { get; set; }
         public bool IsConnectionAllowedForAnyAddress { get; set; }
 
@@ -17,6 +19,7 @@ namespace Cerebro.Core.Models.Common.Clients.Applications
 
         public ApplicationSettings()
         {
+            Scope = ApplicationScope.SingleScope;
             PublicIpRange = new HashSet<string>();
             PrivateIpRange = new HashSet<string>();
         }
