@@ -33,12 +33,29 @@ namespace Cerebro.Core.Services.Clustering.Background
                     await client!.RequestHeartBeatAsync();
 
                     _clusterStateRepository.UpdateHeartBeat(node.Key);
+                    _clusterStateRepository.UpdateClusterStatus(Models.Common.Clusters.ClusterStatus.Online);
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError($"Failed to requeset Heartbeat to node {node.Key}, error details: {ex.Message}");
+                    _clusterStateRepository.UpdateClusterStatus(Models.Common.Clusters.ClusterStatus.Reconnecting);
+
+                    // checking timeout
+                    var lastHeartBeat = node.Value.LastHeartbeat!.Value.TimeOfDay;
+                    var rightNow = DateTime.Now.TimeOfDay;
+                    var diference = rightNow - lastHeartBeat;
+                    if (diference.TotalSeconds >= _configIOService.GetClusterConfiguration()!.Settings.HeartbeatTimeout)
+                    {
+                        _logger.LogError($"Node {node.Key} is offline, trying to connect in {_configIOService.GetClusterConfiguration()!.Settings.HeartbeatInterval} seconds");
+                        _clusterStateRepository.UpdateClusterStatus(Models.Common.Clusters.ClusterStatus.Offline);
+                    }
                 }
             }
+        }
+
+        private void CheckHeartBeatTimeout()
+        {
+
         }
     }
 }

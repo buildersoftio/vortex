@@ -1,6 +1,7 @@
 ﻿using Cerebro.Core.IO;
 using Cerebro.Core.IO.Services;
 using Cerebro.Core.Models.Configurations;
+using Cerebro.Core.Utilities.Consts;
 using Cerebro.Infrastructure.IO.Services;
 
 namespace Cerebro.Server.DependencyInjection
@@ -17,7 +18,7 @@ namespace Cerebro.Server.DependencyInjection
         {
             var nodeConfiguration = new NodeConfiguration();
 
-            nodeConfiguration.NodeId = configuration.GetValue<string>("NodeId")!;
+            nodeConfiguration.NodeId = configuration.GetValue<string>(EnvironmentConstants.NodeId)!;
 
             services.AddSingleton(nodeConfiguration);
         }
@@ -27,7 +28,6 @@ namespace Cerebro.Server.DependencyInjection
             StorageDefaultConfiguration defaultStorageConfig = new StorageDefaultConfiguration();
             services.AddSingleton(defaultStorageConfig);
         }
-
 
         public static void AddIOServices(this IServiceCollection services)
         {
