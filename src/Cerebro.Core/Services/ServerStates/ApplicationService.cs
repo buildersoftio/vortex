@@ -159,6 +159,38 @@ namespace Cerebro.Core.Services.ServerStates
             return (status: false, message: $"Application {applicationName} settings couldnot update");
         }
 
+        public (bool status, string message) PromoteApplication(string applicationName, string updatedBy, bool requestedByOtherNode = false)
+        {
+            var application = _applicationRepository.GetApplication(applicationName);
+            if (application == null)
+                return (status: false, message: $"Application {applicationName} doesnot exists");
+
+            if (application.Settings.Scope == ApplicationScope.ClusterScope)
+                return (status: false, message: $"Application {applicationName} is already promoted to ClusterScope");
+
+            application.Settings.Scope = ApplicationScope.ClusterScope;
+            application.UpdatedAt = DateTimeOffset.UtcNow;
+            application.UpdatedBy = updatedBy;
+
+            if (_applicationRepository.UpdateApplication(application))
+            {
+                // Sync with other nodes
+                if (application.Settings.Scope == ApplicationScope.ClusterScope && requestedByOtherNode != true)
+                {
+                    _backgroundApplicationClusterService.EnqueueRequest(new ApplicationClusterScopeRequest()
+                    {
+                        ApplicationDto = new ApplicationDto() { Description = application.Description, Name = applicationName, Settings = application.Settings },
+                        RequestedBy = updatedBy,
+                        State = ApplicationClusterScopeRequestState.ApplicationCreationRequested
+                    });
+                }
+
+                return (status: false, message: $"Application {applicationName} promoted to ClusterScope");
+            }
+
+            return (status: false, message: $"Application {applicationName} couldnot promoted");
+        }
+
         public (ApplicationDto? application, string message) GetApplication(string applicationName)
         {
             var applicationDetails = _applicationRepository.GetApplication(applicationName);
@@ -520,7 +552,7 @@ namespace Cerebro.Core.Services.ServerStates
                         RequestedBy = updatedBy,
 
                         State = ApplicationClusterScopeRequestState.ApplicationPermissionChangeRequest
-                    }) ;
+                    });
                 }
 
                 return (true, message: $"READ_ADDRESSES permission has changed for {applicationName}");

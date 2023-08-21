@@ -10,6 +10,7 @@ namespace Cerebro.Core.Abstractions.Services
         (bool status, string message) CreateApplicationPermission(string applicationName, string? read, string? write, bool? create, string createdBy);
         (bool status, string message) EditApplicationSettings(string applicationName, ApplicationSettings newApplicationSettings, string updatedBy, bool requestedByOtherNode = false);
         (bool status, string message) EditApplicationDescription(string applicationName, string newDescription, string updatedBy, bool requestedByOtherNode = false);
+        (bool status, string message) PromoteApplication(string applicationName, string updatedBy, bool requestedByOtherNode = false);
 
         (bool status, string message) ActivateApplication(string applicationName, string createdBy, bool requestedByOtherNode = false);
         (bool status, string message) DeactivateApplication(string applicationName, string createdBy, bool requestedByOtherNode = false);

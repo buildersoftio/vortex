@@ -116,6 +116,7 @@ namespace Cerebro.Cluster.Infrastructure.Servers
             return Task.FromResult(new AddressResponse() { Message = message, Success = result });
         }
 
+
         public override Task<AddressResponse> RequestAddressRetentionSettingsChange(AddressRetentionSettingsChangeRequest request, ServerCallContext context)
         {
             _logger.LogInformation($"Address [{request.Alias}] retention change requested by neighbor node {context.Peer}");
