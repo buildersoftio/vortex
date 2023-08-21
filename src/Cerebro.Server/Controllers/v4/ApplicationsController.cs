@@ -73,6 +73,18 @@ namespace Cerebro.Server.Controllers.v4
             return Ok(application);
         }
 
+        [HttpPost("{applicationName}/promote")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<string> PromoteApplication(string applicationName)
+        {
+            (bool isPromoted, string message) = _applicationService.PromoteApplication(applicationName, "system");
+            if (isPromoted)
+                return Ok(message);
+
+            return BadRequest(message);
+        }
+
         [HttpPut("{applicationName}/settings")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

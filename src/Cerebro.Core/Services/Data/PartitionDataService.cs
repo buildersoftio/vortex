@@ -8,14 +8,17 @@ using Cerebro.Core.Models.Entities.Entries;
 
 namespace Cerebro.Core.Services.Data
 {
-    public class PartitionDataService : IPartitionDataService<Message>
+    public class PartitionDataService : IPartitionDataService<Message>, IDisposable
     {
+        private bool disposed = false;
+
+
         private readonly IPartitionEntryService _partitionEntryService;
         private readonly IPartitionDataFactory _partitionDataFactory;
         private readonly Address _address;
         private readonly PartitionEntry _partitionEntry;
 
-        private readonly IPartitionDataRepository partitionDataRepository;
+        private readonly IPartitionDataRepository _partitionDataRepository;
 
         public PartitionDataService(
             IPartitionEntryService partitionEntryService,
@@ -28,7 +31,7 @@ namespace Cerebro.Core.Services.Data
             _address = address;
             _partitionEntry = partitionEntry;
 
-            partitionDataRepository = _partitionDataFactory
+            _partitionDataRepository = _partitionDataFactory
                 .CreatePartitionDataRepository(address, partitionEntry);
         }
 
@@ -60,6 +63,25 @@ namespace Cerebro.Core.Services.Data
         public bool TryGetNext(long entryId, out Message entity)
         {
             throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                if (disposing)
+                {
+                    _partitionDataRepository.CloseConnection();
+                }
+               
+                disposed = true;
+            }
         }
     }
 }

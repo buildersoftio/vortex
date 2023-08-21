@@ -73,7 +73,7 @@ namespace Cerebro.Core.Services.Background
                             if (partitionEntry != null)
                             {
                                 _logger.LogInformation($"Address [{request.Name}] partition [{i}] creating storage files");
-                                var partitionDbData = new PartitionDataService(_partitionEntryService, _partitionDataFactory, request, partitionEntry!);
+                                using var partitionDbData = new PartitionDataService(_partitionEntryService, _partitionDataFactory, request, partitionEntry!);
                                 _logger.LogInformation($"Address [{request.Name}] partition [{i}] storage files created");
                             }
                         }

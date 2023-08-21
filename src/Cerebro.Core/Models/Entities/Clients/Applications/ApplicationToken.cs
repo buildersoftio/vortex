@@ -1,6 +1,5 @@
 ﻿using Cerebro.Core.Models.Common;
 using Cerebro.Core.Models.Entities.Base;
-using System.Text.Json.Serialization;
 
 namespace Cerebro.Core.Models.Entities.Clients.Applications
 {
@@ -15,7 +14,6 @@ namespace Cerebro.Core.Models.Entities.Clients.Applications
         public CryptographyTypes CryptographyType { get; set; }
 
         
-        [JsonIgnore]
         public string? HashedSecret { get; set; }
 
         public DateTimeOffset ExpireDate { get; set; }
