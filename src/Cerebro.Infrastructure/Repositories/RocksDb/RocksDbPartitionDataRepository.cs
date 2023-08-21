@@ -43,6 +43,11 @@ namespace Cerebro.Infrastructure.Repositories.RocksDb
                 .Open(dbOptions, partitionLocation);
         }
 
+        public void CloseConnection()
+        {
+            rocksDb.Dispose();
+        }
+
         public void Delete(byte[] entryId)
         {
             rocksDb
