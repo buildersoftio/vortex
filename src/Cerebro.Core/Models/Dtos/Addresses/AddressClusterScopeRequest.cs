@@ -1,6 +1,8 @@
-﻿namespace Cerebro.Core.Models.Dtos.Addresses
+﻿using Cerebro.Core.Abstractions.Background;
+
+namespace Cerebro.Core.Models.Dtos.Addresses
 {
-    public class AddressClusterScopeRequest
+    public class AddressClusterScopeRequest : RequestBase
     {
         public AddressCreationRequest AddressCreationRequest { get; set; }
         public AddressClusterScopeRequestState AddressClusterScopeRequestState { get; set; }

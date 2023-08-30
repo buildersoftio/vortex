@@ -1,4 +1,5 @@
-﻿using Cerebro.Core.IO;
+﻿using Cerebro.Core.Abstractions.IO.Services;
+using Cerebro.Core.IO;
 using Cerebro.Core.IO.Services;
 using Cerebro.Core.Models.Configurations;
 using Cerebro.Core.Utilities.Consts;
@@ -34,6 +35,7 @@ namespace Cerebro.Server.DependencyInjection
             services.AddSingleton<IRootIOService, RootIOService>();
             services.AddSingleton<IConfigIOService, ConfigIOService>();
             services.AddSingleton<IDataIOService, DataIOService>();
+            services.AddSingleton<ITemporaryIOService, TemporaryIOService>();
         }
     }
 }

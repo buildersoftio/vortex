@@ -1,4 +1,5 @@
 ﻿using Cerebro.Core.Abstractions.Clustering;
+using Cerebro.Core.Abstractions.IO.Services;
 using Cerebro.Core.IO.Services;
 using Cerebro.Core.Models.Configurations;
 using Cerebro.Core.Utilities.Consts;
@@ -13,6 +14,7 @@ namespace Cerebro.Core.Services
         private readonly IRootIOService _rootIOService;
         private readonly IConfigIOService _configIOService;
         private readonly IDataIOService _dataIOService;
+        private readonly ITemporaryIOService _temporaryIOService;
         private readonly NodeConfiguration _nodeConfiguration;
         private INodeExchangeServer? _nodeExchangeServer;
 
@@ -26,6 +28,7 @@ namespace Cerebro.Core.Services
             IRootIOService rootIOService,
             IConfigIOService configIOService,
             IDataIOService dataIOService,
+            ITemporaryIOService temporaryIOService,
             NodeConfiguration nodeConfiguration,
             StorageDefaultConfiguration storageDefaultConfiguration,
             IClusterManager clusterManager,
@@ -35,6 +38,7 @@ namespace Cerebro.Core.Services
             _rootIOService = rootIOService;
             _configIOService = configIOService;
             _dataIOService = dataIOService;
+            _temporaryIOService = temporaryIOService;
             _nodeConfiguration = nodeConfiguration;
             _storageDefaultConfiguration = storageDefaultConfiguration;
             _clusterManager = clusterManager;
@@ -184,6 +188,12 @@ namespace Cerebro.Core.Services
             {
                 _logger.LogInformation("Root directory [/logs] is created");
                 _rootIOService.CreateTempRootDirectory();
+            }
+
+            if (_temporaryIOService.IsTemporaryBackgroundDirectoryCreated() != true)
+            {
+                _logger.LogInformation("Root directory [/logs/backgrounds] is created");
+                _temporaryIOService.CreateTemporaryBackgroundDirectory();
             }
         }
 

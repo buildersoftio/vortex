@@ -1,5 +1,6 @@
 ﻿using Cerebro.Core.Abstractions.Background;
 using Cerebro.Core.Abstractions.Factories;
+using Cerebro.Core.Abstractions.IO.Services;
 using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.IO;
 using Cerebro.Core.IO.Services;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Cerebro.Core.Services.Background
 {
-    public class AddressBackgroundServerStateService : BackgroundQueueServiceBase<Address>
+    public class AddressBackgroundServerStateService : SimpleBackgroundQueueServiceBase<Address>
     {
         private readonly ILogger<AddressBackgroundServerStateService> _logger;
         private readonly IAddressRepository _addressRepository;

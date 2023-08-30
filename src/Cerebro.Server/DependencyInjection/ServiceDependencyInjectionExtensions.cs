@@ -33,7 +33,7 @@ namespace Cerebro.Server.DependencyInjection
 
         public static void AddBackgroundServerStateServices(this IServiceCollection services)
         {
-            services.AddSingleton<IBackgroundQueueService<Address>, AddressBackgroundServerStateService>();
+            services.AddSingleton<ISimpleBackgroundQueueService<Address>, AddressBackgroundServerStateService>();
             services.AddSingleton<IBackgroundQueueService<AddressClusterScopeRequest>, AddressClusterSyncBackgroundService>();
 
             services.AddSingleton<IBackgroundQueueService<ApplicationClusterScopeRequest>, ApplicationClusterSyncBackgroundService>();

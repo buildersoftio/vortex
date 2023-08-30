@@ -14,6 +14,8 @@
 
         public const string NodeId = "CEREBRO_NODE_ID";
 
+        public const string BackgroundServiceFaildTaskInterval = "CEREBRO_BACKGROUND_TASK_INTERVAL";
+
 
         /// <summary>
         ///  CEREBRO Cluster Environment Variables

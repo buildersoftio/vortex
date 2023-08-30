@@ -1,34 +1,21 @@
-﻿using Cerebro.Core.Abstractions.IO.Services;
-using Cerebro.Core.Utilities.Consts;
-using System.Collections.Concurrent;
-using System.Threading;
+﻿using System.Collections.Concurrent;
 
 namespace Cerebro.Core.Abstractions.Background
 {
-    public abstract class BackgroundQueueServiceBase<TRequest> : IBackgroundQueueService<TRequest> where TRequest : RequestBase
+    public abstract class SimpleBackgroundQueueServiceBase<TRequest> : ISimpleBackgroundQueueService<TRequest>
     {
         private readonly ConcurrentQueue<TRequest> requestQueue;
         private readonly object queueLock;
-        private readonly string _prefixFileName;
-        private readonly ITemporaryIOService _temporaryIOService;
 
         private CancellationTokenSource? cancellationTokenSource;
 
-
-        // Timer for background file check
-        private Timer _failedTaskTimer;
-
-        public BackgroundQueueServiceBase(string prefixFileName, ITemporaryIOService temporaryIOService)
+        public SimpleBackgroundQueueServiceBase()
         {
             requestQueue = new ConcurrentQueue<TRequest>();
-
             queueLock = new object();
-            _prefixFileName = prefixFileName;
-            _temporaryIOService = temporaryIOService;
-
-            var intervalInSec = int.Parse(Environment.GetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFaildTaskInterval)!);
-            _failedTaskTimer = new Timer(FailedTaskTimerCallBack, null, TimeSpan.Zero, new TimeSpan(0, 0, intervalInSec));
         }
+
+      
 
         public void EnqueueRequest(TRequest request)
         {
@@ -90,23 +77,6 @@ namespace Cerebro.Core.Abstractions.Background
                     Monitor.Wait(queueLock, millisecondsTimeout);
                 }
                 return !requestQueue.IsEmpty;
-            }
-        }
-
-        public void StoreFailedRequest(TRequest request)
-        {
-            _temporaryIOService.StoreBackgroundTemporaryFile(request, _prefixFileName, Guid.NewGuid());
-        }
-
-        private void FailedTaskTimerCallBack(object? state)
-        {
-            // get logs
-            var tempFiles = _temporaryIOService.GetBackgroundFiles(_prefixFileName);
-            foreach (var tempFile in tempFiles)
-            {
-                // re-trying the same request again.
-                EnqueueRequest(_temporaryIOService.GetBackgroundTemporaryFileContent<TRequest>(tempFile));
-                _temporaryIOService.DeleteFile(tempFile);
             }
         }
     }

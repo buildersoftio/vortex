@@ -1,3 +1,4 @@
+using Cerebro.Core.Utilities.Consts;
 using Cerebro.Server.DependencyInjection;
 using Cerebro.Server.Middleware;
 using Microsoft.OpenApi.Models;
@@ -14,6 +15,10 @@ Log.Logger = new LoggerConfiguration()
 // adding Serilog
 builder.Host.UseSerilog();
 
+
+//TODO figure it out, move the default envs from here
+// setting default env variables
+Environment.SetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFaildTaskInterval, "300");
 
 // ---------------------------------------------------------------------
 // Configure Services

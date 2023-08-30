@@ -1,9 +1,8 @@
 ﻿namespace Cerebro.Core.Abstractions.Background
 {
-    public interface IBackgroundQueueService<TRequest> where TRequest : RequestBase
+    public interface ISimpleBackgroundQueueService<TRequest>
     {
         void EnqueueRequest(TRequest request);
-        void StoreFailedRequest(TRequest request);
         void Handle(TRequest request);
     }
 }

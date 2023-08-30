@@ -12,7 +12,7 @@ using System.Collections.Concurrent;
 
 namespace Cerebro.Core.Services.Orchestrations
 {
-    public class ServerCoreStateManager : BackgroundQueueServiceBase<PartitionEntry>, IServerCoreStateManager
+    public class ServerCoreStateManager : SimpleBackgroundQueueServiceBase<PartitionEntry>, IServerCoreStateManager
     {
         private readonly ILogger<ServerCoreStateManager> _logger;
         private readonly IPartitionDataFactory _partitionDataFactory;

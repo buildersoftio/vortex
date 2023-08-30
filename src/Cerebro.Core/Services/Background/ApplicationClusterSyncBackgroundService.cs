@@ -1,5 +1,6 @@
 ﻿using Cerebro.Core.Abstractions.Background;
 using Cerebro.Core.Abstractions.Clustering;
+using Cerebro.Core.Abstractions.IO.Services;
 using Cerebro.Core.Models.Dtos.Applications;
 using Microsoft.Extensions.Logging;
 
@@ -11,7 +12,8 @@ namespace Cerebro.Core.Services.Background
         private readonly IClusterStateRepository _clusterStateRepository;
 
         public ApplicationClusterSyncBackgroundService(ILogger<ApplicationClusterSyncBackgroundService> logger,
-            IClusterStateRepository clusterStateRepository)
+            IClusterStateRepository clusterStateRepository,
+            ITemporaryIOService temporaryIOService) : base("applicationCluster_", temporaryIOService)
         {
             _logger = logger;
             _clusterStateRepository = clusterStateRepository;
@@ -62,6 +64,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestApplicationPermissionChange(request.ApplicationDto.Name, request.ApplicationPermissionKey, request.ApplicationPermissionValue, request.RequestedBy);
                     if (success == true)
                         continue;
@@ -72,6 +78,7 @@ namespace Cerebro.Core.Services.Background
                 }
 
                 _logger.LogWarning($"Application [{request.ApplicationDto.Name}] permission change failed at {nodeClient.Key}, request is saved temporary");
+                StoreFailedRequestInFile(request, nodeClient.Key);
             }
         }
 
@@ -82,6 +89,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestApplicationTokenRevocation(request.ApplicationDto.Name, request.ApplicationToken!.Id, request.RequestedBy);
                     if (success == true)
                         continue;
@@ -91,6 +102,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Application [{request.ApplicationDto.Name}] token revocation failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -102,6 +114,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestApplicationTokenCreation(request.ApplicationDto.Name, request.ApplicationToken!, request.RequestedBy);
                     if (success == true)
                         continue;
@@ -111,6 +127,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Application [{request.ApplicationDto.Name}] token creation failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -122,6 +139,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestApplicationStatusChange(request.ApplicationDto.Name, request.ApplicationIsActive!.Value, request.RequestedBy);
                     if (success == true)
                         continue;
@@ -131,6 +152,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Application [{request.ApplicationDto.Name}] activation change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -142,6 +164,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestApplicationSettingsChange(request.ApplicationDto.Name, request.ApplicationDto.Settings, request.RequestedBy);
                     if (success == true)
                         continue;
@@ -151,6 +177,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Application [{request.ApplicationDto.Name}] settings change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -162,6 +189,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestApplicationDescriptionChange(request.ApplicationDto.Name, request.ApplicationDto.Description, request.RequestedBy);
                     if (success == true)
                         continue;
@@ -171,6 +202,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Application [{request.ApplicationDto.Name}] description change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -182,6 +214,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestApplicationHardDeletion(request.ApplicationDto.Name);
                     if (success == true)
                         continue;
@@ -191,6 +227,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Application [{request.ApplicationDto.Name}] hard deletion failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -202,6 +239,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestApplicationSoftDeletion(request.ApplicationDto.Name, request.RequestedBy);
                     if (success == true)
                         continue;
@@ -211,6 +252,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Application [{request.ApplicationDto.Name}] soft deletion failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -222,6 +264,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestApplicationCreation(request.ApplicationDto, request.RequestedBy);
                     if (success == true)
                         continue;
@@ -231,10 +277,25 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Application [{request.ApplicationDto.Name}] creation failed at {nodeClient.Key}, request is saved temporary");
             }
+        }
 
 
+        private void StoreFailedRequestInFile(ApplicationClusterScopeRequest request, string nodeId)
+        {
+            StoreFailedRequest(new ApplicationClusterScopeRequest()
+            {
+                NodeId = nodeId,
+                RequestedBy = request.RequestedBy,
+                ApplicationDto = request.ApplicationDto,
+                ApplicationIsActive = request.ApplicationIsActive,
+                ApplicationPermissionKey = request.ApplicationPermissionKey,
+                ApplicationPermissionValue = request.ApplicationPermissionValue,
+                ApplicationToken = request.ApplicationToken,
+                State = request.State
+            });
         }
     }
 }
