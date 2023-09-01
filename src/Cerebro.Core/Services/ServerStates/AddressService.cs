@@ -13,14 +13,14 @@ namespace Cerebro.Core.Services.ServerStates
     {
         private readonly ILogger<AddressService> _logger;
         private readonly IAddressRepository _addressRepository;
-        private readonly IBackgroundQueueService<Address> _backgroundServerStateService;
+        private readonly ISimpleBackgroundQueueService<Address> _backgroundServerStateService;
         private readonly IBackgroundQueueService<AddressClusterScopeRequest> _backgroundAddressClusterService;
         private readonly NodeConfiguration _nodeConfiguration;
         private readonly StorageDefaultConfiguration _storageDefaultConfiguration;
 
         public AddressService(ILogger<AddressService> logger,
             IAddressRepository addressRepository,
-            IBackgroundQueueService<Address> backgroundServerStateService,
+            ISimpleBackgroundQueueService<Address> backgroundServerStateService,
             IBackgroundQueueService<AddressClusterScopeRequest> backgroundAddressClusterService,
             NodeConfiguration nodeConfiguration,
             StorageDefaultConfiguration storageDefaultConfiguration)

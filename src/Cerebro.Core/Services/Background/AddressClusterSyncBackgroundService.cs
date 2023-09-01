@@ -1,5 +1,6 @@
 ﻿using Cerebro.Core.Abstractions.Background;
 using Cerebro.Core.Abstractions.Clustering;
+using Cerebro.Core.Abstractions.IO.Services;
 using Cerebro.Core.Models.Dtos.Addresses;
 using Microsoft.Extensions.Logging;
 
@@ -10,7 +11,9 @@ namespace Cerebro.Core.Services.Background
         private readonly ILogger<AddressClusterSyncBackgroundService> _logger;
         private readonly IClusterStateRepository _clusterStateRepository;
 
-        public AddressClusterSyncBackgroundService(ILogger<AddressClusterSyncBackgroundService> logger, IClusterStateRepository clusterStateRepository)
+        public AddressClusterSyncBackgroundService(ILogger<AddressClusterSyncBackgroundService> logger,
+            IClusterStateRepository clusterStateRepository,
+            ITemporaryIOService temporaryIOService) : base("addressCluster_", temporaryIOService)
         {
             _logger = logger;
             _clusterStateRepository = clusterStateRepository;
@@ -55,6 +58,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestAddressDeletion(request.AddressCreationRequest.Alias);
                     if (success == true)
                         continue;
@@ -64,6 +71,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] deletion failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -75,6 +83,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestAddressRetentionSettingsChange(request.AddressCreationRequest.Alias,
                         request.AddressCreationRequest.Settings.RetentionSettings, request.RequestedBy);
 
@@ -86,6 +98,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] retention settings change failed at {nodeClient.Key}, request is saved temporary");
             }
 
@@ -98,6 +111,14 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestAddressSchemaSettingsChange(request.AddressCreationRequest.Alias,
                         request.AddressCreationRequest.Settings.SchemaSettings, request.RequestedBy);
 
@@ -109,6 +130,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] schema settings change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -120,6 +142,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestAddressStorageSettingsChange(request.AddressCreationRequest.Alias,
                         request.AddressCreationRequest.Settings.StorageSettings, request.RequestedBy);
 
@@ -131,6 +157,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] storage settings change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -142,6 +169,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestAddressReplicationSettingsChange(request.AddressCreationRequest.Alias,
                         request.AddressCreationRequest.Settings.ReplicationSettings, request.RequestedBy);
 
@@ -153,6 +184,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] replication settings change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -164,6 +196,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestAddressPartitionChange(request.AddressCreationRequest.Alias,
                         request.AddressCreationRequest.Settings.PartitionSettings.PartitionNumber, request.RequestedBy);
                     if (success == true)
@@ -174,6 +210,7 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] partition change failed at {nodeClient.Key}, request is saved temporary");
             }
         }
@@ -185,6 +222,10 @@ namespace Cerebro.Core.Services.Background
             {
                 try
                 {
+                    // if this request is stored temporary
+                    if (request.NodeId != null && request.NodeId != nodeClient.Key)
+                        continue;
+
                     var success = await nodeClient.Value.RequestAddressCreation(request);
                     if (success == true)
                         continue;
@@ -194,8 +235,21 @@ namespace Cerebro.Core.Services.Background
 
                 }
 
+                StoreFailedRequestInFile(request, nodeClient.Key);
                 _logger.LogWarning($"Address [{request.AddressCreationRequest.Name}] creation failed at {nodeClient.Key}, request is saved temporary");
             }
+        }
+
+
+        private void StoreFailedRequestInFile(AddressClusterScopeRequest request, string nodeId)
+        {
+            StoreFailedRequest(new AddressClusterScopeRequest()
+            {
+                NodeId = nodeId,
+                AddressClusterScopeRequestState = request.AddressClusterScopeRequestState,
+                AddressCreationRequest = request.AddressCreationRequest,
+                RequestedBy = request.RequestedBy
+            });
         }
     }
 }

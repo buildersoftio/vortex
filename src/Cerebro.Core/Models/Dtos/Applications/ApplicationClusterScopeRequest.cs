@@ -1,8 +1,9 @@
-﻿using Cerebro.Core.Models.Entities.Clients.Applications;
+﻿using Cerebro.Core.Abstractions.Background;
+using Cerebro.Core.Models.Entities.Clients.Applications;
 
 namespace Cerebro.Core.Models.Dtos.Applications
 {
-    public class ApplicationClusterScopeRequest
+    public class ApplicationClusterScopeRequest : RequestBase
     {
         public ApplicationDto ApplicationDto { get; set; }
 

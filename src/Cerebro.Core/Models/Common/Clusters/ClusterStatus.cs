@@ -4,6 +4,8 @@
     {
         Online,
         Initializing,
-        Offline
+        Offline,
+        Reconnecting,
+        Recovering
     }
 }

@@ -79,6 +79,7 @@ namespace Cerebro.Infrastructure.IO.Services
             try
             {
                 Directory.CreateDirectory(RootLocations.GetLogsRootDirectory());
+
                 return true;
             }
             catch (Exception ex)
@@ -93,6 +94,7 @@ namespace Cerebro.Infrastructure.IO.Services
             try
             {
                 Directory.CreateDirectory(RootLocations.GetTempRootDirectory());
+
                 return true;
             }
             catch (Exception ex)
