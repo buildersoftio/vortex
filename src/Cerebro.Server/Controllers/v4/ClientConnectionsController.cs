@@ -1,8 +1,8 @@
 ﻿using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.Models.Common.Clients.Applications;
 using Cerebro.Core.Models.Dtos.Clients;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Validations;
 
 namespace Cerebro.Server.Controllers.v4
 {
@@ -24,6 +24,7 @@ namespace Cerebro.Server.Controllers.v4
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<List<ClientConnectionDto>> GetClientConnections([FromQuery] string? applicationName, [FromQuery] string? addressAlias, [FromQuery] string? addressName)
         {
             if (applicationName != null)
@@ -62,6 +63,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PostClientConnection([FromBody] ClientConnectionRequest clientConnectionRequest)
         {
             (bool status, string message) = _clientConnectionService.RegisterClientConnection(clientConnectionRequest, "system");
@@ -74,6 +76,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpGet("verify")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<string> VerifyClientConnection([FromQuery] string applicationName, [FromQuery] string? addressAlias, [FromQuery] string? addressName, [FromQuery] ApplicationConnectionTypes applicationConnectionType)
         {
             if (addressAlias != null)
