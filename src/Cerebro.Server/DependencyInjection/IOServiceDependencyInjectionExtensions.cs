@@ -13,6 +13,8 @@ namespace Cerebro.Server.DependencyInjection
         {
             services.BindNodeConfiguration(configuration);
             services.BindDefaultStorageConfiguration();
+            services.BindCredentialsConfiguration(configuration);
+
         }
 
         private static void BindNodeConfiguration(this IServiceCollection services, IConfiguration configuration)
@@ -36,6 +38,13 @@ namespace Cerebro.Server.DependencyInjection
             services.AddSingleton<IConfigIOService, ConfigIOService>();
             services.AddSingleton<IDataIOService, DataIOService>();
             services.AddSingleton<ITemporaryIOService, TemporaryIOService>();
+        }
+
+        private static void BindCredentialsConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            var credentialsConfiguration = new List<CredentialsConfiguration>();
+            configuration.Bind("Credentials", credentialsConfiguration);
+            services.AddSingleton(credentialsConfiguration);
         }
     }
 }

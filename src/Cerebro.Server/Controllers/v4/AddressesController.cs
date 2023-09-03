@@ -1,6 +1,7 @@
 ﻿using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.Models.Common.Addresses;
 using Cerebro.Core.Models.Dtos.Addresses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cerebro.Server.Controllers.v4
@@ -21,6 +22,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPost("create")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PostAddress([FromBody] AddressCreationRequest addressCreationRequest)
         {
             if (addressCreationRequest == null)
@@ -36,6 +38,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPost("create/default")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PostDefaultAddress([FromBody] AddressDefaultCreationRequest addressCreationRequest)
         {
             if (addressCreationRequest == null)
@@ -51,6 +54,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpGet("byaddress/{addressName}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<AddressDto> GetAddressByName(string addressName)
         {
             string addressNameUnescape = Uri.UnescapeDataString(addressName);
@@ -65,6 +69,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpGet("byalias/{alias}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<AddressDto> GetAddressByAlias(string alias)
         {
             (var address, string message) = _addressService.GetAddressByAlias(alias);
@@ -77,6 +82,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpGet("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<AddressDto> GetAddresses()
         {
             (var addresses, string message) = _addressService.GetAddresses();
@@ -89,6 +95,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{alias}/settings/storage")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutAddressStorageSettings(string alias, [FromBody] AddressStorageSettings addressStorageSettings)
         {
             if (addressStorageSettings == null)
@@ -104,6 +111,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{alias}/settings/partitions")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutAddressPartitionSettings(string alias, [FromBody] AddressPartitionSettings addressPartitionSettings)
         {
             if (addressPartitionSettings == null)
@@ -119,6 +127,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{alias}/settings/replication")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutAddressReplicationSettings(string alias, [FromBody] AddressReplicationSettings addressReplicationSettings)
         {
             if (addressReplicationSettings == null)
@@ -134,6 +143,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{alias}/settings/retention")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutAddressRetentionSettings(string alias, [FromBody] AddressRetentionSettings addressRetentionSettings)
         {
             if (addressRetentionSettings == null)
@@ -149,6 +159,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{alias}/settings/schema")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutAddressSchemaSettings(string alias, [FromBody] AddressSchemaSettings addressSchemaSettings)
         {
             if (addressSchemaSettings == null)
@@ -164,6 +175,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPost("{alias}/promote")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PromoteAddress(string alias)
         {
             (bool isPromoted, string message) = _addressService.PromoteAddress(alias, "system");
@@ -176,6 +188,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpDelete("{alias}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> DeleteAddress(string alias)
         {
             (bool isDeleted, string message) = _addressService.DeleteAddress(alias);

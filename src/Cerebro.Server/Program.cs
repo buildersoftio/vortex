@@ -1,6 +1,7 @@
-using Cerebro.Core.Utilities.Consts;
 using Cerebro.Server.DependencyInjection;
+using Cerebro.Server.Handlers;
 using Cerebro.Server.Middleware;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text.Json.Serialization;
@@ -14,11 +15,6 @@ Log.Logger = new LoggerConfiguration()
 
 // adding Serilog
 builder.Host.UseSerilog();
-
-
-//TODO figure it out, move the default envs from here
-// setting default env variables
-Environment.SetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFaildTaskInterval, "300");
 
 // ---------------------------------------------------------------------
 // Configure Services
@@ -43,6 +39,30 @@ builder.Services.AddSwaggerGen(c =>
         License = new OpenApiLicense() { Name = "Licensed under the Apache License 2.0", Url = new Uri("https://bit.ly/3DqVQbx") }
 
     });
+
+    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "basic",
+        In = ParameterLocation.Header,
+        Description = "Basic Authorization header using the Bearer scheme."
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "basic"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
 
 // Adding IO Services
@@ -53,6 +73,9 @@ builder.Services.AddGRPCClusterServer();
 builder.Services.AddSystemStarterService();
 builder.Services.AddIOServices();
 builder.Services.AddOrchestators();
+
+builder.Services.AddAuthentication("Cerebro_Authentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Cerebro_Authentication", null);
 
 // Adding Factories
 builder.Services.AddFactories();
@@ -78,7 +101,10 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<RestLoggingMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.UseSystemStarterService();

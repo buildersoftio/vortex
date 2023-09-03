@@ -78,6 +78,9 @@ namespace Cerebro.Core.Services
             _logger.LogInformation($"Server environment:user.name: {Environment.UserName}");
             _logger.LogInformation($"Server environment:processor.count: {Environment.ProcessorCount}");
             _logger.LogInformation($"Server environment:dotnet.version: {Environment.Version}");
+
+            Console.WriteLine("");
+            SetDefaultEnvironmentVariables();
             Console.WriteLine("");
 
             _logger.LogInformation("Update settings");
@@ -91,6 +94,15 @@ namespace Cerebro.Core.Services
             RunCluster();
 
             _logger.LogInformation($"{SystemProperties.ShortName} is ready");
+        }
+
+        private void SetDefaultEnvironmentVariables()
+        {
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFaildTaskInterval) == null)
+            {
+                _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundServiceFaildTaskInterval}: 300");
+                Environment.SetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFaildTaskInterval, "300");
+            }
         }
 
         private void CreateLoggingDirectory()

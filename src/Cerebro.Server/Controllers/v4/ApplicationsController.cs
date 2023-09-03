@@ -1,7 +1,9 @@
 ﻿using Cerebro.Core.Abstractions.Services;
 using Cerebro.Core.Models.Common.Clients.Applications;
 using Cerebro.Core.Models.Dtos.Applications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Cerebro.Server.Controllers.v4
 {
@@ -21,6 +23,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPost()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PostApplication([FromBody] ApplicationDto applicationDto,
             [FromQuery] bool IsWithPermissions,
             [FromQuery] string? readAddressPermission,
@@ -45,6 +48,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<List<ApplicationDto>> GetApplications([FromQuery] bool getAll)
         {
             if (getAll)
@@ -64,6 +68,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpGet("{applicationName}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<List<ApplicationDto>> GetApplications(string applicationName)
         {
             (var application, string message) = _applicationService.GetApplication(applicationName);
@@ -76,6 +81,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPost("{applicationName}/promote")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PromoteApplication(string applicationName)
         {
             (bool isPromoted, string message) = _applicationService.PromoteApplication(applicationName, "system");
@@ -88,6 +94,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{applicationName}/settings")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutApplicationSettings(string applicationName, [FromBody] ApplicationSettings applicationSettings)
         {
             (var result, string message) = _applicationService.EditApplicationSettings(applicationName, applicationSettings, "system");
@@ -100,6 +107,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{applicationName}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutApplicationSettings(string applicationName, [FromQuery] string applicationDescription)
         {
             (var result, string message) = _applicationService.EditApplicationDescription(applicationName, applicationDescription, "system");
@@ -112,6 +120,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{applicationName}/deactivate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutDeactivateApplication(string applicationName)
         {
             (var result, string message) = _applicationService.DeactivateApplication(applicationName, "system");
@@ -124,6 +133,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{applicationName}/activate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutActivateApplication(string applicationName)
         {
             (var result, string message) = _applicationService.ActivateApplication(applicationName, "system");
@@ -136,6 +146,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpDelete("applicationName")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> DeleteApplication(string applicationName, [FromQuery] bool isSoftDelete)
         {
             bool result;
@@ -156,6 +167,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPost("{applicationName}/tokens")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<TokenResponse> PostApplicationToken(string applicationName, [FromBody] TokenRequest request)
         {
             (var result, string message) = _applicationService.CreateApplicationToken(applicationName, request, "system");
@@ -169,6 +181,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpGet("{applicationName}/tokens")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<List<ApplicationTokenDto>> GetApplicationTokens(string applicationName)
         {
             (var result, string message) = _applicationService.GetApplicationTokens(applicationName);
@@ -181,6 +194,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpGet("{applicationName}/tokens/{apiKey}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<ApplicationTokenDto> GetApplicationToken(string applicationName, Guid apiKey)
         {
             (var result, string message) = _applicationService.GetApplicationToken(applicationName, apiKey);
@@ -193,6 +207,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{applicationName}/tokens/{apiKey}/revoke")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> RevokeApplicationToken(string applicationName, Guid apiKey)
         {
             (var status, string message) = _applicationService.RevokeApplicationToken(applicationName, apiKey, "system");
@@ -206,7 +221,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpGet("{applicationName}/permissions")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<ApplicationPermissionDto> GetApplicationPermissions(string applicationName)
         {
             (var result, string message) = _applicationService.GetApplicationPermissions(applicationName);
@@ -219,6 +234,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{applicationName}/permissions/read")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutReadAddressPermission(string applicationName, [FromBody] string value)
         {
             (var status, string message) = _applicationService.EditReadAddressApplicationPermission(applicationName, value, "system");
@@ -231,6 +247,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{applicationName}/permissions/write")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutWriteAddressPermission(string applicationName, [FromBody] string value)
         {
             (var status, string message) = _applicationService.EditWriteAddressApplicationPermission(applicationName, value, "system");
@@ -243,6 +260,7 @@ namespace Cerebro.Server.Controllers.v4
         [HttpPut("{applicationName}/permissions/create")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [Authorize(Roles = "Admin")]
         public ActionResult<string> PutCreateAddressPermission(string applicationName, [FromBody] bool value)
         {
             (var status, string message) = _applicationService.EditCreateAddressApplicationPermission(applicationName, value, "system");

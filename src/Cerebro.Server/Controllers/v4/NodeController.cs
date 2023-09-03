@@ -1,7 +1,9 @@
 ﻿using Cerebro.Core.Models.Common.System;
 using Cerebro.Core.Models.Configurations;
 using Cerebro.Core.Utilities.Consts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace Cerebro.Server.Controllers.v4
 {
@@ -42,6 +44,7 @@ namespace Cerebro.Server.Controllers.v4
         }
 
         [HttpGet("status")]
+        [Authorize(Roles = "Admin,Readonly")]
         public ActionResult<string> GetNodeStatus()
         {
             return Ok("NOT_IMPLEMENTED; statuses will be [Online, Starting, Offline, Recovering]");
