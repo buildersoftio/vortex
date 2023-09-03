@@ -12,13 +12,11 @@ namespace Cerebro.Core.Services.Entries
     {
         private readonly ILogger<PartitionEntryService> _logger;
         private readonly IPartitionEntryRepository _partitionEntryRepository;
-        private readonly NodeConfiguration _nodeConfiguration;
 
-        public PartitionEntryService(ILogger<PartitionEntryService> logger, IPartitionEntryRepository partitionEntryRepository, NodeConfiguration nodeConfiguration)
+        public PartitionEntryService(ILogger<PartitionEntryService> logger, IPartitionEntryRepository partitionEntryRepository)
         {
             _logger = logger;
             _partitionEntryRepository = partitionEntryRepository;
-            _nodeConfiguration = nodeConfiguration;
         }
 
         public bool CreatePartitionEntry(int addressId, string addressAlias, int partitionId, MessageIndexTypes messageIndexType, string createdBy)
@@ -35,7 +33,7 @@ namespace Cerebro.Core.Services.Entries
                 CreatedAt = DateTimeOffset.UtcNow,
                 CreatedBy = createdBy,
                 MessageIndexType = messageIndexType,
-                NodeId = _nodeConfiguration.NodeId,
+                NodeOwner = "na",
 
                 // storing will start from 1, and it will increese as 'i++'
                 //TODO: Check the starting entry when we implement RocksDB Services

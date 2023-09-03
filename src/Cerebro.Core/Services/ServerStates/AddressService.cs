@@ -1,5 +1,7 @@
 ﻿using Cerebro.Core.Abstractions.Background;
+using Cerebro.Core.Abstractions.Clustering;
 using Cerebro.Core.Abstractions.Services;
+using Cerebro.Core.Models.BackgroundRequests;
 using Cerebro.Core.Models.Common.Addresses;
 using Cerebro.Core.Models.Configurations;
 using Cerebro.Core.Models.Dtos.Addresses;
@@ -13,17 +15,19 @@ namespace Cerebro.Core.Services.ServerStates
     {
         private readonly ILogger<AddressService> _logger;
         private readonly IAddressRepository _addressRepository;
-        private readonly ISimpleBackgroundQueueService<Address> _backgroundServerStateService;
+        private readonly ISimpleBackgroundQueueService<AddressBackgroundRequest> _backgroundServerStateService;
         private readonly IBackgroundQueueService<AddressClusterScopeRequest> _backgroundAddressClusterService;
         private readonly NodeConfiguration _nodeConfiguration;
         private readonly StorageDefaultConfiguration _storageDefaultConfiguration;
+        private readonly IClusterStateRepository _clusterStateRepository;
 
         public AddressService(ILogger<AddressService> logger,
             IAddressRepository addressRepository,
-            ISimpleBackgroundQueueService<Address> backgroundServerStateService,
+            ISimpleBackgroundQueueService<AddressBackgroundRequest> backgroundServerStateService,
             IBackgroundQueueService<AddressClusterScopeRequest> backgroundAddressClusterService,
             NodeConfiguration nodeConfiguration,
-            StorageDefaultConfiguration storageDefaultConfiguration)
+            StorageDefaultConfiguration storageDefaultConfiguration,
+            IClusterStateRepository clusterStateRepository)
         {
             _logger = logger;
             _addressRepository = addressRepository;
@@ -33,6 +37,8 @@ namespace Cerebro.Core.Services.ServerStates
 
             _nodeConfiguration = nodeConfiguration;
             _storageDefaultConfiguration = storageDefaultConfiguration;
+
+            _clusterStateRepository = clusterStateRepository;
         }
 
         public (bool status, string message) CreateAddress(AddressCreationRequest addressCreationRequest, string createdBy, bool requestedByOtherNode = false)
@@ -40,6 +46,15 @@ namespace Cerebro.Core.Services.ServerStates
             (var address, string message) = GetAddressByAliasAndName(addressCreationRequest.Alias, addressCreationRequest.Name);
             if (address != null)
                 return (status: false, message: message);
+
+
+            // checking the replication factor.
+            if (addressCreationRequest.Settings.ReplicationSettings.ReplicationFactor > _clusterStateRepository.GetNodes().Count() + 1)
+                return (status: false, message: $"Address [{addressCreationRequest.Name}] can not be created,  ReplicationFactor should be lower or equal with number of nodes connected in the cluster");
+
+            if (addressCreationRequest.Settings.Scope == AddressScope.SingleScope && addressCreationRequest.Settings.ReplicationSettings.ReplicationFactor > 1)
+                return (status: false, message: $"Address [{addressCreationRequest.Name}] can not be created, in a SingleScope address configuration, ReplicationFactor should be 1");
+
 
             address = new Address()
             {
@@ -58,18 +73,11 @@ namespace Cerebro.Core.Services.ServerStates
 
                 _logger.LogInformation($"Address [{address.Name}] is created successfully");
 
-                _backgroundServerStateService.EnqueueRequest(address);
-
-                // in case of cluster scope, inform other nodes to create address
-                if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
+                _backgroundServerStateService.EnqueueRequest(new AddressBackgroundRequest()
                 {
-                    _backgroundAddressClusterService.EnqueueRequest(new AddressClusterScopeRequest()
-                    {
-                        AddressCreationRequest = addressCreationRequest,
-                        AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressCreationRequested,
-                        RequestedBy = createdBy
-                    });
-                }
+                    Address = address,
+                    IsRequestedFromOtherNode = requestedByOtherNode
+                });
 
                 return (true, $"Address [{addressCreationRequest.Name}] created sucessfully at [{address.Id}]");
             }
@@ -85,7 +93,7 @@ namespace Cerebro.Core.Services.ServerStates
                 Scope = addressDefaultCreationRequest.Scope,
                 MessageIndexType = MessageIndexTypes.DAILY,
                 PartitionSettings = new AddressPartitionSettings() { PartitionNumber = addressDefaultCreationRequest.PartitionNumber },
-                ReplicationSettings = new AddressReplicationSettings() { NodeIdLeader = _nodeConfiguration.NodeId, FollowerReplicationReplicas = "-1" },
+                ReplicationSettings = new AddressReplicationSettings() { ReplicationFactor = addressDefaultCreationRequest.ReplicationFactor },
                 RetentionSettings = new AddressRetentionSettings() { RetentionType = RetentionTypes.DELETE, TimeToLiveInMinutes = -1 },
                 SchemaSettings = new AddressSchemaSettings(),
                 StorageSettings = new AddressStorageSettings(_storageDefaultConfiguration),
@@ -114,7 +122,7 @@ namespace Cerebro.Core.Services.ServerStates
             {
 
                 address.Status = AddressStatuses.DeletePartitions;
-                _backgroundServerStateService.EnqueueRequest(address);
+                _backgroundServerStateService.EnqueueRequest(new AddressBackgroundRequest() { Address = address });
 
                 // in case of cluster scope, inform other nodes to create address
                 if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
@@ -161,20 +169,7 @@ namespace Cerebro.Core.Services.ServerStates
                 _logger.LogInformation($"Address [{address.Name}] partitions change at {addressPartitionSettings.PartitionNumber} requested");
                 _logger.LogInformation($"Address [{address.Name}] initializing new partitions");
 
-                _backgroundServerStateService.EnqueueRequest(address);
-
-
-                // in case of cluster scope, inform other nodes
-                if (address.Settings.Scope == AddressScope.ClusterScope && requestedByOtherNode != true)
-                {
-                    _backgroundAddressClusterService.EnqueueRequest(new AddressClusterScopeRequest()
-                    {
-                        AddressCreationRequest = new AddressCreationRequest() { Alias = address.Alias, Name = address.Name, Settings = address.Settings },
-                        AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressPartitionChangeRequested,
-                        RequestedBy = updatedBy
-                    });
-                }
-
+                _backgroundServerStateService.EnqueueRequest(new AddressBackgroundRequest() { Address = address, IsRequestedFromOtherNode = requestedByOtherNode });
 
                 return (status: true, message: $"Address [{address.Name}] partition settings changed");
             }

@@ -2,10 +2,9 @@
 {
     public class AddressReplicationSettings
     {
-        public string NodeIdLeader { get; set; }
 
-        // in case of * it means it should replicate data to all nodes
-        // e.g.,  [partitionId]:[brokerId],[partitionId]:[brokerId],…
-        public string FollowerReplicationReplicas { get; set; }
+        // How many replicas the users wants to have in the cluster.
+        // max number of replicas is max number of nodes in the cluster.
+        public int ReplicationFactor { get; set; }
     }
 }

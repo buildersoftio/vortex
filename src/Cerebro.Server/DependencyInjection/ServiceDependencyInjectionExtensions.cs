@@ -5,7 +5,6 @@ using Cerebro.Core.Abstractions.Services.Orchestrations;
 using Cerebro.Core.Models.BackgroundRequests;
 using Cerebro.Core.Models.Dtos.Addresses;
 using Cerebro.Core.Models.Dtos.Applications;
-using Cerebro.Core.Models.Entities.Addresses;
 using Cerebro.Core.Services.Background;
 using Cerebro.Core.Services.Clustering;
 using Cerebro.Core.Services.Clustering.Background;
@@ -33,7 +32,7 @@ namespace Cerebro.Server.DependencyInjection
 
         public static void AddBackgroundServerStateServices(this IServiceCollection services)
         {
-            services.AddSingleton<ISimpleBackgroundQueueService<Address>, AddressBackgroundServerStateService>();
+            services.AddSingleton<ISimpleBackgroundQueueService<AddressBackgroundRequest>, AddressBackgroundServerStateService>();
             services.AddSingleton<IBackgroundQueueService<AddressClusterScopeRequest>, AddressClusterSyncBackgroundService>();
 
             services.AddSingleton<IBackgroundQueueService<ApplicationClusterScopeRequest>, ApplicationClusterSyncBackgroundService>();

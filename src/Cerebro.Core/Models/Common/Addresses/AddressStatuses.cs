@@ -10,6 +10,7 @@
         NoStorageLeft,
         Blocked,
         ChangePartitions,
-        DeletePartitions
+        DeletePartitions,
+        Failed
     }
 }

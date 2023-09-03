@@ -20,5 +20,8 @@ namespace Cerebro.Core.Models.Dtos.Addresses
 
         [Range(1, 20)]
         public int PartitionNumber { get; set; }
+
+        [Range(1, 10)]
+        public int ReplicationFactor { get; set; }
     }
 }
