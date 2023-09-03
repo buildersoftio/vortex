@@ -7,12 +7,11 @@ namespace Cerebro.Core.Models.Entities.Entries
     {
         public int Id { get; set; }
 
-        public string NodeId { get; set; }
+        public string NodeOwner { get; set; }
 
         public int AddressId { get; set; }
         public int PartitionId { get; set; }
         public string AddressAlias { get; set; }
-
 
         public MessageIndexTypes MessageIndexType { get; set; }
 

@@ -8,6 +8,8 @@
   },
   "Settings": {
     "HeartbeatInterval": 10,
-    "HeartbeatTimeout": 30
+    "HeartbeatTimeout": 30,
+    // PartitionDistribution Types: RoundRobin=0;  RackDriven=1
+    "PartitionDistribution": 0
   }
 }

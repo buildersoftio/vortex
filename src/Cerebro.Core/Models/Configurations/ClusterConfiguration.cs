@@ -17,8 +17,6 @@ namespace Cerebro.Core.Models.Configurations
         }
     }
 
-
-
     public class NodeConfig
     {
         public string Address { get; set; }

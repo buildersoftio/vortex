@@ -9,9 +9,12 @@ namespace Cerebro.Core.Models.Dtos.Addresses
 
         public string RequestedBy { get; set; }
 
+        public bool IsRequestedFromOtherNode { get; set; }
+
         public AddressClusterScopeRequest()
         {
             AddressClusterScopeRequestState = AddressClusterScopeRequestState.AddressCreationRequested;
+            IsRequestedFromOtherNode = false;
         }
     }
 
