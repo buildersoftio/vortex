@@ -12,6 +12,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Cerebro.Cluster.Infrastructure\Cerebro.Cluster.Infrastructure.csproj" />
 		<ProjectReference Include="..\Cerebro.Core\Cerebro.Core.csproj" />
+		<ProjectReference Include="..\Cerebro.Grpc\Cerebro.Grpc.csproj" />
 		<ProjectReference Include="..\Cerebro.Infrastructure\Cerebro.Infrastructure.csproj" />
 	</ItemGroup>
 

@@ -5,7 +5,8 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "CEREBRO_BROKER_PORT": "6540"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "http://localhost:5228"

@@ -18,15 +18,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Protos\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\Cerebro.Core\Cerebro.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="Protos\ClientIntegration.proto" GrpcServices="Both" />
+		<Protobuf Include="Protos\ApplicationIntegration.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 </Project>

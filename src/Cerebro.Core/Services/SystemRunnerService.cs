@@ -1,4 +1,5 @@
-﻿using Cerebro.Core.Abstractions.Clustering;
+﻿using Cerebro.Core.Abstractions.Clients;
+using Cerebro.Core.Abstractions.Clustering;
 using Cerebro.Core.Abstractions.IO.Services;
 using Cerebro.Core.IO.Services;
 using Cerebro.Core.Models.Configurations;
@@ -17,6 +18,7 @@ namespace Cerebro.Core.Services
         private readonly ITemporaryIOService _temporaryIOService;
         private readonly NodeConfiguration _nodeConfiguration;
         private INodeExchangeServer? _nodeExchangeServer;
+        private IClientIntegrationServer? _brokerIntegrationServer;
 
         // from here we are changing the default state of the storage configuration
         private readonly StorageDefaultConfiguration _storageDefaultConfiguration;
@@ -92,6 +94,7 @@ namespace Cerebro.Core.Services
             UpdateStateOfDefaultConfiguration();
 
             RunCluster();
+            RunBroker();
 
             _logger.LogInformation($"{SystemProperties.ShortName} is ready");
         }
@@ -147,6 +150,11 @@ namespace Cerebro.Core.Services
                 Console.WriteLine($"                CLUSTER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionPort)}");
             if (Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionSSLPort) != null)
                 Console.WriteLine($"                CLUSTER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionSSLPort)} SSL");
+
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.BrokerPort) != null)
+                Console.WriteLine($"                 BROKER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.BrokerPort)}");
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.BrokerConnectionSSLPort) != null)
+                Console.WriteLine($"                 BROKER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.BrokerConnectionSSLPort)} SSL");
         }
         private string GetOSName()
         {
@@ -242,6 +250,13 @@ namespace Cerebro.Core.Services
             _nodeExchangeServer = _serviceProvider.GetService(typeof(INodeExchangeServer)) as INodeExchangeServer;
             _nodeExchangeServer!.Start();
             _clusterManager.Start();
+        }
+
+
+        private void RunBroker()
+        {
+            _brokerIntegrationServer = _serviceProvider.GetService(typeof(IClientIntegrationServer)) as IClientIntegrationServer;
+            _brokerIntegrationServer!.Start();
         }
     }
 }

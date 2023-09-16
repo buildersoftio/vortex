@@ -69,6 +69,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddConfigurations(builder.Configuration);
 
 builder.Services.AddGRPCClusterServer();
+builder.Services.AddGRPCBrokerServer();
 
 builder.Services.AddSystemStarterService();
 builder.Services.AddIOServices();

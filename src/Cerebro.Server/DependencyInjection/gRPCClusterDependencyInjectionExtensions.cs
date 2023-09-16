@@ -1,4 +1,4 @@
-﻿using Cerebro.Cluster.Infrastructure.Servers;
+﻿using Cerebro.Cluster.Infrastructure.Servers.gRPC;
 using Cerebro.Core.Abstractions.Clustering;
 
 namespace Cerebro.Server.DependencyInjection
@@ -7,7 +7,7 @@ namespace Cerebro.Server.DependencyInjection
     {
         public static void AddGRPCClusterServer(this IServiceCollection services)
         {
-            services.AddSingleton<INodeExchangeServer, gRPCNodeExchangeServer>();
+            services.AddSingleton<INodeExchangeServer, NodeExchangeServer>();
         }
     }
 }

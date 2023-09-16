@@ -10,28 +10,25 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using NodeExchange;
 
-namespace Cerebro.Cluster.Infrastructure.Servers
+namespace Cerebro.Cluster.Infrastructure.Servers.gRPC
 {
-    public class gRPCNodeExchangeServer : NodeExchangeService.NodeExchangeServiceBase, INodeExchangeServer
+    public class NodeExchangeServer : NodeExchangeService.NodeExchangeServiceBase, INodeExchangeServer
     {
-        private readonly ILogger<gRPCNodeExchangeServer> _logger;
+        private readonly ILogger<NodeExchangeServer> _logger;
 
         private readonly int _port;
         private readonly NodeConfiguration _nodeConfiguration;
         private readonly Server _server;
-        private readonly IClusterStateRepository _clusterStateRepository;
         private readonly IAddressService _addressService;
         private readonly IApplicationService _applicationService;
 
-        public gRPCNodeExchangeServer(ILogger<gRPCNodeExchangeServer> logger,
+        public NodeExchangeServer(ILogger<NodeExchangeServer> logger,
             NodeConfiguration nodeConfiguration,
-            IClusterStateRepository clusterStateRepository,
             IAddressService addressService,
             IApplicationService applicationService)
         {
             _logger = logger;
             _nodeConfiguration = nodeConfiguration;
-            _clusterStateRepository = clusterStateRepository;
             _addressService = addressService;
             _applicationService = applicationService;
 
@@ -45,7 +42,7 @@ namespace Cerebro.Cluster.Infrastructure.Servers
 
             _server = new Server()
             {
-                Services = { NodeExchange.NodeExchangeService.BindService(this) },
+                Services = { NodeExchangeService.BindService(this) },
                 Ports = { new ServerPort(hostName, _port, ServerCredentials.Insecure) }
             };
         }
@@ -66,7 +63,7 @@ namespace Cerebro.Cluster.Infrastructure.Servers
             if (_port != -1)
             {
                 _server.Start();
-                _logger.LogInformation($"Cluster listening on port " + _port + " for node " + _nodeConfiguration.NodeId);
+                _logger.LogInformation("Cluster listening on port " + _port + " for node " + _nodeConfiguration.NodeId);
             }
         }
 
