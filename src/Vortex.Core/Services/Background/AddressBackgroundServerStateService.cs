@@ -1,20 +1,20 @@
-﻿using Cerebro.Core.Abstractions.Background;
-using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Abstractions.Factories;
-using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.IO;
-using Cerebro.Core.IO.Services;
-using Cerebro.Core.Models.BackgroundRequests;
-using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Common.Clusters;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Models.Dtos.Addresses;
-using Cerebro.Core.Repositories;
-using Cerebro.Core.Services.Data;
-using Cerebro.Core.Utilities.Extensions;
+﻿using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Abstractions.Factories;
+using Vortex.Core.Abstractions.Services;
+using Vortex.Core.IO;
+using Vortex.Core.IO.Services;
+using Vortex.Core.Models.BackgroundRequests;
+using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Common.Clusters;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Models.Dtos.Addresses;
+using Vortex.Core.Repositories;
+using Vortex.Core.Services.Data;
+using Vortex.Core.Utilities.Extensions;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Core.Services.Background
+namespace Vortex.Core.Services.Background
 {
     public class AddressBackgroundServerStateService : SimpleBackgroundQueueServiceBase<AddressBackgroundRequest>
     {
@@ -133,7 +133,7 @@ namespace Cerebro.Core.Services.Background
                     _partitionEntryService.UpdatePartitionEntry(entryPosition);
                 }
 
-                _logger.LogInformation($"Address [{request.Address.Name}] partitions intialized successfully");
+                _logger.LogInformation($"Address [{request.Address.Name}] partitions initialized successfully");
 
 
                 // inform other nodes to create the new address in case address is new..

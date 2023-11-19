@@ -1,8 +1,8 @@
-﻿using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Dtos.Applications;
-using Cerebro.Core.Models.Entities.Clients.Applications;
+﻿using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Dtos.Applications;
+using Vortex.Core.Models.Entities.Clients.Applications;
 
-namespace Cerebro.Core.Abstractions.Services
+namespace Vortex.Core.Abstractions.Services
 {
     public interface IApplicationService
     {

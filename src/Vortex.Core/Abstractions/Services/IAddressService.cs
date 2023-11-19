@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Dtos.Addresses;
+﻿using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Dtos.Addresses;
 
-namespace Cerebro.Core.Abstractions.Services
+namespace Vortex.Core.Abstractions.Services
 {
     public interface IAddressService
     {

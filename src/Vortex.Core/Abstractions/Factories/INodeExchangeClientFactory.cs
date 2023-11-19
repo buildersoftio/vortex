@@ -1,8 +1,8 @@
-﻿using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Models.Common.Clusters;
-using Cerebro.Core.Models.Configurations;
+﻿using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Models.Common.Clusters;
+using Vortex.Core.Models.Configurations;
 
-namespace Cerebro.Core.Abstractions.Factories
+namespace Vortex.Core.Abstractions.Factories
 {
     public interface INodeExchangeClientFactory
     {

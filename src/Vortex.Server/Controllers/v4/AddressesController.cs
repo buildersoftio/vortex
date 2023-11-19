@@ -1,10 +1,10 @@
-﻿using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Dtos.Addresses;
+﻿using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Dtos.Addresses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Cerebro.Server.Controllers.v4
+namespace Vortex.Server.Controllers.v4
 {
     [Route("api/v4/addresses")]
     [ApiController]

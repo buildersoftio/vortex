@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Abstractions.Clients;
-using Cerebro.Grpc.Servers;
+﻿using Vortex.Core.Abstractions.Clients;
+using Vortex.Grpc.Servers;
 
-namespace Cerebro.Server.DependencyInjection
+namespace Vortex.Server.DependencyInjection
 {
     public static class gRPCBrokerDependencyInjectionExtensions
     {

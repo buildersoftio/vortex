@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Abstractions.Background;
-using Cerebro.Core.Models.Entities.Clients.Applications;
+﻿using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Models.Entities.Clients.Applications;
 
-namespace Cerebro.Core.Models.Dtos.Applications
+namespace Vortex.Core.Models.Dtos.Applications
 {
     public class ApplicationClusterScopeRequest : RequestBase
     {

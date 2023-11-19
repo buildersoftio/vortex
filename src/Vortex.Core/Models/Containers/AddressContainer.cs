@@ -1,9 +1,9 @@
-﻿using Cerebro.Core.Abstractions.Services.Data;
-using Cerebro.Core.Models.Data;
-using Cerebro.Core.Models.Entities.Entries;
+﻿using Vortex.Core.Abstractions.Services.Data;
+using Vortex.Core.Models.Data;
+using Vortex.Core.Models.Entities.Entries;
 using System.Collections.Concurrent;
 
-namespace Cerebro.Core.Models.Containers
+namespace Vortex.Core.Models.Containers
 {
     public class AddressContainer
     {

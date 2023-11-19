@@ -1,13 +1,13 @@
-﻿using Cerebro.Core.Abstractions.Clients;
-using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Abstractions.IO.Services;
-using Cerebro.Core.IO.Services;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Utilities.Consts;
+﻿using Vortex.Core.Abstractions.Clients;
+using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Abstractions.IO.Services;
+using Vortex.Core.IO.Services;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Utilities.Consts;
 using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 
-namespace Cerebro.Core.Services
+namespace Vortex.Core.Services
 {
     public class SystemRunnerService
     {
@@ -52,13 +52,22 @@ namespace Cerebro.Core.Services
 
         public void Start()
         {
-            Console.WriteLine("\r\n           ____                  _                 " + $"       Starting {SystemProperties.Name}" +
-                "\r\n          / ___| ___  _ __  ___ | |__   _ __  ___  " + "       Set your information in motion." +
-                "\r\n         | |    / _ \\| '__|/ _ \\| '_ \\ | '__|/ _ " +
-                "\r\n         | |___|  __/| |  |  __/| |_) || |  | (_) |" + $"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC." +
-                "\r\n          \\____|\\___||_|   \\___||_.__/ |_|   \\___/ " + $"       Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx" +
-                "\r\n                                                   " + "       Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integrations." +
-                "\r\n");
+
+            Console.WriteLine(
+                "\n                     _            " + $"       Starting {SystemProperties.Name}" +
+                "\n    __   _____  _ __| |_ _____  __" + "       Set your information in motion." +
+                "\n    \\ \\ / / _ \\| '__| __/ _ \\ \\/ /" +
+                "\n     \\ V / (_) | |  | ||  __/>  < " + $"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC." +
+                "\n      \\_/ \\___/|_|   \\__\\___/_/\\_\\" + $"       Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx \n\n");
+
+            //Console.WriteLine("\r\n           ____                  _                 " + $"       Starting {SystemProperties.Name}" +
+            //    "\r\n          / ___| ___  _ __  ___ | |__   _ __  ___  " + "       Set your information in motion." +
+            //    "\r\n         | |    / _ \\| '__|/ _ \\| '_ \\ | '__|/ _ " +
+            //    "\r\n         | |___|  __/| |  |  __/| |_) || |  | (_) |" + $"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC." +
+            //    "\r\n          \\____|\\___||_|   \\___||_.__/ |_|   \\___/ " + $"       Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx" +
+            //    "\r\n                                                   " + "       Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integrations." +
+            //    "\r\n");
+
 
             ExposePorts();
 

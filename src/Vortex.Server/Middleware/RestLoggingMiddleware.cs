@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Server.Middleware
+﻿namespace Vortex.Server.Middleware
 {
     public class RestLoggingMiddleware
     {

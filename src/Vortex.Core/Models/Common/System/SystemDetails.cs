@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.Common.System
+﻿namespace Vortex.Core.Models.Common.System
 {
     public class SystemDetails
     {

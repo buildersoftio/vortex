@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Entities.Addresses;
+﻿using Vortex.Core.Models.Entities.Addresses;
 
-namespace Cerebro.Core.IO
+namespace Vortex.Core.IO
 {
     public static class DataLocations
     {

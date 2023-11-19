@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Cerebro.Core.Models.Common.Addresses
+namespace Vortex.Core.Models.Common.Addresses
 {
     public class AddressPartitionSettings
     {

@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Cerebro.Core.Utilities.Extensions
+namespace Vortex.Core.Utilities.Extensions
 {
     public static class CryptographyExtensions
     {

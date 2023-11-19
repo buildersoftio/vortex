@@ -1,15 +1,15 @@
-﻿using Cerebro.Core.Abstractions.Background;
-using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Dtos.Applications;
-using Cerebro.Core.Models.Entities.Clients.Applications;
-using Cerebro.Core.Repositories;
-using Cerebro.Core.Utilities.Consts;
-using Cerebro.Core.Utilities.Extensions;
-using Cerebro.Core.Utilities.Validators;
+﻿using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Dtos.Applications;
+using Vortex.Core.Models.Entities.Clients.Applications;
+using Vortex.Core.Repositories;
+using Vortex.Core.Utilities.Consts;
+using Vortex.Core.Utilities.Extensions;
+using Vortex.Core.Utilities.Validators;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Core.Services.ServerStates
+namespace Vortex.Core.Services.ServerStates
 {
     public class ApplicationService : IApplicationService
     {

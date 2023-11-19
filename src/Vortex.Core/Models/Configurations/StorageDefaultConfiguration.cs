@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Common.Addresses;
+﻿using Vortex.Core.Models.Common.Addresses;
 
-namespace Cerebro.Core.Models.Configurations
+namespace Vortex.Core.Models.Configurations
 {
     public class StorageDefaultConfiguration
     {

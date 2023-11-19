@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Models.Common;
-using Cerebro.Core.Models.Entities.Clients.Applications;
+﻿using Vortex.Core.Models.Common;
+using Vortex.Core.Models.Entities.Clients.Applications;
 
-namespace Cerebro.Core.Models.Dtos.Applications
+namespace Vortex.Core.Models.Dtos.Applications
 {
     public class ApplicationTokenDto
     {

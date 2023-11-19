@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Abstractions.Background
+﻿namespace Vortex.Core.Abstractions.Background
 {
     public interface IDailyJobService
     {

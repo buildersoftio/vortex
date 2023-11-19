@@ -1,13 +1,13 @@
 ﻿
-using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Abstractions.Repositories;
-using Cerebro.Core.Repositories;
-using Cerebro.Core.Repositories.Clustering;
-using Cerebro.Infrastructure.DataAccess.IndexesState;
-using Cerebro.Infrastructure.DataAccess.ServerStateStore;
-using Cerebro.Infrastructure.Repositories;
+using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Abstractions.Repositories;
+using Vortex.Core.Repositories;
+using Vortex.Core.Repositories.Clustering;
+using Vortex.Infrastructure.DataAccess.IndexesState;
+using Vortex.Infrastructure.DataAccess.ServerStateStore;
+using Vortex.Infrastructure.Repositories;
 
-namespace Cerebro.Server.DependencyInjection
+namespace Vortex.Server.DependencyInjection
 {
     public static class DataAccessDependencyInjectionExtensions
     {

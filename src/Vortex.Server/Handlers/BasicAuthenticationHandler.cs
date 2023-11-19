@@ -1,4 +1,4 @@
-﻿using Cerebro.Core.Models.Configurations;
+﻿using Vortex.Core.Models.Configurations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace Cerebro.Server.Handlers
+namespace Vortex.Server.Handlers
 {
     public class BasicAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {

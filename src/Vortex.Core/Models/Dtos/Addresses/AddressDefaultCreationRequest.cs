@@ -1,8 +1,8 @@
-﻿using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Utilities.Attributes;
+﻿using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Utilities.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Cerebro.Core.Models.Dtos.Addresses
+namespace Vortex.Core.Models.Dtos.Addresses
 {
     public class AddressDefaultCreationRequest
     {

@@ -1,10 +1,10 @@
-﻿using Cerebro.Core.IO;
-using Cerebro.Core.IO.Services;
-using Cerebro.Core.Models.Configurations;
+﻿using Vortex.Core.IO;
+using Vortex.Core.IO.Services;
+using Vortex.Core.Models.Configurations;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace Cerebro.Infrastructure.IO.Services
+namespace Vortex.Infrastructure.IO.Services
 {
     public class ConfigIOService : IConfigIOService
     {

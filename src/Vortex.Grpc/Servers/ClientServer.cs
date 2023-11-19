@@ -1,10 +1,10 @@
 ﻿using ApplicationIntegration;
-using Cerebro.Core.Abstractions.Clients;
-using Cerebro.Core.Utilities.Consts;
+using Vortex.Core.Abstractions.Clients;
+using Vortex.Core.Utilities.Consts;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Grpc.Servers
+namespace Vortex.Grpc.Servers
 {
     public class ClientServer : DataTransmissionService.DataTransmissionServiceBase, IClientIntegrationServer
     {

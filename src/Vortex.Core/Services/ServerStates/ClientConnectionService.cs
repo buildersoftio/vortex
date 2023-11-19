@@ -1,13 +1,13 @@
-﻿using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Dtos.Clients;
-using Cerebro.Core.Models.Entities.Addresses;
-using Cerebro.Core.Models.Entities.Clients.Applications;
-using Cerebro.Core.Repositories;
-using Cerebro.Core.Utilities.Consts;
+﻿using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Dtos.Clients;
+using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Models.Entities.Clients.Applications;
+using Vortex.Core.Repositories;
+using Vortex.Core.Utilities.Consts;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Core.Services.ServerStates
+namespace Vortex.Core.Services.ServerStates
 {
     public class ClientConnectionService : IClientConnectionService
     {

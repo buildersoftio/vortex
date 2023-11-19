@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Common.Addresses;
+﻿using Vortex.Core.Models.Common.Addresses;
 
-namespace Cerebro.Core.Utilities.Extensions
+namespace Vortex.Core.Utilities.Extensions
 {
     public static class AddressIndexExtensions
     {

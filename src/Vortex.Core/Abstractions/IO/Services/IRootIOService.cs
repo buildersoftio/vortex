@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.IO.Services
+﻿namespace Vortex.Core.IO.Services
 {
     public interface IRootIOService
     {

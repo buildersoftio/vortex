@@ -1,15 +1,15 @@
-﻿using Cerebro.Core.Abstractions.Background;
-using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.Models.BackgroundRequests;
-using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Models.Dtos.Addresses;
-using Cerebro.Core.Models.Entities.Addresses;
-using Cerebro.Core.Repositories;
+﻿using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Models.BackgroundRequests;
+using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Models.Dtos.Addresses;
+using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Repositories;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Core.Services.ServerStates
+namespace Vortex.Core.Services.ServerStates
 {
     public class AddressService : IAddressService
     {

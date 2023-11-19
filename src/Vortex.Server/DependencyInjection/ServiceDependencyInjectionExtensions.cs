@@ -1,18 +1,18 @@
-﻿using Cerebro.Core.Abstractions.Background;
-using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.Abstractions.Services.Orchestrations;
-using Cerebro.Core.Models.BackgroundRequests;
-using Cerebro.Core.Models.Dtos.Addresses;
-using Cerebro.Core.Models.Dtos.Applications;
-using Cerebro.Core.Services.Background;
-using Cerebro.Core.Services.Clustering;
-using Cerebro.Core.Services.Clustering.Background;
-using Cerebro.Core.Services.Entries;
-using Cerebro.Core.Services.Orchestrations;
-using Cerebro.Core.Services.ServerStates;
+﻿using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Abstractions.Services.Orchestrations;
+using Vortex.Core.Models.BackgroundRequests;
+using Vortex.Core.Models.Dtos.Addresses;
+using Vortex.Core.Models.Dtos.Applications;
+using Vortex.Core.Services.Background;
+using Vortex.Core.Services.Clustering;
+using Vortex.Core.Services.Clustering.Background;
+using Vortex.Core.Services.Entries;
+using Vortex.Core.Services.Orchestrations;
+using Vortex.Core.Services.ServerStates;
 
-namespace Cerebro.Server.DependencyInjection
+namespace Vortex.Server.DependencyInjection
 {
     public static class ServiceDependencyInjectionExtensions
     {

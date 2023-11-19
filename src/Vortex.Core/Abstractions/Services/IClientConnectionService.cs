@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Dtos.Clients;
+﻿using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Dtos.Clients;
 
-namespace Cerebro.Core.Abstractions.Services
+namespace Vortex.Core.Abstractions.Services
 {
     public interface IClientConnectionService
     {

@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Common.Clients.Applications;
+﻿using Vortex.Core.Models.Common.Clients.Applications;
 
-namespace Cerebro.Core.Models.Dtos.Clients
+namespace Vortex.Core.Models.Dtos.Clients
 {
     public class ClientConnectionDto
     {

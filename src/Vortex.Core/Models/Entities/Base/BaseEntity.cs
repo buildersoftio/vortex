@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.Entities.Base
+﻿namespace Vortex.Core.Models.Entities.Base
 {
     public class BaseEntity
     {

@@ -1,10 +1,10 @@
-﻿using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Dtos.Addresses;
-using Cerebro.Core.Models.Dtos.Applications;
-using Cerebro.Core.Models.Entities.Clients.Applications;
+﻿using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Dtos.Addresses;
+using Vortex.Core.Models.Dtos.Applications;
+using Vortex.Core.Models.Entities.Clients.Applications;
 
-namespace Cerebro.Core.Abstractions.Clustering
+namespace Vortex.Core.Abstractions.Clustering
 {
     public interface INodeExchangeClient
     {

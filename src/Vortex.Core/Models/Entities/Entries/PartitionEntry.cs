@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Entities.Base;
+﻿using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Entities.Base;
 
-namespace Cerebro.Core.Models.Entities.Entries
+namespace Vortex.Core.Models.Entities.Entries
 {
     public class PartitionEntry : BaseEntity
     {

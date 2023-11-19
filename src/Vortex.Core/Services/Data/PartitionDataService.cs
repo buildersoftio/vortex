@@ -1,12 +1,12 @@
-﻿using Cerebro.Core.Abstractions.Factories;
-using Cerebro.Core.Abstractions.Repositories.Data;
-using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.Abstractions.Services.Data;
-using Cerebro.Core.Models.Data;
-using Cerebro.Core.Models.Entities.Addresses;
-using Cerebro.Core.Models.Entities.Entries;
+﻿using Vortex.Core.Abstractions.Factories;
+using Vortex.Core.Abstractions.Repositories.Data;
+using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Abstractions.Services.Data;
+using Vortex.Core.Models.Data;
+using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Models.Entities.Entries;
 
-namespace Cerebro.Core.Services.Data
+namespace Vortex.Core.Services.Data
 {
     public class PartitionDataService : IPartitionDataService<Message>, IDisposable
     {

@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.Common.Clusters
+﻿namespace Vortex.Core.Models.Common.Clusters
 {
     public class ClusterSettings
     {

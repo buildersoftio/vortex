@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Abstractions.Clustering
+﻿namespace Vortex.Core.Abstractions.Clustering
 {
     public interface IClusterManager
     {

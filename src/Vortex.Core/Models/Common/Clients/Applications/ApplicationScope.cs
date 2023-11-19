@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.Common.Clients.Applications
+﻿namespace Vortex.Core.Models.Common.Clients.Applications
 {
     public enum ApplicationScope
     {

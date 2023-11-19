@@ -1,9 +1,9 @@
-﻿using Cerebro.Core.IO;
-using Cerebro.Core.Models.Entities.Addresses;
-using Cerebro.Core.Models.Entities.Clients.Applications;
+﻿using Vortex.Core.IO;
+using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Models.Entities.Clients.Applications;
 using LiteDB;
 
-namespace Cerebro.Infrastructure.DataAccess.ServerStateStore
+namespace Vortex.Infrastructure.DataAccess.ServerStateStore
 {
     public class ServerStateStoreDbContext
     {

@@ -1,11 +1,11 @@
-﻿using Cerebro.Core.Models.Common.System;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Utilities.Consts;
+﻿using Vortex.Core.Models.Common.System;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Utilities.Consts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 
-namespace Cerebro.Server.Controllers.v4
+namespace Vortex.Server.Controllers.v4
 {
     [Route("api/v4/node")]
     [ApiController]

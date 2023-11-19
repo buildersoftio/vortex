@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.Dtos.Applications
+﻿namespace Vortex.Core.Models.Dtos.Applications
 {
     public class ApplicationPermissionDto
     {

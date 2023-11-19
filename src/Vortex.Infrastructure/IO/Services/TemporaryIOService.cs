@@ -1,9 +1,9 @@
-﻿using Cerebro.Core.Abstractions.IO.Services;
-using Cerebro.Core.IO;
-using Cerebro.Core.Utilities.Json;
+﻿using Vortex.Core.Abstractions.IO.Services;
+using Vortex.Core.IO;
+using Vortex.Core.Utilities.Json;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Infrastructure.IO.Services
+namespace Vortex.Infrastructure.IO.Services
 {
     public class TemporaryIOService : ITemporaryIOService
     {

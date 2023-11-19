@@ -1,16 +1,16 @@
-﻿using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Models.Entities.Clients.Applications;
-using Cerebro.Core.Utilities.Consts;
-using Cerebro.Core.Utilities.Json;
+﻿using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Models.Entities.Clients.Applications;
+using Vortex.Core.Utilities.Consts;
+using Vortex.Core.Utilities.Json;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using NodeExchange;
 
-namespace Cerebro.Cluster.Infrastructure.Servers.gRPC
+namespace Vortex.Cluster.Infrastructure.Servers.gRPC
 {
     public class NodeExchangeServer : NodeExchangeService.NodeExchangeServiceBase, INodeExchangeServer
     {

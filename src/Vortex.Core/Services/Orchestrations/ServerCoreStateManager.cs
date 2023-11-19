@@ -1,16 +1,16 @@
-﻿using Cerebro.Core.Abstractions.Background;
-using Cerebro.Core.Abstractions.Factories;
-using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.Abstractions.Services.Orchestrations;
-using Cerebro.Core.Models.Containers;
-using Cerebro.Core.Models.Entities.Addresses;
-using Cerebro.Core.Models.Entities.Entries;
-using Cerebro.Core.Repositories;
-using Cerebro.Core.Services.Data;
+﻿using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Abstractions.Factories;
+using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Abstractions.Services.Orchestrations;
+using Vortex.Core.Models.Containers;
+using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Models.Entities.Entries;
+using Vortex.Core.Repositories;
+using Vortex.Core.Services.Data;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
-namespace Cerebro.Core.Services.Orchestrations
+namespace Vortex.Core.Services.Orchestrations
 {
     public class ServerCoreStateManager : SimpleBackgroundQueueServiceBase<PartitionEntry>, IServerCoreStateManager
     {

@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Abstractions.Repositories.Data
+﻿namespace Vortex.Core.Abstractions.Repositories.Data
 {
     public interface IPartitionDataRepository
     {

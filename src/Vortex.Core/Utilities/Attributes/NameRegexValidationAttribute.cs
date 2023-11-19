@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace Cerebro.Core.Utilities.Attributes
+namespace Vortex.Core.Utilities.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
     public class NameRegexValidationAttribute : ValidationAttribute

@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Entities.Base;
+﻿using Vortex.Core.Models.Entities.Base;
 
-namespace Cerebro.Core.Models.Entities.Clients.Applications
+namespace Vortex.Core.Models.Entities.Clients.Applications
 {
     public class ApplicationPermission : BaseEntity
     {

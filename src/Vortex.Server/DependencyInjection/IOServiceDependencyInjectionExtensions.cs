@@ -1,11 +1,11 @@
-﻿using Cerebro.Core.Abstractions.IO.Services;
-using Cerebro.Core.IO;
-using Cerebro.Core.IO.Services;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Utilities.Consts;
-using Cerebro.Infrastructure.IO.Services;
+﻿using Vortex.Core.Abstractions.IO.Services;
+using Vortex.Core.IO;
+using Vortex.Core.IO.Services;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Utilities.Consts;
+using Vortex.Infrastructure.IO.Services;
 
-namespace Cerebro.Server.DependencyInjection
+namespace Vortex.Server.DependencyInjection
 {
     public static class IOServiceDependencyInjectionExtensions
     {

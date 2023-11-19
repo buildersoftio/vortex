@@ -1,10 +1,10 @@
-﻿using Cerebro.Core.Abstractions.Background;
-using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.IO.Services;
-using Cerebro.Core.Models.BackgroundRequests;
+﻿using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.IO.Services;
+using Vortex.Core.Models.BackgroundRequests;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Core.Services.Clustering.Background
+namespace Vortex.Core.Services.Clustering.Background
 {
     public class HeartbeatBackgroundService : TimedBackgroundServiceBase<HeartbeatTimerRequest>
     {

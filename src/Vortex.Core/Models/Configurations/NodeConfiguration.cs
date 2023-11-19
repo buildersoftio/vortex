@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.Configurations
+﻿namespace Vortex.Core.Models.Configurations
 {
     public class NodeConfiguration
     {

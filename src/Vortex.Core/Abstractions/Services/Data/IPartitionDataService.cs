@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Abstractions.Services.Data
+﻿namespace Vortex.Core.Abstractions.Services.Data
 {
     public interface IPartitionDataService<T>
     {

@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Entities.Addresses;
+﻿using Vortex.Core.Models.Entities.Addresses;
 
-namespace Cerebro.Core.Models.BackgroundRequests
+namespace Vortex.Core.Models.BackgroundRequests
 {
     public class AddressBackgroundRequest
     {

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Cerebro.Core.Utilities.Json
+namespace Vortex.Core.Utilities.Json
 {
     public static class JsonExtensions
     {

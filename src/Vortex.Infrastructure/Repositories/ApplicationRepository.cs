@@ -1,10 +1,10 @@
-﻿using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Entities.Clients.Applications;
-using Cerebro.Core.Repositories;
-using Cerebro.Infrastructure.DataAccess.ServerStateStore;
+﻿using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Entities.Clients.Applications;
+using Vortex.Core.Repositories;
+using Vortex.Infrastructure.DataAccess.ServerStateStore;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Infrastructure.Repositories
+namespace Vortex.Infrastructure.Repositories
 {
     public class ApplicationRepository : IApplicationRepository
     {

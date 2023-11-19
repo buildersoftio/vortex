@@ -1,8 +1,8 @@
-﻿using Cerebro.Core.Abstractions.Repositories.Data;
-using Cerebro.Core.Models.Entities.Addresses;
-using Cerebro.Core.Models.Entities.Entries;
+﻿using Vortex.Core.Abstractions.Repositories.Data;
+using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Models.Entities.Entries;
 
-namespace Cerebro.Core.Abstractions.Factories
+namespace Vortex.Core.Abstractions.Factories
 {
     public interface IPartitionDataFactory
     {

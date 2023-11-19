@@ -1,9 +1,9 @@
-﻿using Cerebro.Core.Abstractions.IO.Services;
-using Cerebro.Core.Utilities.Consts;
+﻿using Vortex.Core.Abstractions.IO.Services;
+using Vortex.Core.Utilities.Consts;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace Cerebro.Core.Abstractions.Background
+namespace Vortex.Core.Abstractions.Background
 {
     public abstract class BackgroundQueueServiceBase<TRequest> : IBackgroundQueueService<TRequest> where TRequest : RequestBase
     {

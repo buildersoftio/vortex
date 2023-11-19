@@ -1,15 +1,15 @@
-﻿using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Common.Clusters;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Models.Dtos.Addresses;
-using Cerebro.Core.Models.Dtos.Applications;
-using Cerebro.Core.Models.Entities.Clients.Applications;
-using Cerebro.Core.Utilities.Json;
+﻿using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Common.Clusters;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Models.Dtos.Addresses;
+using Vortex.Core.Models.Dtos.Applications;
+using Vortex.Core.Models.Entities.Clients.Applications;
+using Vortex.Core.Utilities.Json;
 using Grpc.Core;
 
-namespace Cerebro.Cluster.Infrastructure.Clients
+namespace Vortex.Cluster.Infrastructure.Clients
 {
     public class gRPCNodeExchangeClient : INodeExchangeClient
     {

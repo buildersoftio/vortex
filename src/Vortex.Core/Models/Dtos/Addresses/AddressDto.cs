@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Entities.Addresses;
+﻿using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Entities.Addresses;
 
-namespace Cerebro.Core.Models.Dtos.Addresses
+namespace Vortex.Core.Models.Dtos.Addresses
 {
     public class AddressDto
     {

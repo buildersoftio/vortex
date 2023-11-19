@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Models.Common.Clusters;
+﻿using Vortex.Core.Models.Common.Clusters;
 using System.Collections.Concurrent;
 
-namespace Cerebro.Core.Abstractions.Clustering
+namespace Vortex.Core.Abstractions.Clustering
 {
     public interface IClusterStateRepository
     {

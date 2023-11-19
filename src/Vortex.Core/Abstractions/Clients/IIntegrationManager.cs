@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Abstractions.Clients
+﻿namespace Vortex.Core.Abstractions.Clients
 {
     public interface IIntegrationManager
     {

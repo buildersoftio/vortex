@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Configurations;
+﻿using Vortex.Core.Models.Configurations;
 
-namespace Cerebro.Core.Models.Common.Addresses
+namespace Vortex.Core.Models.Common.Addresses
 {
     public class AddressStorageSettings
     {

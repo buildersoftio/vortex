@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Entities.Entries;
+﻿using Vortex.Core.Models.Entities.Entries;
 
-namespace Cerebro.Core.Abstractions.Services.Orchestrations
+namespace Vortex.Core.Abstractions.Services.Orchestrations
 {
     public interface IServerCoreStateManager
     {

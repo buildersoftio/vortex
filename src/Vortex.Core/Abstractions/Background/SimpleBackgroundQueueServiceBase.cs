@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Cerebro.Core.Abstractions.Background
+namespace Vortex.Core.Abstractions.Background
 {
     public abstract class SimpleBackgroundQueueServiceBase<TRequest> : ISimpleBackgroundQueueService<TRequest>
     {

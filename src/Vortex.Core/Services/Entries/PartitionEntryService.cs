@@ -1,12 +1,12 @@
-﻿using Cerebro.Core.Abstractions.Repositories;
-using Cerebro.Core.Abstractions.Services;
-using Cerebro.Core.Models.Common.Addresses;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Models.Entities.Entries;
-using Cerebro.Core.Utilities.Extensions;
+﻿using Vortex.Core.Abstractions.Repositories;
+using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Models.Common.Addresses;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Models.Entities.Entries;
+using Vortex.Core.Utilities.Extensions;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Core.Services.Entries
+namespace Vortex.Core.Services.Entries
 {
     public class PartitionEntryService : IPartitionEntryService
     {

@@ -1,10 +1,10 @@
-﻿using Cerebro.Core.Abstractions.Factories;
-using Cerebro.Core.Abstractions.Repositories.Data;
-using Cerebro.Core.Models.Entities.Addresses;
-using Cerebro.Core.Models.Entities.Entries;
-using Cerebro.Infrastructure.Repositories.RocksDb;
+﻿using Vortex.Core.Abstractions.Factories;
+using Vortex.Core.Abstractions.Repositories.Data;
+using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Models.Entities.Entries;
+using Vortex.Infrastructure.Repositories.RocksDb;
 
-namespace Cerebro.Infrastructure.Factories
+namespace Vortex.Infrastructure.Factories
 {
     public class PartitionDataFactory : IPartitionDataFactory
     {

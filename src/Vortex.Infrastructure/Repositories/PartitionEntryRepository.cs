@@ -1,9 +1,9 @@
-﻿using Cerebro.Core.Abstractions.Repositories;
-using Cerebro.Core.Models.Entities.Entries;
-using Cerebro.Infrastructure.DataAccess.IndexesState;
+﻿using Vortex.Core.Abstractions.Repositories;
+using Vortex.Core.Models.Entities.Entries;
+using Vortex.Infrastructure.DataAccess.IndexesState;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Infrastructure.Repositories
+namespace Vortex.Infrastructure.Repositories
 {
     public class PartitionEntryRepository : IPartitionEntryRepository
     {

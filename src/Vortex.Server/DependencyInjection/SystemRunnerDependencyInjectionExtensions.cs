@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Services;
+﻿using Vortex.Core.Services;
 
-namespace Cerebro.Server.DependencyInjection
+namespace Vortex.Server.DependencyInjection
 {
     public static class SystemRunnerDependencyInjectionExtensions
     {

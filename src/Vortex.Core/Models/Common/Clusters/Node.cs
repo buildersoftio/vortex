@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Cerebro.Core.Models.Common.Clusters
+namespace Vortex.Core.Models.Common.Clusters
 {
     public class Node
     {

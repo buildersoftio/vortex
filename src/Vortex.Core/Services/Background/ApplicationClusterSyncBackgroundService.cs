@@ -1,10 +1,10 @@
-﻿using Cerebro.Core.Abstractions.Background;
-using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Abstractions.IO.Services;
-using Cerebro.Core.Models.Dtos.Applications;
+﻿using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Abstractions.IO.Services;
+using Vortex.Core.Models.Dtos.Applications;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Core.Services.Background
+namespace Vortex.Core.Services.Background
 {
     public class ApplicationClusterSyncBackgroundService : BackgroundQueueServiceBase<ApplicationClusterScopeRequest>
     {

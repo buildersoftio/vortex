@@ -1,11 +1,11 @@
-﻿using Cerebro.Core.Abstractions.Repositories.Data;
-using Cerebro.Core.IO;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Models.Entities.Addresses;
-using Cerebro.Core.Models.Entities.Entries;
+﻿using Vortex.Core.Abstractions.Repositories.Data;
+using Vortex.Core.IO;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Models.Entities.Entries;
 using RocksDbSharp;
 
-namespace Cerebro.Infrastructure.Repositories.RocksDb
+namespace Vortex.Infrastructure.Repositories.RocksDb
 {
     public class RocksDbPartitionDataRepository : IPartitionDataRepository
     {

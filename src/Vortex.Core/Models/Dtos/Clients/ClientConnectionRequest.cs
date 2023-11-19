@@ -1,8 +1,8 @@
-﻿using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Utilities.Attributes;
+﻿using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Utilities.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Cerebro.Core.Models.Dtos.Clients
+namespace Vortex.Core.Models.Dtos.Clients
 {
     public class ClientConnectionRequest
     {

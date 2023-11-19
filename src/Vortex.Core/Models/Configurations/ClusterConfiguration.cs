@@ -1,7 +1,7 @@
 ﻿
-using Cerebro.Core.Models.Common.Clusters;
+using Vortex.Core.Models.Common.Clusters;
 
-namespace Cerebro.Core.Models.Configurations
+namespace Vortex.Core.Models.Configurations
 {
     public class ClusterConfiguration
     {

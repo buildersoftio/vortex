@@ -1,6 +1,6 @@
-using Cerebro.Server.DependencyInjection;
-using Cerebro.Server.Handlers;
-using Cerebro.Server.Middleware;
+using Vortex.Server.DependencyInjection;
+using Vortex.Server.Handlers;
+using Vortex.Server.Middleware;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.OpenApi.Models;
 using Serilog;

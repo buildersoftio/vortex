@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Text.RegularExpressions;
 
-namespace Cerebro.Core.Utilities.Validators
+namespace Vortex.Core.Utilities.Validators
 {
     public static class DataValidationExtensions
     {

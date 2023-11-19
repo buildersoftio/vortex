@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Entities.Entries;
+﻿using Vortex.Core.Models.Entities.Entries;
 
-namespace Cerebro.Core.Abstractions.Repositories
+namespace Vortex.Core.Abstractions.Repositories
 {
     public interface IPartitionEntryRepository
     {

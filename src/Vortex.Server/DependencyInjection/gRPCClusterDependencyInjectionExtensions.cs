@@ -1,7 +1,7 @@
-﻿using Cerebro.Cluster.Infrastructure.Servers.gRPC;
-using Cerebro.Core.Abstractions.Clustering;
+﻿using Vortex.Cluster.Infrastructure.Servers.gRPC;
+using Vortex.Core.Abstractions.Clustering;
 
-namespace Cerebro.Server.DependencyInjection
+namespace Vortex.Server.DependencyInjection
 {
     public static class gRPCClusterDependencyInjectionExtensions
     {

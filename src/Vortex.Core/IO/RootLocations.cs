@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Utilities.Consts;
+﻿using Vortex.Core.Utilities.Consts;
 
-namespace Cerebro.Core.IO
+namespace Vortex.Core.IO
 {
     public static class RootLocations
     {

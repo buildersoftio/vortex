@@ -1,8 +1,8 @@
-﻿using Cerebro.Cluster.Infrastructure.Factories;
-using Cerebro.Core.Abstractions.Factories;
-using Cerebro.Infrastructure.Factories;
+﻿using Vortex.Cluster.Infrastructure.Factories;
+using Vortex.Core.Abstractions.Factories;
+using Vortex.Infrastructure.Factories;
 
-namespace Cerebro.Server.DependencyInjection
+namespace Vortex.Server.DependencyInjection
 {
     public static class FactoriesDependencyInjectionExtensions
     {

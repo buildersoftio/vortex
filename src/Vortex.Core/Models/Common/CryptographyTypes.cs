@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.Common
+﻿namespace Vortex.Core.Models.Common
 {
     public enum CryptographyTypes
     {

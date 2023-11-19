@@ -1,14 +1,14 @@
-﻿using Cerebro.Core.Abstractions.Background;
-using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Abstractions.Factories;
-using Cerebro.Core.IO.Services;
-using Cerebro.Core.Models.BackgroundRequests;
-using Cerebro.Core.Models.Common.Clusters;
-using Cerebro.Core.Models.Configurations;
-using Cerebro.Core.Utilities.Consts;
+﻿using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Abstractions.Factories;
+using Vortex.Core.IO.Services;
+using Vortex.Core.Models.BackgroundRequests;
+using Vortex.Core.Models.Common.Clusters;
+using Vortex.Core.Models.Configurations;
+using Vortex.Core.Utilities.Consts;
 using Microsoft.Extensions.Logging;
 
-namespace Cerebro.Core.Services.Clustering
+namespace Vortex.Core.Services.Clustering
 {
     public class ClusterManager : IClusterManager
     {

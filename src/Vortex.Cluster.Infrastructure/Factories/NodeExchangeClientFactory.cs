@@ -1,10 +1,10 @@
-﻿using Cerebro.Cluster.Infrastructure.Clients;
-using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Abstractions.Factories;
-using Cerebro.Core.Models.Common.Clusters;
-using Cerebro.Core.Models.Configurations;
+﻿using Vortex.Cluster.Infrastructure.Clients;
+using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Abstractions.Factories;
+using Vortex.Core.Models.Common.Clusters;
+using Vortex.Core.Models.Configurations;
 
-namespace Cerebro.Cluster.Infrastructure.Factories
+namespace Vortex.Cluster.Infrastructure.Factories
 {
     public class NodeExchangeClientFactory : INodeExchangeClientFactory
     {

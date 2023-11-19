@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.Data
+﻿namespace Vortex.Core.Models.Data
 {
     public class Message
     {

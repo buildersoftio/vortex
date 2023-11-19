@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Entities.Clients.Applications;
+﻿using Vortex.Core.Models.Entities.Clients.Applications;
 
-namespace Cerebro.Core.Utilities.Consts
+namespace Vortex.Core.Utilities.Consts
 {
     public static class DefaultApplicationPermissions
     {

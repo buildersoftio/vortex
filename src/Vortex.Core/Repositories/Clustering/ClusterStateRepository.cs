@@ -1,9 +1,9 @@
-﻿using Cerebro.Core.Abstractions.Clustering;
-using Cerebro.Core.Models.Common.Clusters;
+﻿using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Models.Common.Clusters;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 
-namespace Cerebro.Core.Repositories.Clustering
+namespace Vortex.Core.Repositories.Clustering
 {
     public class ClusterStateRepository : IClusterStateRepository
     {

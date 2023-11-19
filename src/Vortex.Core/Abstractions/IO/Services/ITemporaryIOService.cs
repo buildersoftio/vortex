@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Abstractions.IO.Services
+﻿namespace Vortex.Core.Abstractions.IO.Services
 {
     public interface ITemporaryIOService
     {

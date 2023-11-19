@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Models.BackgroundRequests
+﻿namespace Vortex.Core.Models.BackgroundRequests
 {
     public class HeartbeatTimerRequest
     {

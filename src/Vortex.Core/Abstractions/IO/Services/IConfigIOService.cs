@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Models.Configurations;
+﻿using Vortex.Core.Models.Configurations;
 
-namespace Cerebro.Core.IO.Services
+namespace Vortex.Core.IO.Services
 {
     public interface IConfigIOService
     {

@@ -1,8 +1,8 @@
-﻿using Cerebro.Core.IO;
-using Cerebro.Core.Models.Entities.Entries;
+﻿using Vortex.Core.IO;
+using Vortex.Core.Models.Entities.Entries;
 using LiteDB;
 
-namespace Cerebro.Infrastructure.DataAccess.IndexesState
+namespace Vortex.Infrastructure.DataAccess.IndexesState
 {
     public class IndexCatalogDbContext
     {

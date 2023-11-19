@@ -1,6 +1,6 @@
-﻿using Cerebro.Core.Abstractions.Background;
+﻿using Vortex.Core.Abstractions.Background;
 
-namespace Cerebro.Core.Models.Dtos.Addresses
+namespace Vortex.Core.Models.Dtos.Addresses
 {
     public class AddressClusterScopeRequest : RequestBase
     {

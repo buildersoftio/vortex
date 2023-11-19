@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Entities.Base;
+﻿using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Entities.Base;
 
-namespace Cerebro.Core.Models.Entities.Clients.Applications
+namespace Vortex.Core.Models.Entities.Clients.Applications
 {
     public class Application : BaseEntity
     {

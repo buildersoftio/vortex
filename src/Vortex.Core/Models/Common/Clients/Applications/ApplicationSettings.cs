@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Cerebro.Core.Models.Common.Clients.Applications
+namespace Vortex.Core.Models.Common.Clients.Applications
 {
     public class ApplicationSettings
     {

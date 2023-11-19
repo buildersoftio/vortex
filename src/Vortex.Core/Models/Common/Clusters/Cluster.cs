@@ -1,9 +1,9 @@
-﻿using Cerebro.Core.Abstractions.Clustering;
+﻿using Vortex.Core.Abstractions.Clustering;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Collections.Concurrent;
 
-namespace Cerebro.Core.Models.Common.Clusters
+namespace Vortex.Core.Models.Common.Clusters
 {
     public class Cluster
     {

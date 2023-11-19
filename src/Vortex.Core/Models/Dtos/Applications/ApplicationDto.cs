@@ -1,10 +1,10 @@
-﻿using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Entities.Clients.Applications;
-using Cerebro.Core.Utilities.Attributes;
+﻿using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Entities.Clients.Applications;
+using Vortex.Core.Utilities.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Cerebro.Core.Models.Dtos.Applications
+namespace Vortex.Core.Models.Dtos.Applications
 {
     public class ApplicationDto
     {

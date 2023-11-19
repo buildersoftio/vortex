@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.Utilities.Extensions
+﻿namespace Vortex.Core.Utilities.Extensions
 {
     public static class FilePathExtensions
     {

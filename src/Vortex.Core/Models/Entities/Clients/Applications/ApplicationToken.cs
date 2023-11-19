@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Models.Common;
-using Cerebro.Core.Models.Entities.Base;
+﻿using Vortex.Core.Models.Common;
+using Vortex.Core.Models.Entities.Base;
 
-namespace Cerebro.Core.Models.Entities.Clients.Applications
+namespace Vortex.Core.Models.Entities.Clients.Applications
 {
     public class ApplicationToken : BaseEntity
     {

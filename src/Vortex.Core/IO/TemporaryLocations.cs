@@ -1,4 +1,4 @@
-﻿namespace Cerebro.Core.IO
+﻿namespace Vortex.Core.IO
 {
     public static class TemporaryLocations
     {

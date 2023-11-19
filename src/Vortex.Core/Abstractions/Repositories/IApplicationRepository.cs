@@ -1,7 +1,7 @@
-﻿using Cerebro.Core.Models.Common.Clients.Applications;
-using Cerebro.Core.Models.Entities.Clients.Applications;
+﻿using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Entities.Clients.Applications;
 
-namespace Cerebro.Core.Repositories
+namespace Vortex.Core.Repositories
 {
     public interface IApplicationRepository
     {
