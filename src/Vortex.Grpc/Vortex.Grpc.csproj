@@ -8,25 +8,21 @@
 
 	<ItemGroup>
 		<!--gRPC integration which is needed to connect applications and nodes in cluster mode-->
-		<PackageReference Include="Google.Protobuf" Version="3.24.0" />
+		<PackageReference Include="Google.Protobuf" Version="3.25.1" />
 		<PackageReference Include="Grpc" Version="2.46.6" />
-		<PackageReference Include="Grpc.Net.Client" Version="2.55.0" />
-		<PackageReference Include="Grpc.Tools" Version="2.57.0">
+		<PackageReference Include="Grpc.Net.Client" Version="2.59.0" />
+		<PackageReference Include="Grpc.Tools" Version="2.59.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Protos\" />
+	  <ProjectReference Include="..\Vortex.Core\Vortex.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="Protos\NodeExchange.proto" GrpcServices="Both" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Cerebro.Core\Vortex.Core.csproj" />
+		<Protobuf Include="Protos\ApplicationIntegration.proto" GrpcServices="Server" />
 	</ItemGroup>
 
 </Project>
