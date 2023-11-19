@@ -33,9 +33,9 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v4", new OpenApiInfo
     {
-        Title = "Cerebro | Engine",
+        Title = "Vortex | Engine",
         Version = "v4",
-        Description = "Buildersoft Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integration.",
+        Description = "Buildersoft Vortex is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integration.",
         License = new OpenApiLicense() { Name = "Licensed under the Apache License 2.0", Url = new Uri("https://bit.ly/3DqVQbx") }
 
     });
@@ -75,8 +75,8 @@ builder.Services.AddSystemStarterService();
 builder.Services.AddIOServices();
 builder.Services.AddOrchestators();
 
-builder.Services.AddAuthentication("Cerebro_Authentication")
-                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Cerebro_Authentication", null);
+builder.Services.AddAuthentication("Vortex_Authentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Vortex_Authentication", null);
 
 // Adding Factories
 builder.Services.AddFactories();
@@ -96,7 +96,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v4/swagger.json", "Cerebro | Engine v4"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v4/swagger.json", "Vortex | Engine v4"));
 }
 
 app.UseMiddleware<RestLoggingMiddleware>();
