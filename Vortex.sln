@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cerebro.Core", "src\Cerebro.Core\Cerebro.Core.csproj", "{BF76375C-53C8-4C3A-B852-F32365DFE401}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortex.Core", "src\Cerebro.Core\Vortex.Core.csproj", "{BF76375C-53C8-4C3A-B852-F32365DFE401}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cerebro.Infrastructure", "src\Cerebro.Infrastructure\Cerebro.Infrastructure.csproj", "{27078A51-55F0-40DF-A17F-6151DA56C57E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortex.Infrastructure", "src\Cerebro.Infrastructure\Vortex.Infrastructure.csproj", "{27078A51-55F0-40DF-A17F-6151DA56C57E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Routing", "Routing", "{79FACF4F-3CDE-4556-9400-B4D4DFC19FD6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cerebro.Grpc", "src\Cerebro.Grpc\Cerebro.Grpc.csproj", "{C6892B32-7F01-4AE1-9FB7-626022970562}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortex.Grpc", "src\Cerebro.Grpc\Vortex.Grpc.csproj", "{C6892B32-7F01-4AE1-9FB7-626022970562}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cerebro.SignalR", "src\Cerebro.SignalR\Cerebro.SignalR.csproj", "{878E332B-2D1F-4467-838D-9CDFF4F819DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortex.SignalR", "src\Cerebro.SignalR\Vortex.SignalR.csproj", "{878E332B-2D1F-4467-838D-9CDFF4F819DF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cluster", "Cluster", "{924E23EA-8E9D-4E22-9250-AD6F060C3B7F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cerebro.Server", "src\Cerebro.Server\Cerebro.Server.csproj", "{B5D25767-3B5E-41DA-B959-966397A38B05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortex.Server", "src\Cerebro.Server\Vortex.Server.csproj", "{B5D25767-3B5E-41DA-B959-966397A38B05}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cerebro.Cluster.Infrastructure", "src\Cerebro.Cluster.Infrastructure\Cerebro.Cluster.Infrastructure.csproj", "{303A1A1C-7577-4456-8B79-7AF3C506C472}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vortex.Cluster.Infrastructure", "src\Cerebro.Cluster.Infrastructure\Vortex.Cluster.Infrastructure.csproj", "{303A1A1C-7577-4456-8B79-7AF3C506C472}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
