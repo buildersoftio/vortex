@@ -17,6 +17,7 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
         private readonly ILogger<NodeExchangeServer> _logger;
 
         private readonly int _port;
+        private readonly int _portSSL;
         private readonly NodeConfiguration _nodeConfiguration;
         private readonly Server _server;
         private readonly IAddressService _addressService;
@@ -32,12 +33,17 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
             _addressService = addressService;
             _applicationService = applicationService;
 
-            if (Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionPort) != null)
-                _port = Convert.ToInt32(Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionPort));
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionPort) != null)
+                _port = Convert.ToInt32(Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionPort));
             else
                 _port = -1;
 
-            string? hostName = Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterHost);
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionSSLPort) != null)
+                _portSSL = Convert.ToInt32(Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionSSLPort));
+            else
+                _portSSL = -1;
+
+            string? hostName = Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterHost);
             hostName ??= "localhost";
 
             _server = new Server()
@@ -49,7 +55,7 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
 
         public Task ShutdownAsync()
         {
-            if (_port != -1)
+            if (_port != -1 || _portSSL != -1)
             {
                 _logger.LogInformation($"Cluster node '{_nodeConfiguration.NodeId}' is shutdown");
                 return _server.ShutdownAsync();
@@ -60,11 +66,14 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
 
         public void Start()
         {
-            if (_port != -1)
-            {
+            if (_port != -1 || _portSSL != -1)
                 _server.Start();
+
+            if(_port != -1)
                 _logger.LogInformation("Cluster listening on port " + _port + " for node " + _nodeConfiguration.NodeId);
-            }
+
+            if(_portSSL != -1)
+                _logger.LogInformation("Cluster listening on port " + _port + " SSL for node " + _nodeConfiguration.NodeId);
         }
 
         public override Task<NodeRegistrationResponse> RegisterNode(NodeInfo request, ServerCallContext context)

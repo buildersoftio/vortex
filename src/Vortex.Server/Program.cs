@@ -65,23 +65,26 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// Adding IO Services
+// add IO Services
 builder.Services.AddConfigurations(builder.Configuration);
 
 builder.Services.AddGRPCClusterServer();
 builder.Services.AddGRPCBrokerServer();
 
+// add Routing Services
+builder.Services.AddRoutingServices();
+
 builder.Services.AddSystemStarterService();
 builder.Services.AddIOServices();
-builder.Services.AddOrchestators();
+builder.Services.AddOrchestrators();
 
 builder.Services.AddAuthentication("Vortex_Authentication")
                 .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("Vortex_Authentication", null);
 
-// Adding Factories
+// add Factories
 builder.Services.AddFactories();
 
-// Adding Server State related components
+// add Server State related components
 builder.Services.AddServerStateStore();
 builder.Services.AddServerRepositories();
 builder.Services.AddServerStateServices();

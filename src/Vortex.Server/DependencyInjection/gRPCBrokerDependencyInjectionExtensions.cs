@@ -7,7 +7,7 @@ namespace Vortex.Server.DependencyInjection
     {
         public static void AddGRPCBrokerServer(this IServiceCollection services)
         {
-            services.AddSingleton<IClientIntegrationServer, ClientServer>();
+            services.AddSingleton<IClientIntegrationServer, BrokerClientIntegrationServer>();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Vortex.Core.Models.Dtos.Clients
         public string ApplicationName { get; set; }
 
         [Required]
-        [AddressRegexValidation(ErrorMessage = "Address should start with / and should not contain letters, numbers and underscoor and dash")]
+        [AddressRegexValidation(ErrorMessage = "Address should start with / and should not contain letters, numbers and underscore and dash")]
 
         public string Address { get; set; }
 

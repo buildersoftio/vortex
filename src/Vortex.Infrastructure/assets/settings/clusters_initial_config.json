@@ -1,9 +1,9 @@
 ﻿{
   "Name": "standalone",
   "Nodes": {
-    "cerebro_standalone": {
+    "vortex_standalone": {
       "Address": "localhost",
-      "Port": "6540"
+      "Port": "2222"
     }
   },
   "Settings": {

@@ -2,6 +2,7 @@
 using Vortex.Core.Abstractions.Clustering;
 using Vortex.Core.Abstractions.Services;
 using Vortex.Core.Abstractions.Services.Orchestrations;
+using Vortex.Core.Abstractions.Services.Routing;
 using Vortex.Core.Models.BackgroundRequests;
 using Vortex.Core.Models.Dtos.Addresses;
 using Vortex.Core.Models.Dtos.Applications;
@@ -10,6 +11,7 @@ using Vortex.Core.Services.Clustering;
 using Vortex.Core.Services.Clustering.Background;
 using Vortex.Core.Services.Entries;
 using Vortex.Core.Services.Orchestrations;
+using Vortex.Core.Services.Routing;
 using Vortex.Core.Services.ServerStates;
 
 namespace Vortex.Server.DependencyInjection
@@ -24,7 +26,12 @@ namespace Vortex.Server.DependencyInjection
             services.AddSingleton<IClientConnectionService, ClientConnectionService>();
         }
 
-        public static void AddOrchestators(this IServiceCollection services)
+        public static  void AddRoutingServices(this IServiceCollection services)
+        {
+            services.AddSingleton<IClientCommunicationService, ClientCommunicationService>();
+        }
+
+        public static void AddOrchestrators(this IServiceCollection services)
         {
             services.AddSingleton<IServerCoreStateManager, ServerCoreStateManager>();
             services.AddSingleton<IClusterManager, ClusterManager>();

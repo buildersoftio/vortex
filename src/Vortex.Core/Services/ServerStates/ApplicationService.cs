@@ -525,6 +525,51 @@ namespace Vortex.Core.Services.ServerStates
             return (false, message: $"Something went wrong, Application Token is not revoked");
         }
 
+
+        public bool IsValidToken(string applicationName, Guid appKey, string secret)
+        {
+
+            (var application, string message) = GetApplication(applicationName);
+            if (application == null)
+                return false;
+
+            var applicationToken = _applicationRepository.GetApplicationToken(application.Id, appKey);
+            if (applicationToken == null)
+                return false;
+
+            if (applicationToken.IsActive != true)
+                return false;
+
+            if (applicationToken.ExpireDate < DateTimeOffset.UtcNow)
+            {
+                RevokeApplicationToken(applicationName, appKey, updateBy: $"{applicationName}");
+                return false;
+            }
+
+            string hashedSecret;
+
+            switch (applicationToken.CryptographyType)
+            {
+                case Models.Common.CryptographyTypes.SHA256:
+                    hashedSecret = secret.ToSHA256_HashString();
+                    break;
+                case Models.Common.CryptographyTypes.SHA384:
+                    hashedSecret = secret.ToSHA384_HashString();
+                    break;
+                case Models.Common.CryptographyTypes.SHA512:
+                    hashedSecret = secret.ToSHA512_HashString();
+                    break;
+                default:
+                    hashedSecret = secret.ToSHA512_HashString();
+                    break;
+            }
+
+            if (applicationToken.HashedSecret != hashedSecret)
+                return false;
+
+            return true;
+        }
+
         public (bool status, string message) EditReadAddressApplicationPermission(string applicationName, string permission, string updatedBy, bool requestedByOtherNode = false)
         {
             (var application, string message) = GetApplication(applicationName);
@@ -645,6 +690,5 @@ namespace Vortex.Core.Services.ServerStates
 
             return (new ApplicationPermissionDto() { ApplicationName = applicationName, Permissions = applicationPermission.Permissions }, "Permissions returned");
         }
-
     }
 }

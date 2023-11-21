@@ -27,7 +27,7 @@ namespace Vortex.Core.Models.Entities.Clients.Applications
         public SubscriptionModes SubscriptionMode { get; set; }
         public ReadInitialPositions ReadInitialPosition { get; set; }
 
-        public List<string>? ConnectedIPs { get; set; }
+        public List<string>? ConnectedHosts { get; set; }
 
     }
 }

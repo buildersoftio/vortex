@@ -110,10 +110,10 @@ namespace Vortex.Core.Services
 
         private void SetDefaultEnvironmentVariables()
         {
-            if (Environment.GetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFaildTaskInterval) == null)
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFailTaskInterval) == null)
             {
-                _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundServiceFaildTaskInterval}: 300");
-                Environment.SetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFaildTaskInterval, "300");
+                _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundServiceFailTaskInterval}: 300");
+                Environment.SetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFailTaskInterval, "300");
             }
         }
 
@@ -137,7 +137,7 @@ namespace Vortex.Core.Services
                     {
                         var u = new Uri(url);
                         if (u.Scheme == "https")
-                            Console.WriteLine($"                   HTTPS Port exposed {u.Port} SSL");
+                            Console.WriteLine($"                  HTTPS  Port exposed {u.Port} SSL");
                         else
                             Console.WriteLine($"                   HTTP  Port exposed {u.Port}");
                     }
@@ -152,13 +152,13 @@ namespace Vortex.Core.Services
             }
             catch (Exception)
             {
-                Console.WriteLine($"                   Cerebro is running on IIS Server");
+                Console.WriteLine($"                   Vortex is running on IIS Server");
             }
 
-            if (Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionPort) != null)
-                Console.WriteLine($"                CLUSTER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionPort)}");
-            if (Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionSSLPort) != null)
-                Console.WriteLine($"                CLUSTER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.CerebroClusterConnectionSSLPort)} SSL");
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionPort) != null)
+                Console.WriteLine($"                CLUSTER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionPort)}");
+            if (Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionSSLPort) != null)
+                Console.WriteLine($"                CLUSTER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionSSLPort)} SSL");
 
             if (Environment.GetEnvironmentVariable(EnvironmentConstants.BrokerPort) != null)
                 Console.WriteLine($"                 BROKER  Port exposed {Environment.GetEnvironmentVariable(EnvironmentConstants.BrokerPort)}");

@@ -19,7 +19,7 @@
     public enum ReadInitialPositions
     {
         /// <summary>
-        /// Starts reading address from the begining.
+        /// Starts reading address from the beginning.
         /// </summary>
         Earliest,
         /// <summary>

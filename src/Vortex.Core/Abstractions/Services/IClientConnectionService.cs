@@ -1,5 +1,6 @@
 ﻿using Vortex.Core.Models.Common.Clients.Applications;
 using Vortex.Core.Models.Dtos.Clients;
+using Vortex.Core.Models.Entities.Clients.Applications;
 
 namespace Vortex.Core.Abstractions.Services
 {
@@ -12,5 +13,11 @@ namespace Vortex.Core.Abstractions.Services
         (bool status, string message) RegisterClientConnection(ClientConnectionRequest clientConnectionRequest, string createdBy);
         (bool status, string message) VerifyClientConnectionByAddressAlias(string applicationName, string addressAlias, ApplicationConnectionTypes applicationType);
         (bool status, string message) VerifyClientConnectionByAddressName(string applicationName, string addressName, ApplicationConnectionTypes applicationType);
+
+        bool RegisterClientHostConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost);
+        bool UpdateClientConnectionState(string applicationName, string addressName, ApplicationConnectionTypes applicationType, bool isConnected);
+
+        // This method should be only used for internal purposes. PLEASE, do not expose it via REST Endpoints.
+        ClientConnection? GetClientConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType);
     }
 }

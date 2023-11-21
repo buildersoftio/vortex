@@ -26,7 +26,7 @@ namespace Vortex.Core.Abstractions.Background
             _prefixFileName = prefixFileName;
             _temporaryIOService = temporaryIOService;
 
-            var intervalInSec = int.Parse(Environment.GetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFaildTaskInterval)!);
+            var intervalInSec = int.Parse(Environment.GetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFailTaskInterval)!);
             _failedTaskTimer = new Timer(FailedTaskTimerCallBack, null, TimeSpan.Zero, new TimeSpan(0, 0, intervalInSec));
         }
 

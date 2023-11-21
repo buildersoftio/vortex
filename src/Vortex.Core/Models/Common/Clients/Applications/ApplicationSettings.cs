@@ -7,7 +7,6 @@ namespace Vortex.Core.Models.Common.Clients.Applications
         public ApplicationScope Scope { get; set; }
 
         public bool IsAuthorizationEnabled { get; set; }
-        public bool IsConnectionAllowedForAnyAddress { get; set; }
 
         public HashSet<string> PublicIpRange { get; set; }
         public HashSet<string> PrivateIpRange { get; set; }

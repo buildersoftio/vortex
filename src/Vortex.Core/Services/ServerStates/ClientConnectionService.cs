@@ -63,7 +63,7 @@ namespace Vortex.Core.Services.ServerStates
                     Address = _addressRepository.GetAddressById(a.AddressId)!.Name,
                     ApplicationName = application.Name,
                     ApplicationConnectionType = a.ApplicationConnectionType,
-                    ConnectedIPs = a.ConnectedIPs,
+                    ConnectedIPs = a.ConnectedHosts,
                     FirstConnectionDate = a.FirstConnectionDate,
                     IsConnected = a.IsConnected,
                     LastConnectionDate = a.LastConnectionDate,
@@ -118,7 +118,7 @@ namespace Vortex.Core.Services.ServerStates
                 ApplicationId = application.Id,
                 ApplicationConnectionType = clientConnectionRequest.ApplicationConnectionType,
                 IsConnected = false,
-                ConnectedIPs = new List<string>(),
+                ConnectedHosts = new List<string>(),
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = createdBy
             };
@@ -188,7 +188,7 @@ namespace Vortex.Core.Services.ServerStates
                 Address = address!.Name,
                 ApplicationName = _applicationRepository.GetApplication(a.ApplicationId)!.Name,
                 ApplicationConnectionType = a.ApplicationConnectionType,
-                ConnectedIPs = a.ConnectedIPs,
+                ConnectedIPs = a.ConnectedHosts,
                 FirstConnectionDate = a.FirstConnectionDate,
                 IsConnected = a.IsConnected,
                 LastConnectionDate = a.LastConnectionDate,
@@ -222,10 +222,9 @@ namespace Vortex.Core.Services.ServerStates
             if (permission == "*" || permission == "*:{*}")
                 return true;
 
-            var addresses = permission.Split(';');
+            var addresses = permission.Split(',');
             if (addresses.Length > 0)
             {
-
                 var addressFound = addresses.Where(a => a == address).FirstOrDefault();
                 if (addressFound != null)
                     return true;
@@ -233,6 +232,80 @@ namespace Vortex.Core.Services.ServerStates
 
             return false;
 
+        }
+
+        public bool RegisterClientHostConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost)
+        {
+            var application = _applicationRepository.GetApplication(applicationName);
+            if (application == null)
+                return false;
+
+            var address = _addressRepository.GetAddressByName(addressName);
+            if (address == null)
+                return false;
+
+            var clientConnection = _applicationRepository.GetClientConnection(application.Id, address.Id, applicationType);
+            if (clientConnection == null)
+                return false;
+
+            // In case ConnectedIPs is null, create new instance.
+            clientConnection.ConnectedHosts ??= new List<string>();
+
+            // Update FirstConnectionDate in case this is the first integration happening.
+            if (clientConnection.ConnectedHosts.Count() == 0)
+                clientConnection.FirstConnectionDate = DateTimeOffset.Now;
+
+            var ipExists = clientConnection.ConnectedHosts!.Exists(x => x == clientHost);
+
+            // add Connection Ip, if the Application is not connected yet.
+            if (ipExists != true)
+                clientConnection.ConnectedHosts.Add(clientHost);
+
+            // update
+
+            return _applicationRepository
+                .UpdateApplicationAddressConnection(clientConnection);
+        }
+
+        public bool UpdateClientConnectionState(string applicationName, string addressName, ApplicationConnectionTypes applicationType, bool isConnected)
+        {
+            var application = _applicationRepository.GetApplication(applicationName);
+            if (application == null)
+                return false;
+
+            var address = _addressRepository.GetAddressByName(addressName);
+            if (address == null)
+                return false;
+
+            var clientConnection = _applicationRepository.GetClientConnection(application.Id, address.Id, applicationType);
+            if (clientConnection == null)
+                return false;
+
+            clientConnection.IsConnected = isConnected;
+
+            if(isConnected == true)
+                clientConnection.LastConnectionDate = DateTimeOffset.Now;
+
+            return _applicationRepository
+                .UpdateApplicationAddressConnection(clientConnection);
+        }
+
+        // This method should be only used for internal purposes. PLEASE, do not expose it via REST Endpoints.
+        public ClientConnection? GetClientConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType)
+        {
+            var application = _applicationRepository.GetApplication(applicationName);
+            if (application == null)
+                return null;
+
+            var address = _addressRepository.GetAddressByName(addressName);
+            if (address == null)
+                return null;
+
+            var clientConnection = _applicationRepository.GetClientConnection(application.Id, address.Id, applicationType);
+            if (clientConnection == null)
+                return null;
+
+            return clientConnection;
         }
     }
 }

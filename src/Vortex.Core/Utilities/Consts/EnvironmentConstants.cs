@@ -14,20 +14,20 @@
 
         public const string NodeId = "VORTEX_NODE_ID";
 
-        public const string BackgroundServiceFaildTaskInterval = "VORTEX_BACKGROUND_TASK_INTERVAL";
+        public const string BackgroundServiceFailTaskInterval = "VORTEX_BACKGROUND_TASK_INTERVAL";
 
 
         /// <summary>
         ///  VORTEX Cluster Environment Variables
         /// </summary>
-        public const string CerebroClusterId = "VORTEX_CLUSTER_ID";
-        public const string CerebroClusterHost = "VORTEX_CLUSTER_HOST";
-        public const string CerebroClusterConnectionIsSecure = "VORTEX_CLUSTER_ISSECURE";
-        public const string CerebroClusterConnectionPort = "VORTEX_CLUSTER_PORT";
-        public const string CerebroClusterConnectionSSLPort = "VORTEX_CLUSTER_SSLPORT";
+        public const string VortexClusterId = "VORTEX_CLUSTER_ID";
+        public const string VortexClusterHost = "VORTEX_CLUSTER_HOST";
+        public const string VortexClusterConnectionIsSecure = "VORTEX_CLUSTER_ISSECURE";
+        public const string VortexClusterConnectionPort = "VORTEX_CLUSTER_PORT";
+        public const string VortexClusterConnectionSSLPort = "VORTEX_CLUSTER_SSLPORT";
 
-        public const string CerebroClusterCertificateFileName = "VORTEX_CLUSTER_X509CERTIFICATE_PATH";
-        public const string CerebroClusterCertificatePassword = "VORTEX_CLUSTER_X509CERTIFICATE_PASSWORD";
+        public const string VortexClusterCertificateFileName = "VORTEX_CLUSTER_X509CERTIFICATE_PATH";
+        public const string VortexClusterCertificatePassword = "VORTEX_CLUSTER_X509CERTIFICATE_PASSWORD";
 
         /// <summary>
         ///  VORTEX Broker Environment Variables

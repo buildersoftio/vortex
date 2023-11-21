@@ -31,6 +31,9 @@ namespace Vortex.Core.Abstractions.Services
         (bool status, string message) RevokeApplicationToken(string applicationName, Guid appKey, string updateBy, bool requestedByOtherNode = false);
 
 
+        bool IsValidToken(string applicationName, Guid appKey, string secret);
+
+
 
         (ApplicationPermissionDto? permissionDto, string message) GetApplicationPermissions(string applicationName);
         (bool status, string message) EditReadAddressApplicationPermission(string applicationName, string permission, string updatedBy, bool requestedByOtherNode = false);
