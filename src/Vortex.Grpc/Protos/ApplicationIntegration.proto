@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package ApplicationIntegration;
+
+service DataTransmissionService {
+
+	rpc Connect(ConnectionRequest) returns (ConnectionResponse);
+	rpc Disconnect(DisconnectionRequest) returns (DisconnectionResponse);
+}
+
+enum ApplicationTypes {
+	PRODUCTION = 0;
+	CONSUMPTION = 1;
+}
+
+message ConnectionRequest{
+	string application = 1;
+	string address = 2;
+	ApplicationTypes application_type = 3;
+	string app_key = 4;
+
+	// default settings for producer and consumer
+	optional ConnectionProductionInstanceTypes  production_instance_types= 5;
+	optional ConnectionSubscriptionTypes subscription_types = 6;
+	optional ConnectionReadInitialPositions subscription_initial_position = 7;
+	optional ConnectionSubscriptionModes subscription_modes = 8;
+}
+
+message ConnectionResponse {
+	Statuses status = 1;
+	string message = 2;
+	string client_id = 3;
+
+	string vortex_server_name = 4;
+	string vortex_server_version = 5;
+}
+
+message DisconnectionRequest { 
+	string application_id = 1;
+	string client_id = 2;
+	ApplicationTypes application_type = 3;
+}
+
+message DisconnectionResponse {
+	Statuses status = 1;
+	string message = 2;
+	string client_id = 3;
+}
+
+
+enum Statuses {
+	CONNECTED = 0;
+	DISCONNECTED = 1;
+	NOT_AUTHORIZED = 2;
+	FORBIDDEN = 3;
+	APPLICATION_NOT_FOUND = 4;
+	ADDRESS_NOT_FOUND = 5;
+	ERROR = 6;
+	FATAL_ERROR = 7;
+}
+
+
+enum ConnectionProductionInstanceTypes {
+	SINGLE = 0;
+	MULTIPLE = 1;
+}
+
+enum ConnectionSubscriptionTypes {
+	UNIQUE = 0;
+	FAILOVER = 1;
+	SHARED = 2;
+}
+
+enum ConnectionReadInitialPositions {
+	EARLIEST = 0;
+	LATEST = 1;
+}
+
+enum ConnectionSubscriptionModes{
+	RESILIENT = 0;
+	NON_RESILIENT = 1;
+}

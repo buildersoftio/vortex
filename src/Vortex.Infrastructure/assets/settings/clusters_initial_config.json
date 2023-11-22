@@ -1,0 +1,15 @@
+﻿{
+  "Name": "standalone",
+  "Nodes": {
+    "vortex_standalone": {
+      "Address": "localhost",
+      "Port": "2222"
+    }
+  },
+  "Settings": {
+    "HeartbeatInterval": 10,
+    "HeartbeatTimeout": 30,
+    // PartitionDistribution Types: RoundRobin=0;  RackDriven=1
+    "PartitionDistribution": 0
+  }
+}
