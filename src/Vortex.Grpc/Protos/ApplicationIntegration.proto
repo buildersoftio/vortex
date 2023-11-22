@@ -30,6 +30,9 @@ message ConnectionResponse {
 	Statuses status = 1;
 	string message = 2;
 	string client_id = 3;
+
+	string vortex_server_name = 4;
+	string vortex_server_version = 5;
 }
 
 message DisconnectionRequest { 

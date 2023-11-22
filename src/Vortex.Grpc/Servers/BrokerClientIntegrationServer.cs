@@ -134,7 +134,11 @@ namespace Vortex.Grpc.Servers
             {
                 ClientId = result.ClientId.ToString(),
                 Message = result.Message,
-                Status = Enum.Parse<Statuses>(result.Status.ToString())
+                Status = Enum.Parse<Statuses>(result.Status.ToString()),
+
+                // Server infos
+                VortexServerName = SystemProperties.Name,
+                VortexServerVersion = SystemProperties.Version,
             });
         }
 

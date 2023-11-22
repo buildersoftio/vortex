@@ -9,5 +9,8 @@ namespace Vortex.Core.Models.Routing.Integrations
 
         public ConnectionStatuses Status { get; set; }
         public string Message { get; set; }
+
+
+        // Server information
     }
 }
