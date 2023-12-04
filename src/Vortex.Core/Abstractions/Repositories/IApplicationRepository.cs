@@ -32,10 +32,10 @@ namespace Vortex.Core.Repositories
         bool DeleteApplicationAddressConnection(ClientConnection applicationAddressConnection);
         bool UpdateApplicationAddressConnection(ClientConnection applicationAddressConnection);
 
+        ClientConnection? GetClientConnection(Guid clientConnectionId);
         ClientConnection? GetClientConnection(int applicationId, int addressId, ApplicationConnectionTypes applicationConnectionTypes);
         List<ClientConnection>? GetClientConnectionsByApplication(int applicationId);
         List<ClientConnection>? GetClientConnectionsByAddress(int addressId);
-
         List<ClientConnection>? GetConnectedClientConnections();
 
     }

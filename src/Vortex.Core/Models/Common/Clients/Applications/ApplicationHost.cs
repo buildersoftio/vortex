@@ -6,5 +6,7 @@
         public DateTimeOffset FirstConnectionDate { get; set; }
         public DateTimeOffset LastConnectionDate { get; set; }
         public DateTimeOffset? LastHeartbeatDate { get; set; }
+
+        public string? ConnectedNode { get; set; }
     }
 }

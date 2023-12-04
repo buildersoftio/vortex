@@ -3,7 +3,6 @@ using Vortex.Core.Abstractions.Background;
 using Vortex.Core.Abstractions.Services;
 using Vortex.Core.Models.BackgroundTimerRequests;
 using Vortex.Core.Models.Configurations;
-using Vortex.Core.Models.Entities.Clients.Applications;
 
 namespace Vortex.Core.Services.Routing.Background
 {
@@ -33,8 +32,10 @@ namespace Vortex.Core.Services.Routing.Background
             {
                 // here for each client we check for dead connections.
                 // check if the heartbeat is older than connection timeout - close connection for that client connection.
+                // The background service can disconnect only clients that are connected in this node, to update other clients from different nodes in cluster
+                //      is client's node leaders to do the update.
 
-                foreach (var clientCon in conn.HostsHistory.Where(x => x.Value.IsConnected == true))
+                foreach (var clientCon in conn.HostsHistory.Where(x => x.Value.IsConnected == true && x.Value.ConnectedNode == _nodeConfiguration.NodeId))
                 {
                     var lastHeartbeat = clientCon.Value.LastHeartbeatDate;
 
@@ -57,6 +58,7 @@ namespace Vortex.Core.Services.Routing.Background
                     conn.IsConnected = false;
 
                 // update client connection
+                conn.UpdatedBy = "Idle_BackgroundService";
                 _clientConnectionService.UpdateClientConnection(conn);
             }
 

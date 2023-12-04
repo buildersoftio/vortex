@@ -217,5 +217,12 @@ namespace Vortex.Infrastructure.Repositories
                 .Where(x=> x.IsConnected == true)
                 .ToList();
         }
+
+        public ClientConnection? GetClientConnection(Guid clientConnectionId)
+        {
+            return _serverStateStoreDbContext
+                .ClientConnections!
+                .FindById(clientConnectionId);
+        }
     }
 }

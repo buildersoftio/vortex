@@ -118,6 +118,10 @@ namespace Vortex.Core.Services
                 _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundServiceFailTaskInterval}: 300");
                 Environment.SetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFailTaskInterval, "300");
             }
+
+            _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundIdleClientConnectionInterval}: {_nodeConfiguration.IdleClientConnectionInterval}");
+            _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundIdleClientConnectionTimeout}: {_nodeConfiguration.IdleClientConnectionTimeout}");
+            _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundCheckRetryCount}: {_nodeConfiguration.CheckRetryCount}");
         }
 
         private void CreateLoggingDirectory()

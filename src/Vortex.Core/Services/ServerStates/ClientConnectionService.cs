@@ -237,7 +237,7 @@ namespace Vortex.Core.Services.ServerStates
 
         }
 
-        public bool RegisterClientHostConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost)
+        public bool RegisterClientHostConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost, string connectedNode)
         {
             var application = _applicationRepository.GetApplication(applicationName);
             if (application == null)
@@ -269,10 +269,15 @@ namespace Vortex.Core.Services.ServerStates
                 {
                     IsConnected = false,
                     FirstConnectionDate = DateTimeOffset.Now,
-                    LastConnectionDate = DateTimeOffset.Now
+                    LastConnectionDate = DateTimeOffset.Now,
+
+                    // node where this client is connected to.
+                    ConnectedNode = connectedNode
                 });
 
             // update
+            clientConnection.UpdatedAt = DateTimeOffset.Now;
+            clientConnection.UpdatedBy = applicationName;
 
             return _applicationRepository
                 .UpdateApplicationAddressConnection(clientConnection);
@@ -306,6 +311,9 @@ namespace Vortex.Core.Services.ServerStates
             if (clientConnection.HostsHistory.All(pair => pair.Value.IsConnected != true))
                 clientConnection.IsConnected = false;
 
+            clientConnection.UpdatedAt = DateTimeOffset.Now;
+            clientConnection.UpdatedBy = applicationName;
+
             return _applicationRepository
                 .UpdateApplicationAddressConnection(clientConnection);
         }
@@ -336,8 +344,16 @@ namespace Vortex.Core.Services.ServerStates
 
         public bool UpdateClientConnection(ClientConnection clientConnection)
         {
+            clientConnection.UpdatedAt = DateTimeOffset.Now;
+
             return _applicationRepository
                 .UpdateApplicationAddressConnection(clientConnection);
+        }
+
+        public ClientConnection GetClientConnection(Guid connectionId)
+        {
+            return _applicationRepository
+                .GetClientConnection(connectionId)!;
         }
     }
 }

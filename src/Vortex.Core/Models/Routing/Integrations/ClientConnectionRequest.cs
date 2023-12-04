@@ -22,5 +22,9 @@ namespace Vortex.Core.Models.Routing.Integrations
         public SubscriptionTypes? SubscriptionType { get; set; }
         public SubscriptionModes? SubscriptionMode { get; set; }
         public ReadInitialPositions? ReadInitialPosition { get; set; }
+
+
+        // NodeId, where the client is connected
+        public string ConnectedNode { get; set; }
     }
 }

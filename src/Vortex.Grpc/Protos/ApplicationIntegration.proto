@@ -1,3 +1,6 @@
+/// VORTEX Application Integration PROTO file
+/// This Proto File is part of VORTEX SERVER
+
 syntax = "proto3";
 
 package ApplicationIntegration;
@@ -6,6 +9,7 @@ service DataTransmissionService {
 
 	rpc Connect(ConnectionRequest) returns (ConnectionResponse);
 	rpc Disconnect(DisconnectionRequest) returns (DisconnectionResponse);
+	rpc Heartbeat(HeartbeatRequest) returns (ConnectionResponse);
 }
 
 enum ApplicationTypes {
@@ -51,6 +55,15 @@ message DisconnectionResponse {
 }
 
 
+message HeartbeatRequest {
+	string application = 1;
+	string address = 2;
+	ApplicationTypes application_type = 3;
+	string app_key = 4;
+
+	string client_id = 5;
+}
+
 enum Statuses {
 	CONNECTED = 0;
 	DISCONNECTED = 1;
@@ -61,7 +74,6 @@ enum Statuses {
 	ERROR = 6;
 	FATAL_ERROR = 7;
 }
-
 
 enum ConnectionProductionInstanceTypes {
 	UNKNOWN = 0;
