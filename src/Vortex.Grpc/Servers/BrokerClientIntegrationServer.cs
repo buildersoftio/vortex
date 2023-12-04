@@ -5,6 +5,7 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using Vortex.Core.Abstractions.Services.Routing;
 using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Routing.Integrations;
 
 namespace Vortex.Grpc.Servers
 {
@@ -101,7 +102,7 @@ namespace Vortex.Grpc.Servers
             var headers = context.RequestHeaders;
             var connectionType = Enum.Parse<ApplicationConnectionTypes>(request.ApplicationType.ToString());
 
-            var connectionRequest = new Core.Models.Routing.Integrations.ClientConnectionRequest()
+            var connectionRequest = new ClientConnectionRequest()
             {
                 Address = request.Address,
                 AppKey = request.AppKey,
@@ -119,14 +120,33 @@ namespace Vortex.Grpc.Servers
 
             if (connectionType == ApplicationConnectionTypes.Consumption)
             {
-                connectionRequest.SubscriptionMode = Enum.Parse<SubscriptionModes>(request.SubscriptionModes.ToString());
-                connectionRequest.SubscriptionType = Enum.Parse<SubscriptionTypes>(request.SubscriptionTypes.ToString());
-                connectionRequest.ReadInitialPosition = Enum.Parse<ReadInitialPositions>(request.SubscriptionInitialPosition.ToString());
+
+                // check in case the value is null
+                // In case of NULL, in EstablishConnection, store the default value from Application
+                if (request.SubscriptionModes == ConnectionSubscriptionModes.UndefinedValue)
+                    connectionRequest.SubscriptionMode = null;
+                else
+                    connectionRequest.SubscriptionMode = Enum.Parse<SubscriptionModes>(request.SubscriptionModes.ToString());
+
+                if (request.SubscriptionTypes == ConnectionSubscriptionTypes.Null)
+                    connectionRequest.SubscriptionType = null;
+                else
+                    connectionRequest.SubscriptionType = Enum.Parse<SubscriptionTypes>(request.SubscriptionTypes.ToString());
+
+                if (request.SubscriptionInitialPosition == ConnectionReadInitialPositions.Undefined)
+                    connectionRequest.ReadInitialPosition = null;
+                else
+                    connectionRequest.ReadInitialPosition = Enum.Parse<ReadInitialPositions>(request.SubscriptionInitialPosition.ToString());
             }
+
             else
             {
-                connectionRequest.ProductionInstanceType = Enum.Parse<ProductionInstanceTypes>(request.ProductionInstanceTypes.ToString());
+                if (request.ProductionInstanceTypes == ConnectionProductionInstanceTypes.Unknown)
+                    connectionRequest.ProductionInstanceType = null;
+                else
+                    connectionRequest.ProductionInstanceType = Enum.Parse<ProductionInstanceTypes>(request.ProductionInstanceTypes.ToString());
             }
+
 
             var result = _clientCommunicationService.EstablishConnection(connectionRequest);
 
@@ -136,7 +156,7 @@ namespace Vortex.Grpc.Servers
                 Message = result.Message,
                 Status = Enum.Parse<Statuses>(result.Status.ToString()),
 
-                // Server infos
+                // Server info
                 VortexServerName = SystemProperties.Name,
                 VortexServerVersion = SystemProperties.Version,
             });
@@ -144,9 +164,33 @@ namespace Vortex.Grpc.Servers
 
         public override Task<DisconnectionResponse> Disconnect(DisconnectionRequest request, ServerCallContext context)
         {
-            // to implement
+            var headers = context.RequestHeaders;
+            var connectionType = Enum.Parse<ApplicationConnectionTypes>(request.ApplicationType.ToString());
 
-            return base.Disconnect(request, context);
+            var disconnectionRequest = new ClientDisconnectionRequest()
+            {
+                Address = request.Address,
+                AppKey = request.AppKey,
+                Application = request.Application,
+                ApplicationType = connectionType,
+                ClientId = request.ClientId,
+                ClientHost = context.Peer
+            };
+
+            var authHeader = headers.FirstOrDefault(h => h.Key.Equals("authorization", StringComparison.OrdinalIgnoreCase));
+            if (authHeader != null)
+            {
+                disconnectionRequest.AppSecret = authHeader.Value;
+            }
+
+            var result = _clientCommunicationService.CloseConnection(disconnectionRequest);
+
+            return Task.FromResult(new DisconnectionResponse()
+            {
+                ClientId = result.ClientId.ToString(),
+                Message = result.Message,
+                Status = Enum.Parse<Statuses>(result.Status.ToString()),
+            });
         }
     }
 }

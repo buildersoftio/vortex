@@ -36,9 +36,12 @@ message ConnectionResponse {
 }
 
 message DisconnectionRequest { 
-	string application_id = 1;
-	string client_id = 2;
+	string application = 1;
+	string address = 2;
 	ApplicationTypes application_type = 3;
+	string app_key = 4;
+
+	string client_id = 5;
 }
 
 message DisconnectionResponse {
@@ -61,22 +64,26 @@ enum Statuses {
 
 
 enum ConnectionProductionInstanceTypes {
-	SINGLE = 0;
-	MULTIPLE = 1;
+	UNKNOWN = 0;
+	SINGLE = 1;
+	MULTIPLE = 2;
 }
 
 enum ConnectionSubscriptionTypes {
-	UNIQUE = 0;
-	FAILOVER = 1;
-	SHARED = 2;
+	NULL = 0;
+	UNIQUE = 1;
+	FAILOVER = 2;
+	SHARED = 3;
 }
 
 enum ConnectionReadInitialPositions {
-	EARLIEST = 0;
-	LATEST = 1;
+	UNDEFINED = 0;
+	EARLIEST = 1;
+	LATEST = 2;
 }
 
 enum ConnectionSubscriptionModes{
-	RESILIENT = 0;
-	NON_RESILIENT = 1;
+	UNDEFINED_VALUE = 0;
+	RESILIENT = 1;
+	NON_RESILIENT = 2;
 }
