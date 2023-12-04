@@ -36,5 +36,7 @@ namespace Vortex.Core.Repositories
         List<ClientConnection>? GetClientConnectionsByApplication(int applicationId);
         List<ClientConnection>? GetClientConnectionsByAddress(int addressId);
 
+        List<ClientConnection>? GetConnectedClientConnections();
+
     }
 }

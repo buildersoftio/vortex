@@ -293,13 +293,13 @@ namespace Vortex.Core.Services.ServerStates
                 return false;
 
             clientConnection.IsConnected = isConnected;
-
             clientConnection.HostsHistory[clientHost].IsConnected = isConnected;
 
             if (isConnected == true)
             {
                 clientConnection.LastConnectionDate = DateTimeOffset.Now;
                 clientConnection.HostsHistory[clientHost].LastConnectionDate = DateTimeOffset.Now;
+                clientConnection.HostsHistory[clientHost].LastHeartbeatDate = DateTimeOffset.Now;
             }
 
             // isConnected should be false in all hosts are disconnected
@@ -326,6 +326,18 @@ namespace Vortex.Core.Services.ServerStates
                 return null;
 
             return clientConnection;
+        }
+
+        public List<ClientConnection>? GetConnectedClientConnections()
+        {
+            return _applicationRepository
+                .GetConnectedClientConnections();
+        }
+
+        public bool UpdateClientConnection(ClientConnection clientConnection)
+        {
+            return _applicationRepository
+                .UpdateApplicationAddressConnection(clientConnection);
         }
     }
 }

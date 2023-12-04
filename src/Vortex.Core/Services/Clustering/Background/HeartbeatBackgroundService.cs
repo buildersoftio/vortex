@@ -16,6 +16,7 @@ namespace Vortex.Core.Services.Clustering.Background
         {
             return new TimeSpan(0, 0, configIOService.GetClusterConfiguration()!.Settings.HeartbeatInterval);
         }
+
         public HeartbeatBackgroundService(ILogger<HeartbeatBackgroundService> logger, IClusterStateRepository clusterStateRepository, IConfigIOService configIOService) : base(GetPeriod(configIOService))
         {
             _logger = logger;

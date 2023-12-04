@@ -90,6 +90,7 @@ builder.Services.AddServerRepositories();
 builder.Services.AddServerStateServices();
 builder.Services.AddBackgroundServerStateServices();
 builder.Services.AddBackgroundTimerServerStateServices();
+builder.Services.AddBackgroundClientConnectionTimerServices();
 
 
 

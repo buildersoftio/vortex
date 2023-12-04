@@ -23,6 +23,9 @@ namespace Vortex.Server.DependencyInjection
 
             nodeConfiguration.NodeId = configuration.GetValue<string>(EnvironmentConstants.NodeId)!;
 
+            nodeConfiguration.IdleClientConnectionInterval = configuration.GetValue<int>(EnvironmentConstants.BackgroundIdleClientConnectionInterval)!;
+            nodeConfiguration.IdleClientConnectionTimeout = configuration.GetValue<int>(EnvironmentConstants.BackgroundIdleClientConnectionTimeout)!;
+
             services.AddSingleton(nodeConfiguration);
         }
 

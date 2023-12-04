@@ -19,5 +19,9 @@ namespace Vortex.Core.Abstractions.Services
 
         // This method should be only used for internal purposes. PLEASE, do not expose it via REST Endpoints.
         ClientConnection? GetClientConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType);
+
+        List<ClientConnection>? GetConnectedClientConnections();
+
+        bool UpdateClientConnection(ClientConnection clientConnection);
     }
 }

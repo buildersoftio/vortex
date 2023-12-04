@@ -209,5 +209,13 @@ namespace Vortex.Infrastructure.Repositories
                 .ApplicationTokens!
                 .Update(applicationToken);
         }
+
+        public List<ClientConnection>? GetConnectedClientConnections()
+        {
+            return _serverStateStoreDbContext
+                .ClientConnections!.Query()
+                .Where(x=> x.IsConnected == true)
+                .ToList();
+        }
     }
 }
