@@ -107,6 +107,9 @@ namespace Vortex.Core.Abstractions.Background
                 // re-trying the same request again.
                 EnqueueRequest(_temporaryIOService.GetBackgroundTemporaryFileContent<TRequest>(tempFile));
                 _temporaryIOService.DeleteFile(tempFile);
+
+                // Wait 1sec for each file to process.
+                Thread.Sleep(1000);
             }
         }
     }
