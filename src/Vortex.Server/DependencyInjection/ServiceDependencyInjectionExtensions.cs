@@ -4,6 +4,7 @@ using Vortex.Core.Abstractions.Services;
 using Vortex.Core.Abstractions.Services.Orchestrations;
 using Vortex.Core.Abstractions.Services.Routing;
 using Vortex.Core.Models.BackgroundRequests;
+using Vortex.Core.Models.BackgroundTimerRequests;
 using Vortex.Core.Models.Dtos.Addresses;
 using Vortex.Core.Models.Dtos.Applications;
 using Vortex.Core.Services.Background;
@@ -12,6 +13,7 @@ using Vortex.Core.Services.Clustering.Background;
 using Vortex.Core.Services.Entries;
 using Vortex.Core.Services.Orchestrations;
 using Vortex.Core.Services.Routing;
+using Vortex.Core.Services.Routing.Background;
 using Vortex.Core.Services.ServerStates;
 
 namespace Vortex.Server.DependencyInjection
@@ -43,11 +45,18 @@ namespace Vortex.Server.DependencyInjection
             services.AddSingleton<IBackgroundQueueService<AddressClusterScopeRequest>, AddressClusterSyncBackgroundService>();
 
             services.AddSingleton<IBackgroundQueueService<ApplicationClusterScopeRequest>, ApplicationClusterSyncBackgroundService>();
+
+            services.AddSingleton<IBackgroundQueueService<ClientConnectionBackgroundRequest>, ClientConnectionSyncBackgroundService>();
         }
 
         public static void AddBackgroundTimerServerStateServices(this IServiceCollection services)
         {
             services.AddSingleton<ITimedBackgroundService<HeartbeatTimerRequest>, HeartbeatBackgroundService>();
+        }
+
+        public static void AddBackgroundClientConnectionTimerServices(this IServiceCollection services)
+        {
+            services.AddSingleton<ITimedBackgroundService<ClientIdleTimerRequest>, ClientIdleBackgroundService>();
         }
     }
 }

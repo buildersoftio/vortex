@@ -9,6 +9,9 @@ using Vortex.Core.Utilities.Json;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using NodeExchange;
+using Vortex.Core.Abstractions.Services.Routing;
+using Vortex.Core.Models.Data;
+using System.Xml;
 
 namespace Vortex.Cluster.Infrastructure.Servers.gRPC
 {
@@ -22,16 +25,20 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
         private readonly Server _server;
         private readonly IAddressService _addressService;
         private readonly IApplicationService _applicationService;
+        private readonly IClientCommunicationService _clientCommunicationService;
 
         public NodeExchangeServer(ILogger<NodeExchangeServer> logger,
             NodeConfiguration nodeConfiguration,
             IAddressService addressService,
-            IApplicationService applicationService)
+            IApplicationService applicationService,
+            IClientCommunicationService clientCommunicationService)
         {
             _logger = logger;
             _nodeConfiguration = nodeConfiguration;
             _addressService = addressService;
             _applicationService = applicationService;
+            _clientCommunicationService = clientCommunicationService;
+
 
             if (Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionPort) != null)
                 _port = Convert.ToInt32(Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionPort));
@@ -69,10 +76,10 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
             if (_port != -1 || _portSSL != -1)
                 _server.Start();
 
-            if(_port != -1)
+            if (_port != -1)
                 _logger.LogInformation("Cluster listening on port " + _port + " for node " + _nodeConfiguration.NodeId);
 
-            if(_portSSL != -1)
+            if (_portSSL != -1)
                 _logger.LogInformation("Cluster listening on port " + _port + " SSL for node " + _nodeConfiguration.NodeId);
         }
 
@@ -99,6 +106,7 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
 
             (bool result, string message) = _addressService
                 .CreateAddress(addressCreationRequest, request.CreatedBy, requestedByOtherNode: true);
+
             return Task.FromResult(new AddressCreationResponse() { Success = result });
         }
 
@@ -290,6 +298,79 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
             (bool result, string message) = _applicationService.RevokeApplicationToken(request.ApplicationName, Guid.Parse(request.ApiKey), request.UpdatedBy, requestedByOtherNode: true);
 
             return Task.FromResult(new ApplicationResponse() { Message = message, Success = result });
+        }
+
+        #endregion
+
+
+        #region Client connection
+
+        public override Task<ClientConnection_Response> RequestClientConnectionRegistration(ClientConnection_Registration request, ServerCallContext context)
+        {
+            _logger.LogInformation($"Application [{request.Application}] client connection registration requested by neighbor node [{context.Peer}]");
+
+            var response = _clientCommunicationService.EstablishConnection(new Core.Models.Routing.Integrations.ClientConnectionRequest()
+            {
+                Address = request.Address,
+                Application = request.Application,
+                AppKey = request.AppKey,
+                AppSecret = request.AppToken,
+                ConnectedNode = request.ConnectedNode,
+                ClientHost = request.ClientHost,
+                ApplicationType = Enum.Parse<ApplicationConnectionTypes>(request.ConnectionType),
+
+                ProductionInstanceType = Enum.Parse<ProductionInstanceTypes>(request.ProductionInstanceType),
+                ReadInitialPosition = Enum.Parse<ReadInitialPositions>(request.ReadInitialPosition),
+                SubscriptionMode = Enum.Parse<SubscriptionModes>(request.SubscriptionMode),
+                SubscriptionType = Enum.Parse<SubscriptionTypes>(request.SubscriptionType)
+
+            }, notifyOtherNodes: false);
+
+            if (response.Status == Core.Models.Routing.Common.ConnectionStatuses.Connected)
+                return Task.FromResult(new ClientConnection_Response() { Message = response.Message, Success = true });
+
+            return Task.FromResult(new ClientConnection_Response() { Message = response.Message, Success = false });
+        }
+
+        public override Task<ClientConnection_Response> RequestClientConnectionHeartbeat(ClientConnection_Heartbeat request, ServerCallContext context)
+        {
+            var clientConnection = _clientCommunicationService.GetClientConnection(request.Application, request.Address, Enum.Parse<ApplicationConnectionTypes>(request.ConnectionType));
+            if (clientConnection == null)
+                return Task.FromResult(new ClientConnection_Response() { Message = $"Client connection doesnot exists for application [{request.Application}] and address [{request.Address}]", Success = false });
+
+            var response = _clientCommunicationService.HeartbeatConnection(clientConnection.Id, request.ClientHost, request.Application, request.Address, new TokenDetails()
+            {
+                AppKey = request.AppKey,
+                AppSecret = request.AppToken
+            }, notifyOtherNodes: false);
+
+            if (response.Status == Core.Models.Routing.Common.ConnectionStatuses.Connected)
+                return Task.FromResult(new ClientConnection_Response() { Message = response.Message, Success = true });
+
+            return Task.FromResult(new ClientConnection_Response() { Message = response.Message, Success = false });
+        }
+
+        public override Task<ClientConnection_Response> RequestClientConnectionDisconnect(ClientConnection_Close request, ServerCallContext context)
+        {
+            var clientConnection = _clientCommunicationService.GetClientConnection(request.Application, request.Address, Enum.Parse<ApplicationConnectionTypes>(request.ConnectionType));
+            if (clientConnection == null)
+                return Task.FromResult(new ClientConnection_Response() { Message = $"Client connection doesnot exists for application [{request.Application}] and address [{request.Address}]", Success = false });
+
+            var response = _clientCommunicationService.CloseConnection(new Core.Models.Routing.Integrations.ClientDisconnectionRequest()
+            {
+                ApplicationType = Enum.Parse<ApplicationConnectionTypes>(request.ConnectionType),
+                Address = request.Address,
+                AppKey = request.AppKey,
+                AppSecret = request.AppToken,
+                Application = request.Application,
+                ClientHost = request.ClientHost,
+                ClientId = request.ClientId
+            }, notifyOtherNodes: false);
+
+            if (response.Status == Core.Models.Routing.Common.ConnectionStatuses.Disconnected)
+                return Task.FromResult(new ClientConnection_Response() { Message = response.Message, Success = true });
+
+            return Task.FromResult(new ClientConnection_Response() { Message = response.Message, Success = false });
         }
 
         #endregion

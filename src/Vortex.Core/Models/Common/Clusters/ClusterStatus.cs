@@ -3,6 +3,7 @@
     public enum ClusterStatus
     {
         Online,
+        OnlineStandalone,
         Initializing,
         Offline,
         Reconnecting,

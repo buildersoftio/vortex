@@ -50,7 +50,14 @@ namespace Vortex.Infrastructure.IO.Services
 
         public string[] GetBackgroundFiles(string prefixFileName)
         {
-            return Directory.GetFiles(TemporaryLocations.GetBackgroundServiceDirectory(), $"{prefixFileName}*", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(TemporaryLocations.GetBackgroundServiceDirectory(), $"{prefixFileName}*", SearchOption.AllDirectories);
+
+            // sort the files based on date of creation, order by the oldest.
+            var orderedFiles = files.Select(file => new FileInfo(file))
+                                .OrderBy(fileInfo => fileInfo.CreationTime)
+                                .ToList().Select(f=>f.FullName).ToArray();
+
+            return orderedFiles;
         }
 
         public TRequest GetBackgroundTemporaryFileContent<TRequest>(string path)

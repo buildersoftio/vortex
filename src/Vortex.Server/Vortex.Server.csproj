@@ -11,7 +11,7 @@
 		<Authors>Buildersoft</Authors>
 		<Company>Buildersoft LLC</Company>
 		<Product>Buildersoft Vortex</Product>
-		<Description>Buildersoft Vortex, distributed streaming platform</Description>
+		<Description>Buildersoft Vortex Server, distributed streaming platform</Description>
 		<PackageProjectUrl>https://buildersoft.io/</PackageProjectUrl>
 	</PropertyGroup>
 

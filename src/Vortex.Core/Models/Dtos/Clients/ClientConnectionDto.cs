@@ -23,6 +23,12 @@ namespace Vortex.Core.Models.Dtos.Clients
         public SubscriptionModes? SubscriptionMode { get; set; }
         public ReadInitialPositions? ReadInitialPosition { get; set; }
 
-        public List<string>? ConnectedIPs { get; set; }
+        public List<string>? ConnectedHosts { get; set; }
+        public Dictionary<string, ApplicationHost> HostsHistory { get; set; }
+
+        public ClientConnectionDto()
+        {
+            HostsHistory = new Dictionary<string, ApplicationHost>();
+        }
     }
 }

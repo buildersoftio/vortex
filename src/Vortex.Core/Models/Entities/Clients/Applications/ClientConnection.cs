@@ -28,6 +28,11 @@ namespace Vortex.Core.Models.Entities.Clients.Applications
         public ReadInitialPositions ReadInitialPosition { get; set; }
 
         public List<string>? ConnectedHosts { get; set; }
+        public Dictionary<string, ApplicationHost> HostsHistory { get; set; }
 
+        public ClientConnection()
+        {
+            HostsHistory = new Dictionary<string, ApplicationHost>();
+        }
     }
 }

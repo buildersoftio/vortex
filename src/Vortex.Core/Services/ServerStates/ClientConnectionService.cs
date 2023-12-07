@@ -44,9 +44,9 @@ namespace Vortex.Core.Services.ServerStates
                 return (null, $"Address [{addressName}] doesnot exists");
 
             var clientConnections = _applicationRepository.GetClientConnectionsByAddress(address.Id)!;
-            List<ClientConnectionDto> clientConenctionsDto = MapClientConnectionsByAddress(address, clientConnections);
+            List<ClientConnectionDto> clientConnectionsDto = MapClientConnectionsByAddress(address, clientConnections);
 
-            return (clientConenctionsDto, message: "Client connections returned");
+            return (clientConnectionsDto, message: "Client connections returned");
         }
 
         public (List<ClientConnectionDto>? clientConnections, string message) GetClientConnectionsByApplicationName(string applicationName)
@@ -55,7 +55,7 @@ namespace Vortex.Core.Services.ServerStates
             if (application == null)
                 return (null, $"Application [{applicationName}] doesnot exists");
 
-            var clientConenctionsDto = _applicationRepository
+            var clientConnectionsDto = _applicationRepository
                 .GetClientConnectionsByApplication(application.Id)!
                 .Select(a => new ClientConnectionDto()
                 {
@@ -63,7 +63,8 @@ namespace Vortex.Core.Services.ServerStates
                     Address = _addressRepository.GetAddressById(a.AddressId)!.Name,
                     ApplicationName = application.Name,
                     ApplicationConnectionType = a.ApplicationConnectionType,
-                    ConnectedIPs = a.ConnectedHosts,
+                    ConnectedHosts = a.ConnectedHosts,
+                    HostsHistory = a.HostsHistory,
                     FirstConnectionDate = a.FirstConnectionDate,
                     IsConnected = a.IsConnected,
                     LastConnectionDate = a.LastConnectionDate,
@@ -74,7 +75,7 @@ namespace Vortex.Core.Services.ServerStates
                 }).ToList();
 
 
-            return (clientConenctionsDto, message: "Client connections returned");
+            return (clientConnectionsDto, message: "Client connections returned");
         }
 
 
@@ -119,6 +120,7 @@ namespace Vortex.Core.Services.ServerStates
                 ApplicationConnectionType = clientConnectionRequest.ApplicationConnectionType,
                 IsConnected = false,
                 ConnectedHosts = new List<string>(),
+                HostsHistory = new Dictionary<string, ApplicationHost>(),
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = createdBy
             };
@@ -188,14 +190,15 @@ namespace Vortex.Core.Services.ServerStates
                 Address = address!.Name,
                 ApplicationName = _applicationRepository.GetApplication(a.ApplicationId)!.Name,
                 ApplicationConnectionType = a.ApplicationConnectionType,
-                ConnectedIPs = a.ConnectedHosts,
+                ConnectedHosts = a.ConnectedHosts,
                 FirstConnectionDate = a.FirstConnectionDate,
                 IsConnected = a.IsConnected,
                 LastConnectionDate = a.LastConnectionDate,
                 ProductionInstanceType = a.ProductionInstanceType,
                 ReadInitialPosition = a.ReadInitialPosition,
                 SubscriptionMode = a.SubscriptionMode,
-                SubscriptionType = a.SubscriptionType
+                SubscriptionType = a.SubscriptionType,
+                HostsHistory = a.HostsHistory,
             }).ToList();
         }
 
@@ -234,7 +237,7 @@ namespace Vortex.Core.Services.ServerStates
 
         }
 
-        public bool RegisterClientHostConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost)
+        public bool RegisterClientHostConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost, string connectedNode)
         {
             var application = _applicationRepository.GetApplication(applicationName);
             if (application == null)
@@ -261,13 +264,26 @@ namespace Vortex.Core.Services.ServerStates
             if (ipExists != true)
                 clientConnection.ConnectedHosts.Add(clientHost);
 
+            if (clientConnection.HostsHistory.ContainsKey(clientHost) != true)
+                clientConnection.HostsHistory.Add(clientHost, new ApplicationHost()
+                {
+                    IsConnected = false,
+                    FirstConnectionDate = DateTimeOffset.Now,
+                    LastConnectionDate = DateTimeOffset.Now,
+
+                    // node where this client is connected to.
+                    ConnectedNode = connectedNode
+                });
+
             // update
+            clientConnection.UpdatedAt = DateTimeOffset.Now;
+            clientConnection.UpdatedBy = applicationName;
 
             return _applicationRepository
                 .UpdateApplicationAddressConnection(clientConnection);
         }
 
-        public bool UpdateClientConnectionState(string applicationName, string addressName, ApplicationConnectionTypes applicationType, bool isConnected)
+        public bool UpdateClientConnectionState(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost, bool isConnected)
         {
             var application = _applicationRepository.GetApplication(applicationName);
             if (application == null)
@@ -282,9 +298,21 @@ namespace Vortex.Core.Services.ServerStates
                 return false;
 
             clientConnection.IsConnected = isConnected;
+            clientConnection.HostsHistory[clientHost].IsConnected = isConnected;
 
-            if(isConnected == true)
+            if (isConnected == true)
+            {
                 clientConnection.LastConnectionDate = DateTimeOffset.Now;
+                clientConnection.HostsHistory[clientHost].LastConnectionDate = DateTimeOffset.Now;
+                clientConnection.HostsHistory[clientHost].LastHeartbeatDate = DateTimeOffset.Now;
+            }
+
+            // isConnected should be false in all hosts are disconnected
+            if (clientConnection.HostsHistory.All(pair => pair.Value.IsConnected != true))
+                clientConnection.IsConnected = false;
+
+            clientConnection.UpdatedAt = DateTimeOffset.Now;
+            clientConnection.UpdatedBy = applicationName;
 
             return _applicationRepository
                 .UpdateApplicationAddressConnection(clientConnection);
@@ -306,6 +334,26 @@ namespace Vortex.Core.Services.ServerStates
                 return null;
 
             return clientConnection;
+        }
+
+        public List<ClientConnection>? GetConnectedClientConnections()
+        {
+            return _applicationRepository
+                .GetConnectedClientConnections();
+        }
+
+        public bool UpdateClientConnection(ClientConnection clientConnection)
+        {
+            clientConnection.UpdatedAt = DateTimeOffset.Now;
+
+            return _applicationRepository
+                .UpdateApplicationAddressConnection(clientConnection);
+        }
+
+        public ClientConnection GetClientConnection(Guid connectionId)
+        {
+            return _applicationRepository
+                .GetClientConnection(connectionId)!;
         }
     }
 }

@@ -14,10 +14,15 @@ namespace Vortex.Core.Abstractions.Services
         (bool status, string message) VerifyClientConnectionByAddressAlias(string applicationName, string addressAlias, ApplicationConnectionTypes applicationType);
         (bool status, string message) VerifyClientConnectionByAddressName(string applicationName, string addressName, ApplicationConnectionTypes applicationType);
 
-        bool RegisterClientHostConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost);
-        bool UpdateClientConnectionState(string applicationName, string addressName, ApplicationConnectionTypes applicationType, bool isConnected);
+        bool RegisterClientHostConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost, string connectedNode);
+        bool UpdateClientConnectionState(string applicationName, string addressName, ApplicationConnectionTypes applicationType, string clientHost, bool isConnected);
 
         // This method should be only used for internal purposes. PLEASE, do not expose it via REST Endpoints.
         ClientConnection? GetClientConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType);
+        ClientConnection GetClientConnection(Guid connectionId);
+
+        List<ClientConnection>? GetConnectedClientConnections();
+
+        bool UpdateClientConnection(ClientConnection clientConnection);
     }
 }

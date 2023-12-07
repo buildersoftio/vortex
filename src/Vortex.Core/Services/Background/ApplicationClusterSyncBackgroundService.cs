@@ -77,7 +77,7 @@ namespace Vortex.Core.Services.Background
 
                 }
 
-                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] permission change failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] permission change failed at [{nodeClient.Key}], request is saved temporary");
                 StoreFailedRequestInFile(request, nodeClient.Key);
             }
         }
@@ -103,7 +103,7 @@ namespace Vortex.Core.Services.Background
                 }
 
                 StoreFailedRequestInFile(request, nodeClient.Key);
-                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] token revocation failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] token revocation failed at [{nodeClient.Key}], request is saved temporary");
             }
         }
 
@@ -128,7 +128,7 @@ namespace Vortex.Core.Services.Background
                 }
 
                 StoreFailedRequestInFile(request, nodeClient.Key);
-                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] token creation failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] token creation failed at [{nodeClient.Key}], request is saved temporary");
             }
         }
 
@@ -153,7 +153,7 @@ namespace Vortex.Core.Services.Background
                 }
 
                 StoreFailedRequestInFile(request, nodeClient.Key);
-                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] activation change failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] activation change failed at [{nodeClient.Key}], request is saved temporary");
             }
         }
 
@@ -178,7 +178,7 @@ namespace Vortex.Core.Services.Background
                 }
 
                 StoreFailedRequestInFile(request, nodeClient.Key);
-                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] settings change failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] settings change failed at [{nodeClient.Key}], request is saved temporary");
             }
         }
 
@@ -203,7 +203,7 @@ namespace Vortex.Core.Services.Background
                 }
 
                 StoreFailedRequestInFile(request, nodeClient.Key);
-                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] description change failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] description change failed at [{nodeClient.Key}], request is saved temporary");
             }
         }
 
@@ -228,7 +228,7 @@ namespace Vortex.Core.Services.Background
                 }
 
                 StoreFailedRequestInFile(request, nodeClient.Key);
-                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] hard deletion failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] hard deletion failed at [{nodeClient.Key}], request is saved temporary");
             }
         }
 
@@ -253,7 +253,7 @@ namespace Vortex.Core.Services.Background
                 }
 
                 StoreFailedRequestInFile(request, nodeClient.Key);
-                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] soft deletion failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] soft deletion failed at [{nodeClient.Key}], request is saved temporary");
             }
         }
 
@@ -278,7 +278,7 @@ namespace Vortex.Core.Services.Background
                 }
 
                 StoreFailedRequestInFile(request, nodeClient.Key);
-                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] creation failed at {nodeClient.Key}, request is saved temporary");
+                _logger.LogWarning($"Application [{request.ApplicationDto.Name}] creation failed at [{nodeClient.Key}], request is saved temporary");
             }
         }
 

@@ -43,6 +43,7 @@ namespace Vortex.Core.Services.Orchestrations
 
             LoadPartitionDataServices(address);
         }
+
         public void LoadAddressPartitionsInMemory(int addressId)
         {
             var address = _addressRepository.GetAddressById(addressId);
@@ -60,6 +61,7 @@ namespace Vortex.Core.Services.Orchestrations
 
             UnloadPartitionDataServices(address);
         }
+
         public void UnloadAddressPartitionsInMemory(int addressId)
         {
             var address = _addressRepository.GetAddressById(addressId);
@@ -69,12 +71,16 @@ namespace Vortex.Core.Services.Orchestrations
             UnloadPartitionDataServices(address);
         }
 
-
-
-
         private void LoadPartitionDataServices(Address address)
         {
             var partitions = _partitionEntryService.GetPartitionEntries(address.Id);
+
+            if (_inMemoryAddresses.ContainsKey(address.Id))
+            {
+
+                _logger.LogInformation($"Address [{address.Name}] partitions are already loaded");
+                return;
+            }
 
             _inMemoryAddresses.TryAdd(address.Id, new AddressContainer() { AddressAlias = address.Alias, AddressName = address.Name, PartitionEntries = partitions });
             foreach (var partition in partitions)
@@ -86,6 +92,7 @@ namespace Vortex.Core.Services.Orchestrations
 
             _logger.LogInformation($"Address [{address.Name}] partitions are loaded and ready");
         }
+
         private void UnloadPartitionDataServices(Address address)
         {
             if (_inMemoryAddresses.TryRemove(address.Id, out _))

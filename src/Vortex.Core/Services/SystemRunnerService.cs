@@ -6,6 +6,8 @@ using Vortex.Core.Models.Configurations;
 using Vortex.Core.Utilities.Consts;
 using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
+using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Models.BackgroundTimerRequests;
 
 namespace Vortex.Core.Services
 {
@@ -104,6 +106,7 @@ namespace Vortex.Core.Services
 
             RunCluster();
             RunBroker();
+            RunBackgroundJobs();
 
             _logger.LogInformation($"{SystemProperties.ShortName} is ready");
         }
@@ -115,6 +118,10 @@ namespace Vortex.Core.Services
                 _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundServiceFailTaskInterval}: 300");
                 Environment.SetEnvironmentVariable(EnvironmentConstants.BackgroundServiceFailTaskInterval, "300");
             }
+
+            _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundIdleClientConnectionInterval}: {_nodeConfiguration.IdleClientConnectionInterval}");
+            _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundIdleClientConnectionTimeout}: {_nodeConfiguration.IdleClientConnectionTimeout}");
+            _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundCheckRetryCount}: {_nodeConfiguration.CheckRetryCount}");
         }
 
         private void CreateLoggingDirectory()
@@ -266,6 +273,12 @@ namespace Vortex.Core.Services
         {
             _brokerIntegrationServer = _serviceProvider.GetService(typeof(IClientIntegrationServer)) as IClientIntegrationServer;
             _brokerIntegrationServer!.Start();
+        }
+
+        private void RunBackgroundJobs()
+        {
+            var clientIdleBackgroundService = _serviceProvider.GetService(typeof(ITimedBackgroundService<ClientIdleTimerRequest>)) as ITimedBackgroundService<ClientIdleTimerRequest>;
+            clientIdleBackgroundService!.Start();
         }
     }
 }

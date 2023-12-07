@@ -307,6 +307,15 @@ namespace Vortex.Core.Services.ServerStates
             return (address: new AddressDto(address), message: $"Address alias {alias} returned");
         }
 
+        public (AddressDto? address, string message) GetAddressById(int addressId)
+        {
+            var address = _addressRepository.GetAddressById(addressId);
+            if (address == null)
+                return (address: null, message: $"Address with id {addressId} doesnot exists");
+
+            return (address: new AddressDto(address), message: $"Address with id {addressId} returned");
+        }
+
         public (AddressDto? address, string message) GetAddressByName(string name)
         {
             var address = _addressRepository.GetAddressByName(name);

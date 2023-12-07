@@ -4,6 +4,6 @@
     {
         public static string Name = "Buildersoft Vortex";
         public static string ShortName = "Vortex";
-        public static string Version = "v4.0.0-alpha1";
+        public static string Version = "v4.0.0-dev2024";
     }
 }
