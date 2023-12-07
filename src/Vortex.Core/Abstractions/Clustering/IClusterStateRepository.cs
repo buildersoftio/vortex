@@ -5,6 +5,7 @@ namespace Vortex.Core.Abstractions.Clustering
 {
     public interface IClusterStateRepository
     {
+        Cluster GetCluster();
         void UpdateClusterName(string clusterName);
         void UpdateClusterStatus(ClusterStatus clusterStatus);
 

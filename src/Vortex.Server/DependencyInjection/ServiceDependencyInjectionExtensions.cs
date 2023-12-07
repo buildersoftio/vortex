@@ -45,6 +45,8 @@ namespace Vortex.Server.DependencyInjection
             services.AddSingleton<IBackgroundQueueService<AddressClusterScopeRequest>, AddressClusterSyncBackgroundService>();
 
             services.AddSingleton<IBackgroundQueueService<ApplicationClusterScopeRequest>, ApplicationClusterSyncBackgroundService>();
+
+            services.AddSingleton<IBackgroundQueueService<ClientConnectionBackgroundRequest>, ClientConnectionSyncBackgroundService>();
         }
 
         public static void AddBackgroundTimerServerStateServices(this IServiceCollection services)

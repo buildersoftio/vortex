@@ -11,6 +11,7 @@ namespace Vortex.Core.Abstractions.Services
         (bool status, string message) PromoteAddress(string alias, string updatedBy, bool requestedByOtherNode = false);
 
         (AddressDto? address, string message) GetAddressByAlias(string alias);
+        (AddressDto? address, string message) GetAddressById(int addressId);
         (AddressDto? address, string message) GetAddressByName(string name);
         (List<AddressDto>? addresses, string message) GetAddresses();
 

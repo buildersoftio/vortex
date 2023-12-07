@@ -7,6 +7,7 @@ using Vortex.Core.Models.Common.Clusters;
 using Vortex.Core.Models.Configurations;
 using Vortex.Core.Utilities.Consts;
 using Microsoft.Extensions.Logging;
+using System.Xml.Linq;
 
 namespace Vortex.Core.Services.Clustering
 {
@@ -39,7 +40,6 @@ namespace Vortex.Core.Services.Clustering
             _logger.LogInformation("Configuring Cluster...");
 
 
-
             var clusterConfiguration = _configIOService.GetClusterConfiguration();
             _logger.LogInformation("Changing state of default cluster configuration");
 
@@ -48,12 +48,28 @@ namespace Vortex.Core.Services.Clustering
 
             if (clusterConfiguration!.Nodes.Count == 1)
             {
-                if (clusterConfiguration.Nodes.ContainsKey("cerebro_standalone"))
-                {
-                    _clusterStateRepository.UpdateClusterStatus(ClusterStatus.Online);
+                //TODO: vortex_standalone should be somehow integrated with node_id; in cse there is just one node.
+                
+                // we are removing this condition for now, in case we have just a single node registered in the 
 
-                    _logger.LogInformation($"Cluster identifier is 'Standalone', only one node is running within this cluster");
-                }
+                //if (clusterConfiguration.Nodes.ContainsKey("vortex_standalone"))
+                //{
+                _clusterStateRepository.UpdateClusterStatus(ClusterStatus.OnlineStandalone);
+                _logger.LogInformation($"Cluster identifier is 'Standalone', only one node is running within this cluster");
+
+                var nodeToCreate = new Node()
+                {
+                    Id = _nodeConfiguration.NodeId,
+                    Address = "localhost",
+                    Port = 0,
+                    //State = NodeState.Follower,
+                    LastHeartbeat = DateTime.Now,
+                    Status = NodeStatus.Online
+                };
+
+                _clusterStateRepository.AddNode(_nodeConfiguration.NodeId, nodeToCreate);
+
+                //}
             }
             else
             {

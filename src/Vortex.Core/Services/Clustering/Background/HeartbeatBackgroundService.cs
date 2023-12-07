@@ -3,6 +3,7 @@ using Vortex.Core.Abstractions.Clustering;
 using Vortex.Core.IO.Services;
 using Vortex.Core.Models.BackgroundRequests;
 using Microsoft.Extensions.Logging;
+using Vortex.Core.Models.Common.Clusters;
 
 namespace Vortex.Core.Services.Clustering.Background
 {
@@ -34,21 +35,24 @@ namespace Vortex.Core.Services.Clustering.Background
                     await client!.RequestHeartBeatAsync();
 
                     _clusterStateRepository.UpdateHeartBeat(node.Key);
-                    _clusterStateRepository.UpdateClusterStatus(Models.Common.Clusters.ClusterStatus.Online);
+                    _clusterStateRepository.UpdateNodeStatus(node.Key, NodeStatus.Online);
+                    _clusterStateRepository.UpdateClusterStatus(ClusterStatus.Online);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError($"Failed to requeset Heartbeat to node {node.Key}, error details: {ex.Message}");
-                    _clusterStateRepository.UpdateClusterStatus(Models.Common.Clusters.ClusterStatus.Reconnecting);
+                    _logger.LogError($"Failed to request Heartbeat to node {node.Key}, error details: {ex.Message}");
+                    _clusterStateRepository.UpdateClusterStatus(ClusterStatus.Reconnecting);
+                    _clusterStateRepository.UpdateNodeStatus(node.Key, NodeStatus.Reconnecting);
 
                     // checking timeout
                     var lastHeartBeat = node.Value.LastHeartbeat!.Value.TimeOfDay;
                     var rightNow = DateTime.Now.TimeOfDay;
-                    var diference = rightNow - lastHeartBeat;
-                    if (diference.TotalSeconds >= _configIOService.GetClusterConfiguration()!.Settings.HeartbeatTimeout)
+                    var difference = rightNow - lastHeartBeat;
+                    if (difference.TotalSeconds >= _configIOService.GetClusterConfiguration()!.Settings.HeartbeatTimeout)
                     {
                         _logger.LogError($"Node {node.Key} is offline, trying to connect in {_configIOService.GetClusterConfiguration()!.Settings.HeartbeatInterval} seconds");
-                        _clusterStateRepository.UpdateClusterStatus(Models.Common.Clusters.ClusterStatus.Offline);
+                        _clusterStateRepository.UpdateClusterStatus(ClusterStatus.Offline);
+                        _clusterStateRepository.UpdateNodeStatus(node.Key, NodeStatus.Offline);
                     }
                 }
             }

@@ -10,7 +10,7 @@ namespace Vortex.Core.IO
             if (preSelectedLocation != null)
                 return preSelectedLocation;
 
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cerebro_config");
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "vortex_config");
         }
 
         public static string GetDataRootDirectory()
@@ -19,7 +19,7 @@ namespace Vortex.Core.IO
             if (preSelectedLocation != null)
                 return preSelectedLocation;
 
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cerebro_data");
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "vortex_data");
         }
 
         public static string GetLogsRootDirectory()
@@ -28,7 +28,7 @@ namespace Vortex.Core.IO
             if (preSelectedLocation != null)
                 return preSelectedLocation;
 
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cerebro_logs");
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "vortex_logs");
         }
 
         public static string GetTempRootDirectory()
@@ -37,7 +37,7 @@ namespace Vortex.Core.IO
             if (preSelectedLocation != null)
                 return preSelectedLocation;
 
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "cerebro_temp");
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "vortex_temp");
         }
     }
 }

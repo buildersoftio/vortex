@@ -51,6 +51,12 @@ namespace Vortex.Cluster.Infrastructure.Clients
             return Task.CompletedTask;
         }
 
+        public async Task<bool> RequestHeartBeatAsync()
+        {
+            var result = await _client.SendHeartbeatAsync(new NodeExchange.Heartbeat() { NodeId = _serverNodeConfiguration.NodeId });
+            return true;
+        }
+
         #region Address Sync Region
 
         public async Task<bool> RequestAddressCreation(AddressClusterScopeRequest request)
@@ -361,11 +367,85 @@ namespace Vortex.Cluster.Infrastructure.Clients
 
         #endregion
 
-        public async Task<bool> RequestHeartBeatAsync()
+
+        #region Client connection
+
+        public async Task<bool> RequestClientConnectionRegister(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, ProductionInstanceTypes? productionInstanceType, SubscriptionTypes? subscriptionType, SubscriptionModes? subscriptionMode, ReadInitialPositions? readInitialPosition)
         {
-            var result = await _client.SendHeartbeatAsync(new NodeExchange.Heartbeat() { NodeId = _serverNodeConfiguration.NodeId });
-            return true;
+            try
+            {
+                var response = await _client.RequestClientConnectionRegistrationAsync(new NodeExchange.ClientConnection_Registration()
+                {
+                    Address = address,
+                    Application = application,
+                    ClientHost = clientHost,
+                    ConnectedNode = connectedNode,
+                    ConnectionType = connectionTypes.ToString(),
+                    ProductionInstanceType = productionInstanceType.ToString(),
+                    ReadInitialPosition = readInitialPosition.ToString(),
+                    SubscriptionMode = subscriptionMode.ToString(),
+                    SubscriptionType = subscriptionType.ToString(),
+                    AppKey = credentials.AppKey,
+                    AppToken = credentials.AppSecret
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
+
+        public async Task<bool> RequestClientConnectionHeartbeat(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, string clientId)
+        {
+            try
+            {
+                var response = await _client.RequestClientConnectionHeartbeatAsync(new NodeExchange.ClientConnection_Heartbeat()
+                {
+                    Address = address,
+                    Application = application,
+                    ConnectionType = connectionTypes.ToString(),
+                    ConnectedNode = connectedNode,
+                    ClientHost = clientHost,
+                    ClientId = clientId,
+                    AppKey = credentials.AppKey,
+                    AppToken = credentials.AppSecret
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestClientConnectionUnregister(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, string clientId)
+        {
+            try
+            {
+                var response = await _client.RequestClientConnectionDisconnectAsync(new NodeExchange.ClientConnection_Close()
+                {
+                    Address = address,
+                    Application = application,
+                    ConnectionType = connectionTypes.ToString(),
+                    ConnectedNode = connectedNode,
+                    ClientHost = clientHost,
+                    ClientId = clientId,
+                    AppKey = credentials.AppKey,
+                    AppToken = credentials.AppSecret
+                });
+
+                return response.Success;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        #endregion
 
     }
 }

@@ -9,7 +9,6 @@ namespace Vortex.Core.Models.Routing.Integrations
         public ApplicationConnectionTypes ApplicationType { get; set; }
 
 
-        public int ApplicationId { get; set; }
         public string ClientId { get; set; }
 
 

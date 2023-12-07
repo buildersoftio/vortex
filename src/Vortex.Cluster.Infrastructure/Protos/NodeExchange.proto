@@ -8,7 +8,7 @@ service NodeExchangeService {
 	rpc SendHeartbeat(Heartbeat) returns (HeartbeatResponse);
 
 	
-	/// Address Methods
+	/// Address methods
 	rpc RequestAddressCreation(AddressCreationRequest) returns (AddressCreationResponse);
 	rpc RequestAddressPartitionChange(AddressPartitionChangeRequest) returns (AddressResponse);
 
@@ -20,7 +20,7 @@ service NodeExchangeService {
 	rpc RequestAddressDeletion(AddressDeletionRequest) returns (AddressResponse);
 	///
 
-	/// Application Methods
+	/// Application methods
 	rpc RequestApplicationCreation(ApplicationCreationRequest) returns (ApplicationResponse);
 	rpc RequestApplicationDeletion(ApplicationDeletionRequest) returns (ApplicationResponse);
 	rpc RequestApplicationUpdate(ApplicationUpdateRequest) returns (ApplicationResponse);
@@ -30,6 +30,12 @@ service NodeExchangeService {
 	rpc RequestApplicationTokenCreation(AddApplicationTokenRequest) returns (ApplicationResponse);
 	rpc RequestApplicationTokenRevocation(RevokeApplicationTokenRequest) returns (ApplicationResponse);
 	rpc RequestApplicationPermissionChange(ChangeApplicationPermissionRequest) returns (ApplicationResponse);
+
+
+	/// Client connection methods
+	rpc RequestClientConnectionRegistration(ClientConnection_Registration) returns (ClientConnection_Response);
+	rpc RequestClientConnectionHeartbeat(ClientConnection_Heartbeat) returns (ClientConnection_Response);
+	rpc RequestClientConnectionDisconnect(ClientConnection_Close) returns (ClientConnection_Response);
 
 
 	///
@@ -156,6 +162,53 @@ message ChangeApplicationPermissionRequest {
 }
 
 message ApplicationResponse {
+	bool success = 1;
+	string message = 2;
+}
+
+
+message ClientConnection_Registration {
+	string application = 1;
+	string address = 2;
+	string connection_type = 3;
+	string client_host = 4;
+	string connected_node = 5;
+
+	// these are enums, we are sending as string; do the parsing in the server side.
+	optional string production_instance_type = 6;
+	optional string subscription_type = 7;
+	optional string subscription_mode = 8;
+	optional string read_initial_position = 9;
+
+	optional string appKey = 10;
+	optional string appToken = 11;
+}
+
+message ClientConnection_Heartbeat {
+	string application = 1;
+	string address = 2;
+	string connection_type = 3;
+	string client_host = 4;
+	string connected_node = 5;
+	string client_id = 6;
+
+	optional string appKey = 7;
+	optional string appToken = 8;
+}
+
+message ClientConnection_Close {
+	string application = 1;
+	string address = 2;
+	string connection_type = 3;
+	string client_host = 4;
+	string connected_node = 5;
+	string client_id = 6;
+
+	optional string appKey = 7;
+	optional string appToken = 8;
+}
+
+message ClientConnection_Response {
 	bool success = 1;
 	string message = 2;
 }

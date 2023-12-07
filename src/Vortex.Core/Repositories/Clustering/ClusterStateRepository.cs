@@ -38,6 +38,11 @@ namespace Vortex.Core.Repositories.Clustering
             _currentClusterState.Nodes[nodeId] = node;
         }
 
+        public Cluster GetCluster()
+        {
+            return _currentClusterState;
+        }
+
         public DateTime? GetLastHeartbeat(string nodeId)
         {
             if (_currentClusterState.Nodes.ContainsKey(nodeId) != true)

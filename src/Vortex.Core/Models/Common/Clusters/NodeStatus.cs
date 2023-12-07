@@ -3,6 +3,7 @@
     public enum NodeStatus
     {
         Online,
+        Reconnecting,
         Offline
     }
 

@@ -1,10 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Transactions;
+using Vortex.Core.Abstractions.Background;
 using Vortex.Core.Abstractions.Services;
 using Vortex.Core.Abstractions.Services.Orchestrations;
 using Vortex.Core.Abstractions.Services.Routing;
+using Vortex.Core.Models.BackgroundRequests;
 using Vortex.Core.Models.Common.Clients.Applications;
 using Vortex.Core.Models.Configurations;
+using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Models.Entities.Clients.Applications;
 using Vortex.Core.Models.Routing.Integrations;
 using Vortex.Core.Utilities.Consts;
 
@@ -18,13 +22,15 @@ namespace Vortex.Core.Services.Routing
         private readonly IClientConnectionService _clientConnectionService;
         private readonly IServerCoreStateManager _serverCoreStateManager;
         private readonly NodeConfiguration _nodeConfiguration;
+        private readonly IBackgroundQueueService<ClientConnectionBackgroundRequest> _clusterClientConnectionService;
 
         public ClientCommunicationService(ILogger<ClientCommunicationService> logger,
             IApplicationService applicationService,
             IAddressService addressService,
             IClientConnectionService clientConnectionService,
             IServerCoreStateManager serverCoreStateManager,
-            NodeConfiguration nodeConfiguration)
+            NodeConfiguration nodeConfiguration,
+            IBackgroundQueueService<ClientConnectionBackgroundRequest> clusterClientConnectionService)
         {
             _logger = logger;
             _applicationService = applicationService;
@@ -34,6 +40,7 @@ namespace Vortex.Core.Services.Routing
             _serverCoreStateManager = serverCoreStateManager;
 
             _nodeConfiguration = nodeConfiguration;
+            _clusterClientConnectionService = clusterClientConnectionService;
         }
 
         public ClientConnectionResponse EstablishConnection(ClientConnectionRequest request, bool notifyOtherNodes = true)
@@ -99,28 +106,54 @@ namespace Vortex.Core.Services.Routing
 
             // loading address in memory
             (var address, var _) = _addressService.GetAddressByName(request.Address);
-            if (address != null)
-            {
-                // here we check the status of the address, if the address is not ready, we try for 3 seconds.
-                int k = 0;
-                while (address.Status != Models.Common.Addresses.AddressStatuses.Ready)
-                {
-                    if (k == _nodeConfiguration.CheckRetryCount)
-                    {
-                        _logger.LogError($"Application client from [{request.ClientHost}] cannot connect, address [{address.Name}] partitions failed to create.");
-                        return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.FatalError, Message = $"Address [{address.Name}] partitions are not created. Application client cannot connect. To increase the number of retries change Environment variable [{EnvironmentConstants.BackgroundCheckRetryCount}]" };
-                    }
 
-                    Thread.Sleep(1000);
-                    k++;
-                }
-                _serverCoreStateManager.LoadAddressPartitionsInMemory(address.Alias);
+            if (address == null)
+            {
+                return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.FatalError, Message = $"Address [{request.Address}] doesnot exists" };
             }
 
+            // here we check the status of the address, if the address is not ready, we try for 3 seconds.
+            int k = 0;
+            while (address.Status != Models.Common.Addresses.AddressStatuses.Ready)
+            {
+                if (k == _nodeConfiguration.CheckRetryCount)
+                {
+                    _logger.LogError($"Application client from [{request.ClientHost}] cannot connect, address [{address.Name}] partitions failed to create.");
+                    return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.FatalError, Message = $"Address [{address.Name}] partitions are not created. Application client cannot connect. To increase the number of retries change Environment variable [{EnvironmentConstants.BackgroundCheckRetryCount}]" };
+                }
+
+                Thread.Sleep(1000);
+                k++;
+            }
+
+            // inform other nodes for Application Client connection
+            if (address!.Settings.Scope == Models.Common.Addresses.AddressScope.ClusterScope && notifyOtherNodes == true)
+            {
+                _clusterClientConnectionService.EnqueueRequest(new ClientConnectionBackgroundRequest()
+                {
+                    RequestState = ClientConnectionRequestState.EstablishConnection,
+
+                    Application = request.Application,
+                    Address = request.Address,
+                    ApplicationType = request.ApplicationType,
+                    ClientHost = request.ClientHost,
+
+                    ConnectedNode = _nodeConfiguration.NodeId,
+                    Credentials = new TokenDetails() { AppKey = request.AppKey, AppSecret = request.AppSecret },
+
+                    ProductionInstanceType = request.ProductionInstanceType,
+                    ReadInitialPosition = request.ReadInitialPosition,
+                    SubscriptionMode = request.SubscriptionMode,
+                    SubscriptionType = request.SubscriptionType
+
+                });
+            }
+
+            // loading address in memory should be the last thing ever :p it's me saying it!
+            _serverCoreStateManager.LoadAddressPartitionsInMemory(address.Alias);
 
             return new ClientConnectionResponse()
             {
-                ApplicationId = applicationDto.Id,
                 ClientId = clientConnection!.Id,
                 Status = Models.Routing.Common.ConnectionStatuses.Connected,
                 Message = $"[{request.Application}] is connected to [{request.Address}]"
@@ -155,7 +188,9 @@ namespace Vortex.Core.Services.Routing
             if (clientConnectionDetails == null)
                 return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.Error, Message = "Something went wrong! ClientConnection does not exists" };
 
-            if (clientConnectionDetails.Id != Guid.Parse(request.ClientId))
+            // added && notifyOtherNodes == true; reason: the connection id-s are different for each node when the client-connection is registered.
+            // we check this condition only when the request is coming to this node
+            if (clientConnectionDetails.Id != Guid.Parse(request.ClientId) && notifyOtherNodes == true)
                 return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.FatalError, Message = $"Provided ClientId [{request.ClientId}] is not registered in ClientConnections for Application [{request.Application}]" };
 
 
@@ -163,18 +198,42 @@ namespace Vortex.Core.Services.Routing
 
             _logger.LogInformation($"Application [{request.Application}] connection from [{request.ClientHost}] is disconnected from address [{request.Address}]");
 
+
+            // get address by id 
+            (var address, var _) = _addressService.GetAddressById(clientConnectionDetails.AddressId);
+            if (address == null)
+            {
+                return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.FatalError, Message = $"Address with id [{clientConnectionDetails.AddressId}] doesnot exists" };
+            }
+
+            // inform other nodes for Application Client connection
+            if (address!.Settings.Scope == Models.Common.Addresses.AddressScope.ClusterScope && notifyOtherNodes == true)
+            {
+                _clusterClientConnectionService.EnqueueRequest(new ClientConnectionBackgroundRequest()
+                {
+                    RequestState = ClientConnectionRequestState.ClientDisconnection,
+
+                    Application = request.Application,
+                    Address = request.Address,
+                    ApplicationType = request.ApplicationType,
+                    ClientId = request.ClientId,
+                    ClientHost = request.ClientHost,
+                    Credentials = new TokenDetails() { AppKey = request.AppKey, AppSecret = request.AppSecret },
+                    ConnectedNode = _nodeConfiguration.NodeId
+                });
+            }
+
             // trying to unload address from memory.
             // TODO:.. we are here...
 
             return new ClientConnectionResponse()
             {
-                ApplicationId = request.ApplicationId,
                 Status = Models.Routing.Common.ConnectionStatuses.Disconnected,
                 Message = "Application connection has been released"
             };
         }
 
-        public ClientConnectionResponse HeartbeatConnection(Guid clientId, string clientHost, string applicationName, string address, TokenDetails tokenDetails, bool notifyOtherNodes = true)
+        public ClientConnectionResponse HeartbeatConnection(Guid clientId, string clientHost, string applicationName, string addressName, TokenDetails tokenDetails, bool notifyOtherNodes = true)
         {
             (var applicationDto, var message) = _applicationService.GetApplication(applicationName);
 
@@ -200,8 +259,8 @@ namespace Vortex.Core.Services.Routing
             var clientConnection = _clientConnectionService.GetClientConnection(clientId);
             if (clientConnection == null)
             {
-                _logger.LogError($"Application client send heartbeat request, client connection doesnot exists at id [{clientId}] for application [{applicationName}] linked with [{address}]");
-                return new ClientConnectionResponse() { ClientId = clientId, Status = Models.Routing.Common.ConnectionStatuses.Error, Message = $"Client connection doesnot exists at id {clientId} for application {applicationName} linked with {address}" };
+                _logger.LogError($"Application client send heartbeat request, client connection doesnot exists at id [{clientId}] for application [{applicationName}] linked with [{addressName}]");
+                return new ClientConnectionResponse() { ClientId = clientId, Status = Models.Routing.Common.ConnectionStatuses.Error, Message = $"Client connection doesnot exists at id {clientId} for application {applicationName} linked with {addressName}" };
             }
 
             // find this connection in ConnectionHistory
@@ -216,7 +275,44 @@ namespace Vortex.Core.Services.Routing
             clientConnection.HostsHistory[clientHost].LastHeartbeatDate = DateTime.UtcNow;
             _clientConnectionService.UpdateClientConnection(clientConnection);
 
+
+            // send heartbeat to other nodes
+            // get address by id 
+            (var address, var _) = _addressService.GetAddressById(clientConnection.AddressId);
+            if (address == null)
+            {
+                return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.FatalError, Message = $"Address with id [{clientConnection.AddressId}] doesnot exists" };
+            }
+
+            // inform other nodes for Application Client heartbeat
+            if (address!.Settings.Scope == Models.Common.Addresses.AddressScope.ClusterScope && notifyOtherNodes == true)
+            {
+                //
+                // Check if the server is running under the cluster.
+                //
+
+                _clusterClientConnectionService.EnqueueRequest(new ClientConnectionBackgroundRequest()
+                {
+                    RequestState = ClientConnectionRequestState.HeartbeatConnection,
+
+                    ConnectedNode = _nodeConfiguration.NodeId,
+                    ClientHost = clientHost,
+                    Credentials = tokenDetails,
+                    Application = applicationName,
+                    Address = addressName,
+                    ApplicationType = clientConnection.ApplicationConnectionType,
+                    ClientId = clientConnection.Id.ToString(),
+                });
+            }
+
+
             return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.Connected, ClientId = clientId, Message = "Heartbeat received" };
+        }
+
+        public ClientConnection? GetClientConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType)
+        {
+            return _clientConnectionService
+                .GetClientConnection(applicationName, addressName, applicationType);
         }
     }
 }
