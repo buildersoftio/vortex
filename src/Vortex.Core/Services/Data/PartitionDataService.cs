@@ -8,7 +8,7 @@ using Vortex.Core.Models.Entities.Entries;
 
 namespace Vortex.Core.Services.Data
 {
-    public class PartitionDataService : IPartitionDataService<Message>, IDisposable
+    public class PartitionDataService : IPartitionDataService<byte>, IDisposable
     {
         private bool disposed = false;
 
@@ -35,35 +35,7 @@ namespace Vortex.Core.Services.Data
                 .CreatePartitionDataRepository(address, partitionEntry);
         }
 
-        public void Delete(long entryId)
-        {
-            throw new NotImplementedException();
-        }
 
-        public Message Get(long entryId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Message GetNext(long entryId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Put(long entryId, Message entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryGet(long entryId, out Message entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool TryGetNext(long entryId, out Message entity)
-        {
-            throw new NotImplementedException();
-        }
 
         public void Dispose()
         {
@@ -82,6 +54,12 @@ namespace Vortex.Core.Services.Data
                
                 disposed = true;
             }
+        }
+
+        public void Put(ReadOnlySpan<byte> entryId, ReadOnlySpan<byte> entity)
+        {
+            _partitionDataRepository
+                .Put(entryId, entity);
         }
     }
 }

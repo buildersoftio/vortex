@@ -1,6 +1,7 @@
 ﻿using Vortex.Core.Abstractions.Background;
 using Vortex.Core.Abstractions.Clustering;
 using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Abstractions.Services.Data;
 using Vortex.Core.Abstractions.Services.Orchestrations;
 using Vortex.Core.Abstractions.Services.Routing;
 using Vortex.Core.Models.BackgroundRequests;
@@ -31,12 +32,14 @@ namespace Vortex.Server.DependencyInjection
         public static  void AddRoutingServices(this IServiceCollection services)
         {
             services.AddSingleton<IClientCommunicationService, ClientCommunicationService>();
+            
         }
 
         public static void AddOrchestrators(this IServiceCollection services)
         {
             services.AddSingleton<IServerCoreStateManager, ServerCoreStateManager>();
             services.AddSingleton<IClusterManager, ClusterManager>();
+            services.AddSingleton<IDataDistributionService, DataDistributionService>();
         }
 
         public static void AddBackgroundServerStateServices(this IServiceCollection services)

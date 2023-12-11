@@ -48,7 +48,7 @@ namespace Vortex.Core.Services.Clustering
 
             if (clusterConfiguration!.Nodes.Count == 1)
             {
-                //TODO: vortex_standalone should be somehow integrated with node_id; in cse there is just one node.
+                // TODO: vortex_standalone should be somehow integrated with node_id; in cse there is just one node. (this todo maybe is not much needed anymore)
                 
                 // we are removing this condition for now, in case we have just a single node registered in the 
 

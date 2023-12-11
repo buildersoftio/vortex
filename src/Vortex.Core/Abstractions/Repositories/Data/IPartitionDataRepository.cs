@@ -2,7 +2,10 @@
 {
     public interface IPartitionDataRepository
     {
-        void Put(byte[] entryId, byte[] entity);
+        void Put(byte[] entryId, byte[] message);
+
+        void Put(ReadOnlySpan<byte> entryId, ReadOnlySpan<byte> message);
+
         byte[] Get(byte[] entryId);
         void Delete(byte[] entryId);
 

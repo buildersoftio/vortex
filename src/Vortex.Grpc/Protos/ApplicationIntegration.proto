@@ -2,6 +2,7 @@
 /// This Proto File is part of VORTEX SERVER
 
 syntax = "proto3";
+import "google/protobuf/timestamp.proto";
 
 package ApplicationIntegration;
 
@@ -10,6 +11,8 @@ service DataTransmissionService {
 	rpc Connect(ConnectionRequest) returns (ConnectionResponse);
 	rpc Disconnect(DisconnectionRequest) returns (DisconnectionResponse);
 	rpc Heartbeat(HeartbeatRequest) returns (ConnectionResponse);
+
+	rpc ProduceMessage(MessageRequest) returns (MessageResponse);
 }
 
 enum ApplicationTypes {
@@ -98,4 +101,26 @@ enum ConnectionSubscriptionModes{
 	UNDEFINED_VALUE = 0;
 	RESILIENT = 1;
 	NON_RESILIENT = 2;
+}
+
+
+// Data Transmission messages
+
+message MessageRequest {
+	bytes message_id = 1;
+	bytes message_payload = 2;
+	map<string, string> message_headers =3;
+
+	optional int32 partition_index = 4;
+	string source_application = 5;
+	google.protobuf.Timestamp sent_date = 6;
+
+	string client_id = 7;
+	// lets see if we have to send the addressName with each message. I prefer not to sent it.
+}
+
+message MessageResponse {
+	bool success = 1;
+	string message = 2;
+	int32 partition_index = 3;
 }

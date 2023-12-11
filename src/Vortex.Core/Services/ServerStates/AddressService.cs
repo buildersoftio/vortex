@@ -92,7 +92,7 @@ namespace Vortex.Core.Services.ServerStates
                 EnforceSchemaValidation = false,
                 Scope = addressDefaultCreationRequest.Scope,
                 MessageIndexType = MessageIndexTypes.DAILY,
-                PartitionSettings = new AddressPartitionSettings() { PartitionNumber = addressDefaultCreationRequest.PartitionNumber },
+                PartitionSettings = new AddressPartitionSettings() { PartitionNumber = addressDefaultCreationRequest.PartitionNumber, PartitionThreadLimit = 1 },
                 ReplicationSettings = new AddressReplicationSettings() { ReplicationFactor = addressDefaultCreationRequest.ReplicationFactor },
                 RetentionSettings = new AddressRetentionSettings() { RetentionType = RetentionTypes.DELETE, TimeToLiveInMinutes = -1 },
                 SchemaSettings = new AddressSchemaSettings(),

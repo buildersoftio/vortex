@@ -1,4 +1,5 @@
 ﻿using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Data;
 using Vortex.Core.Models.Entities.Clients.Applications;
 using Vortex.Core.Models.Routing.Integrations;
 
@@ -11,5 +12,9 @@ namespace Vortex.Core.Abstractions.Services.Routing
         ClientConnectionResponse HeartbeatConnection(Guid clientId, string clientHost, string applicationName, string address, TokenDetails tokenDetails, bool notifyOtherNodes = true);
 
         ClientConnection? GetClientConnection(string applicationName, string addressName, ApplicationConnectionTypes applicationType);
+
+        (bool success, int? partitionKey, string message) AcceptMessage(Guid clientId, Span<PartitionMessage> partitionMessages);
+
+        bool DeleteClientProducerFromCache(Guid clientId);
     }
 }

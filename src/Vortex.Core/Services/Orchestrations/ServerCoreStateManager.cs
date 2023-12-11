@@ -9,6 +9,7 @@ using Vortex.Core.Repositories;
 using Vortex.Core.Services.Data;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
+using Vortex.Core.Models.Configurations;
 
 namespace Vortex.Core.Services.Orchestrations
 {
@@ -18,6 +19,7 @@ namespace Vortex.Core.Services.Orchestrations
         private readonly IPartitionDataFactory _partitionDataFactory;
         private readonly IAddressRepository _addressRepository;
         private readonly IPartitionEntryService _partitionEntryService;
+        private readonly NodeConfiguration _nodeConfiguration;
 
         private readonly ConcurrentDictionary<int, AddressContainer> _inMemoryAddresses;
 
@@ -25,12 +27,14 @@ namespace Vortex.Core.Services.Orchestrations
         public ServerCoreStateManager(ILogger<ServerCoreStateManager> logger,
             IPartitionDataFactory partitionDataFactory,
             IAddressRepository addressRepository,
-            IPartitionEntryService partitionEntryService)
+            IPartitionEntryService partitionEntryService,
+            NodeConfiguration nodeConfiguration)
         {
             _logger = logger;
             _partitionDataFactory = partitionDataFactory;
             _addressRepository = addressRepository;
             _partitionEntryService = partitionEntryService;
+            _nodeConfiguration = nodeConfiguration;
 
             _inMemoryAddresses = new ConcurrentDictionary<int, AddressContainer>();
         }
@@ -86,8 +90,10 @@ namespace Vortex.Core.Services.Orchestrations
             foreach (var partition in partitions)
             {
                 // load the data access now...
-                _inMemoryAddresses[address.Id].PartitionDataServices.TryAdd(partition.PartitionId,
-                    new PartitionDataService(_partitionEntryService, _partitionDataFactory, address, partition));
+
+                var partitionDataService = new PartitionDataService(_partitionEntryService, _partitionDataFactory, address, partition);
+                _inMemoryAddresses[address.Id].PartitionDataProcessors.TryAdd(partition.PartitionId,
+                    new PartitionDataProcessor(_partitionEntryService, address, partition, partitionDataService, _nodeConfiguration));
             }
 
             _logger.LogInformation($"Address [{address.Name}] partitions are loaded and ready");
@@ -117,6 +123,11 @@ namespace Vortex.Core.Services.Orchestrations
         {
             // Enqueueing the Partition Entry request to background service.
             EnqueueRequest(partitionEntry);
+        }
+
+        public AddressContainer GetAddressContainer(int addressId)
+        {
+            return _inMemoryAddresses[addressId];
         }
     }
 }

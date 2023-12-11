@@ -1,6 +1,6 @@
 ﻿namespace Vortex.Core.Abstractions.Background
 {
-    public abstract class TimedBackgroundServiceBase<HeartbeatTimerRequest> : ITimedBackgroundService<HeartbeatTimerRequest>
+    public abstract class TimedBackgroundServiceBase<TRequest> : ITimedBackgroundService<TRequest>
     {
         private readonly TimeSpan _period;
         private Timer _timer;
