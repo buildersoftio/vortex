@@ -1,4 +1,5 @@
-﻿using Vortex.Core.Models.Entities.Entries;
+﻿using Vortex.Core.Models.Containers;
+using Vortex.Core.Models.Entities.Entries;
 
 namespace Vortex.Core.Abstractions.Services.Orchestrations
 {
@@ -11,5 +12,7 @@ namespace Vortex.Core.Abstractions.Services.Orchestrations
         public void UnloadAddressPartitionsInMemory(int addressId);
 
         public void UpdatePartitionEntry(PartitionEntry partitionEntry);
+
+        public AddressContainer GetAddressContainer(int addressId);
     }
 }

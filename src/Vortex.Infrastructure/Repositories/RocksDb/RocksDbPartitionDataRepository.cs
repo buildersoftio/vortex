@@ -65,5 +65,10 @@ namespace Vortex.Infrastructure.Repositories.RocksDb
             rocksDb
                 .Put(entryId, entity);
         }
+
+        public void Put(ReadOnlySpan<byte> entryId, ReadOnlySpan<byte> message)
+        {
+            rocksDb.Put(entryId, message);
+        }
     }
 }

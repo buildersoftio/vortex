@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using Vortex.Core.Abstractions.Background;
 using Vortex.Core.Abstractions.Clustering;
 using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Abstractions.Services.Routing;
 using Vortex.Core.Models.BackgroundRequests;
 using Vortex.Core.Models.BackgroundTimerRequests;
 using Vortex.Core.Models.Common.Clients.Applications;
@@ -20,7 +21,8 @@ namespace Vortex.Core.Services.Routing.Background
         IBackgroundQueueService<ClientConnectionBackgroundRequest> clusterClientConnectionService,
         IClusterStateRepository clusterStateRepository,
         IAddressRepository addressRepository,
-        IApplicationRepository applicationRepository) : TimedBackgroundServiceBase<ClientIdleTimerRequest>(GetPeriod(nodeConfiguration))
+        IApplicationRepository applicationRepository,
+        IClientCommunicationService clientCommunicationService) : TimedBackgroundServiceBase<ClientIdleTimerRequest>(GetPeriod(nodeConfiguration))
     {
         private readonly ILogger<ClientIdleBackgroundService> _logger = logger;
         private readonly NodeConfiguration _nodeConfiguration = nodeConfiguration;
@@ -30,6 +32,7 @@ namespace Vortex.Core.Services.Routing.Background
 
         private readonly IAddressRepository _addressRepository = addressRepository;
         private readonly IApplicationRepository _applicationRepository = applicationRepository;
+        private readonly IClientCommunicationService _clientCommunicationService = clientCommunicationService;
 
         private static TimeSpan GetPeriod(NodeConfiguration nodeConfiguration)
         {
@@ -73,7 +76,12 @@ namespace Vortex.Core.Services.Routing.Background
 
                 // isConnected should be false in all hosts are disconnected
                 if (conn.HostsHistory.All(pair => pair.Value.IsConnected != true))
+                {
+                    if (conn.ApplicationConnectionType == ApplicationConnectionTypes.Production)
+                        _clientCommunicationService.DeleteClientProducerFromCache(conn.Id);
+
                     conn.IsConnected = false;
+                }
 
                 // update client connection
                 conn.UpdatedBy = "Idle_BackgroundService";

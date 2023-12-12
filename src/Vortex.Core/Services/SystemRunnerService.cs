@@ -122,6 +122,7 @@ namespace Vortex.Core.Services
             _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundIdleClientConnectionInterval}: {_nodeConfiguration.IdleClientConnectionInterval}");
             _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundIdleClientConnectionTimeout}: {_nodeConfiguration.IdleClientConnectionTimeout}");
             _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundCheckRetryCount}: {_nodeConfiguration.CheckRetryCount}");
+            _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundPositionEntityFlushInterval}: {_nodeConfiguration.BackgroundPositionEntry_FlushInterval}");
         }
 
         private void CreateLoggingDirectory()

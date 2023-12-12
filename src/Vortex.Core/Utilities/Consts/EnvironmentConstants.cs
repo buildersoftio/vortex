@@ -15,9 +15,12 @@
         public const string NodeId = "VORTEX_NODE_ID";
 
         public const string BackgroundServiceFailTaskInterval = "VORTEX_BACKGROUND_TASK_INTERVAL";
-        public const string BackgroundIdleClientConnectionInterval = "VORTEX_IDLE_CONN_CHECK";
+        public const string BackgroundIdleClientConnectionInterval = "VORTEX_IDLE_CONN_CHECK"; 
         public const string BackgroundIdleClientConnectionTimeout = "VORTEX_IDLE_CONN_TIMEOUT";
         public const string BackgroundCheckRetryCount = "VORTEX_CHECK_RETRY_COUNT";
+
+
+        public const string BackgroundPositionEntityFlushInterval = "VORTEX_POSITION_FLUSH_INTERVAL";
 
 
 

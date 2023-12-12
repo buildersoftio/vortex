@@ -1,7 +1,6 @@
 ﻿using Vortex.Core.Abstractions.Repositories;
 using Vortex.Core.Abstractions.Services;
 using Vortex.Core.Models.Common.Addresses;
-using Vortex.Core.Models.Configurations;
 using Vortex.Core.Models.Entities.Entries;
 using Vortex.Core.Utilities.Extensions;
 using Microsoft.Extensions.Logging;
@@ -35,14 +34,12 @@ namespace Vortex.Core.Services.Entries
                 MessageIndexType = messageIndexType,
                 NodeOwner = "na",
 
-                // storing will start from 1, and it will increese as 'i++'
-                //TODO: Check the starting entry when we implement RocksDB Services
-
-                CurrentEntry = 1,
+                // Last update 11/12/2023 updated CurrentEntry from 1 to 0.
+                CurrentEntry = 0,
                 MarkDeleteEntryPosition = 0,
                 Positions = new Dictionary<string, IndexPosition>()
                 {
-                    { DateTime.Now.GenerateAddressIndex(messageIndexType), new IndexPosition() { StartEntryPosition = 1 } }
+                    { DateTime.Now.GenerateAddressIndex(messageIndexType), new IndexPosition() { StartEntryPosition = 0 } }
                 }
             };
 

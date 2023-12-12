@@ -26,6 +26,7 @@ namespace Vortex.Server.DependencyInjection
             nodeConfiguration.IdleClientConnectionInterval = configuration.GetValue<int>(EnvironmentConstants.BackgroundIdleClientConnectionInterval)!;
             nodeConfiguration.IdleClientConnectionTimeout = configuration.GetValue<int>(EnvironmentConstants.BackgroundIdleClientConnectionTimeout)!;
             nodeConfiguration.CheckRetryCount = configuration.GetValue<int>(EnvironmentConstants.BackgroundCheckRetryCount)!;
+            nodeConfiguration.BackgroundPositionEntry_FlushInterval = configuration.GetValue<int>(EnvironmentConstants.BackgroundPositionEntityFlushInterval)!;
 
             services.AddSingleton(nodeConfiguration);
         }

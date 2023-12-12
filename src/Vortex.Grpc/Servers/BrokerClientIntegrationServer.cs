@@ -8,6 +8,8 @@ using Vortex.Core.Models.Common.Clients.Applications;
 using Vortex.Core.Models.Routing.Integrations;
 using System.Reflection.PortableExecutable;
 using Vortex.Core.Models.Configurations;
+using Vortex.Core.Models.Data;
+using Google.Protobuf;
 
 namespace Vortex.Grpc.Servers
 {
@@ -220,6 +222,32 @@ namespace Vortex.Grpc.Servers
                 // Server info
                 VortexServerName = SystemProperties.Name,
                 VortexServerVersion = SystemProperties.Version,
+            });
+        }
+
+
+        public override Task<MessageResponse> ProduceMessage(MessageRequest request, ServerCallContext context)
+        {
+            var partitionMessage = new PartitionMessage()
+            {
+                MessageId = request.MessageId.ToByteArray(),
+                MessagePayload = request.MessagePayload.ToByteArray(),
+                MessageHeaders = new Dictionary<string, string>(request.MessageHeaders),
+                PartitionIndex = request.PartitionIndex,
+                HostApplication = context.Peer,
+                SourceApplication = request.SourceApplication,
+                SentDate = request.SentDate.ToDateTime(),
+                StoredDate = DateTime.Now
+            };
+
+            (bool success, int? partitionKey, string message) =
+                _clientCommunicationService.AcceptMessage(Guid.Parse(request.ClientId), new Span<PartitionMessage>(ref partitionMessage));
+
+            return Task.FromResult(new MessageResponse()
+            {
+                Success = success,
+                Message = message,
+                PartitionIndex = partitionKey!.Value,
             });
         }
     }

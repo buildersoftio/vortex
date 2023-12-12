@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Transactions;
+using System.Collections.Concurrent;
 using Vortex.Core.Abstractions.Background;
 using Vortex.Core.Abstractions.Services;
+using Vortex.Core.Abstractions.Services.Data;
 using Vortex.Core.Abstractions.Services.Orchestrations;
 using Vortex.Core.Abstractions.Services.Routing;
 using Vortex.Core.Models.BackgroundRequests;
 using Vortex.Core.Models.Common.Clients.Applications;
 using Vortex.Core.Models.Configurations;
-using Vortex.Core.Models.Entities.Addresses;
+using Vortex.Core.Models.Data;
 using Vortex.Core.Models.Entities.Clients.Applications;
 using Vortex.Core.Models.Routing.Integrations;
 using Vortex.Core.Utilities.Consts;
@@ -23,6 +24,9 @@ namespace Vortex.Core.Services.Routing
         private readonly IServerCoreStateManager _serverCoreStateManager;
         private readonly NodeConfiguration _nodeConfiguration;
         private readonly IBackgroundQueueService<ClientConnectionBackgroundRequest> _clusterClientConnectionService;
+        private readonly IDataDistributionService _dataDistributionService;
+
+        private readonly ConcurrentDictionary<Guid, int> _clientProducerAddressCache;
 
         public ClientCommunicationService(ILogger<ClientCommunicationService> logger,
             IApplicationService applicationService,
@@ -30,7 +34,8 @@ namespace Vortex.Core.Services.Routing
             IClientConnectionService clientConnectionService,
             IServerCoreStateManager serverCoreStateManager,
             NodeConfiguration nodeConfiguration,
-            IBackgroundQueueService<ClientConnectionBackgroundRequest> clusterClientConnectionService)
+            IBackgroundQueueService<ClientConnectionBackgroundRequest> clusterClientConnectionService,
+            IDataDistributionService dataDistributionService)
         {
             _logger = logger;
             _applicationService = applicationService;
@@ -41,6 +46,9 @@ namespace Vortex.Core.Services.Routing
 
             _nodeConfiguration = nodeConfiguration;
             _clusterClientConnectionService = clusterClientConnectionService;
+            _dataDistributionService = dataDistributionService;
+
+            _clientProducerAddressCache = new ConcurrentDictionary<Guid, int>();
         }
 
         public ClientConnectionResponse EstablishConnection(ClientConnectionRequest request, bool notifyOtherNodes = true)
@@ -59,7 +67,7 @@ namespace Vortex.Core.Services.Routing
                 return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.ApplicationNotFound, Message = message };
             }
 
-            if (applicationDto.Settings.IsAuthorizationEnabled == true)
+            if (applicationDto.Settings.IsAuthorizationEnabled == true && notifyOtherNodes == true)
             {
                 var isAppKeyValid = Guid.TryParse(request.AppKey, out Guid appKey);
                 if (isAppKeyValid != true)
@@ -171,7 +179,7 @@ namespace Vortex.Core.Services.Routing
                 return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.ApplicationNotFound, Message = message };
             }
 
-            if (applicationDto.Settings.IsAuthorizationEnabled == true)
+            if (applicationDto.Settings.IsAuthorizationEnabled == true && notifyOtherNodes == true)
             {
                 var isAppKeyValid = Guid.TryParse(request.AppKey, out Guid appKey);
                 if (isAppKeyValid != true)
@@ -243,7 +251,7 @@ namespace Vortex.Core.Services.Routing
                 return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.ApplicationNotFound, Message = message };
             }
 
-            if (applicationDto.Settings.IsAuthorizationEnabled == true)
+            if (applicationDto.Settings.IsAuthorizationEnabled == true && notifyOtherNodes == true)
             {
                 var isAppKeyValid = Guid.TryParse(tokenDetails.AppKey, out Guid appKey);
                 if (isAppKeyValid != true)
@@ -287,9 +295,7 @@ namespace Vortex.Core.Services.Routing
             // inform other nodes for Application Client heartbeat
             if (address!.Settings.Scope == Models.Common.Addresses.AddressScope.ClusterScope && notifyOtherNodes == true)
             {
-                //
                 // Check if the server is running under the cluster.
-                //
 
                 _clusterClientConnectionService.EnqueueRequest(new ClientConnectionBackgroundRequest()
                 {
@@ -305,7 +311,6 @@ namespace Vortex.Core.Services.Routing
                 });
             }
 
-
             return new ClientConnectionResponse() { Status = Models.Routing.Common.ConnectionStatuses.Connected, ClientId = clientId, Message = "Heartbeat received" };
         }
 
@@ -313,6 +318,38 @@ namespace Vortex.Core.Services.Routing
         {
             return _clientConnectionService
                 .GetClientConnection(applicationName, addressName, applicationType);
+        }
+
+        public (bool success, int? partitionKey, string message) AcceptMessage(Guid clientId, Span<PartitionMessage> partitionMessages)
+        {
+            int addressId = GetAddressFromCache(clientId);
+            if (addressId != -1)
+                return _dataDistributionService.Distribute(addressId, partitionMessages);
+
+            return (success: false, partitionKey: -1, "The given address name doesnot exists");
+
+        }
+
+        private int GetAddressFromCache(Guid clientId)
+        {
+            if (_clientProducerAddressCache.ContainsKey(clientId))
+                return _clientProducerAddressCache[clientId];
+
+            var clientConnection = _clientConnectionService.GetClientConnection(clientId);
+            if (clientConnection == null)
+                return -1;
+
+            _clientProducerAddressCache.TryAdd(clientId, clientConnection.AddressId);
+
+            return clientConnection.AddressId;
+        }
+
+        public bool DeleteClientProducerFromCache(Guid clientId)
+        {
+            if (_clientProducerAddressCache.ContainsKey(clientId))
+                return _clientProducerAddressCache.TryRemove(clientId, out _);
+
+            return true;
         }
     }
 }

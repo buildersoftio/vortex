@@ -22,6 +22,7 @@ builder.Host.UseSerilog();
 
 // Add services to the container.
 
+
 builder.Services.AddControllers()
     .AddJsonOptions(opts =>
     {
@@ -65,6 +66,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+
 // add IO Services
 builder.Services.AddConfigurations(builder.Configuration);
 
@@ -93,7 +95,6 @@ builder.Services.AddBackgroundTimerServerStateServices();
 builder.Services.AddBackgroundClientConnectionTimerServices();
 
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -102,6 +103,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v4/swagger.json", "Vortex | Engine v4"));
 }
+
 
 app.UseMiddleware<RestLoggingMiddleware>();
 
