@@ -5,6 +5,8 @@
         void EnqueueRequest(TRequest request);
         void Handle(TRequest request);
 
+        int GetQueueCount();
+
         void StartTimer();
     }
 }

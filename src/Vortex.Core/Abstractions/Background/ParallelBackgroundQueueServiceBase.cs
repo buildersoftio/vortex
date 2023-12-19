@@ -42,7 +42,7 @@ namespace Vortex.Core.Abstractions.Background
             cancellationTokenSource = new CancellationTokenSource();
 
             // TODO: RESEARCH: should we run ProcessRequests in another thread, or in main thread?
-            Task.Run(() => ProcessRequests());
+            Task.Run(() => ProcessRequests(cancellationTokenSource));
         }
 
         public void StopProcessing()
@@ -50,9 +50,8 @@ namespace Vortex.Core.Abstractions.Background
             cancellationTokenSource?.Cancel();
         }
 
-        private void ProcessRequests()
+        private void ProcessRequests(CancellationTokenSource cancellationTokenSource)
         {
-            cancellationTokenSource = new CancellationTokenSource();
             while (!cancellationTokenSource.IsCancellationRequested)
             {
                 if (!requestQueue.IsEmpty)
@@ -73,6 +72,10 @@ namespace Vortex.Core.Abstractions.Background
                         });
                     }
                 }
+                else
+                {
+                    cancellationTokenSource.Cancel();
+                }
             }
         }
 
@@ -90,5 +93,10 @@ namespace Vortex.Core.Abstractions.Background
         }
 
         public abstract void OnTimer_Callback(object? state);
+
+        public int GetQueueCount()
+        {
+            return requestQueue.Count();
+        }
     }
 }

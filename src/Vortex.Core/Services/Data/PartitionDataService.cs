@@ -2,7 +2,6 @@
 using Vortex.Core.Abstractions.Repositories.Data;
 using Vortex.Core.Abstractions.Services;
 using Vortex.Core.Abstractions.Services.Data;
-using Vortex.Core.Models.Data;
 using Vortex.Core.Models.Entities.Addresses;
 using Vortex.Core.Models.Entities.Entries;
 
@@ -11,7 +10,6 @@ namespace Vortex.Core.Services.Data
     public class PartitionDataService : IPartitionDataService<byte>, IDisposable
     {
         private bool disposed = false;
-
 
         private readonly IPartitionEntryService _partitionEntryService;
         private readonly IPartitionDataFactory _partitionDataFactory;
@@ -60,6 +58,11 @@ namespace Vortex.Core.Services.Data
         {
             _partitionDataRepository
                 .Put(entryId, entity);
+        }
+
+        public void PutTemporaryForDistribution(ReadOnlySpan<byte> entryId, ReadOnlySpan<byte> entity)
+        {
+            throw new NotImplementedException();
         }
     }
 }

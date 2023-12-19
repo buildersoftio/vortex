@@ -1,4 +1,9 @@
+/// VORTEX NodeExchange PROTO file
+/// This Proto File is part of VORTEX SERVER
+
+
 syntax = "proto3";
+import "google/protobuf/timestamp.proto";
 
 package NodeExchange;
 
@@ -38,11 +43,11 @@ service NodeExchangeService {
 	rpc RequestClientConnectionDisconnect(ClientConnection_Close) returns (ClientConnection_Response);
 
 
-	///
-
-	// SendData to Node Leader
+	///	
 	// SendData to Replica
+
 	// SendData to Distributed Shard (Partition Leader)
+	rpc DistributeData(DataDistributionMessage) returns (DataDistribution_Response);
 
 	// Promote Address to Address in cluster
 	// Promote Application to Application in cluster
@@ -209,6 +214,25 @@ message ClientConnection_Close {
 }
 
 message ClientConnection_Response {
+	bool success = 1;
+	string message = 2;
+}
+
+message DataDistributionMessage {
+	bytes message_id = 1;
+	bytes message_payload = 2;
+	map<string, string> message_headers = 3;
+
+	optional int32 partition_index = 4;
+	string source_application = 5;
+	string host_application = 6;
+
+	google.protobuf.Timestamp sent_date = 7;
+
+	string addressAlias = 8;
+}
+
+message DataDistribution_Response {
 	bool success = 1;
 	string message = 2;
 }

@@ -8,6 +8,9 @@ using Vortex.Core.Models.Dtos.Applications;
 using Vortex.Core.Models.Entities.Clients.Applications;
 using Vortex.Core.Utilities.Json;
 using Grpc.Core;
+using Vortex.Core.Models.Data;
+using Google.Protobuf.Collections;
+using Google.Protobuf;
 
 namespace Vortex.Cluster.Infrastructure.Clients
 {
@@ -441,6 +444,41 @@ namespace Vortex.Cluster.Infrastructure.Clients
             }
             catch (Exception)
             {
+                return false;
+            }
+        }
+
+        public async Task<bool> RequestDataDistribution(string addressAlias, PartitionMessage partitionMessage)
+        {
+            try
+            {
+                var dataDistributionRequest = new NodeExchange.DataDistributionMessage()
+                {
+                    HostApplication = partitionMessage.HostApplication,
+                    MessageId = ByteString.CopyFrom(partitionMessage.MessageId),
+                    MessagePayload = ByteString.CopyFrom(partitionMessage.MessagePayload),
+                    PartitionIndex = partitionMessage.PartitionIndex!.Value,
+                    SentDate = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(partitionMessage.SentDate.UtcDateTime),
+                    SourceApplication = partitionMessage.SourceApplication,
+                    AddressAlias = addressAlias,
+                };
+
+                // TODO: re-factor this part of code.
+                //Adding headers
+                foreach (var item in partitionMessage.MessageHeaders)
+                {
+                    dataDistributionRequest.MessageHeaders.Add(item.Key, item.Value);
+                }
+
+                var response = await _client.DistributeDataAsync(dataDistributionRequest);
+
+                return response.Success;
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("REMOVE gRPCNodeExchangeClient: error:" + ex.Message);
+
                 return false;
             }
         }

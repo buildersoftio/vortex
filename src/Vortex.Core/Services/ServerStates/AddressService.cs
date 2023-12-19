@@ -79,7 +79,7 @@ namespace Vortex.Core.Services.ServerStates
                     IsRequestedFromOtherNode = requestedByOtherNode
                 });
 
-                return (true, $"Address [{addressCreationRequest.Name}] created sucessfully at [{address.Id}]");
+                return (true, $"Address [{addressCreationRequest.Name}] created successfully at [{address.Id}]");
             }
 
             return (false, $"Something went wrong, Address [{addressCreationRequest.Name}] isnot created");

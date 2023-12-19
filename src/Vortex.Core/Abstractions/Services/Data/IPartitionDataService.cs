@@ -3,6 +3,7 @@
     public interface IPartitionDataService<T>
     {
         void Put(ReadOnlySpan<byte> entryId, ReadOnlySpan<T> entity);
+        void PutTemporaryForDistribution(ReadOnlySpan<byte> entryId, ReadOnlySpan<T> entity);
 
         //T Get(long entryId);
         //T GetNext(long entryId);

@@ -37,6 +37,12 @@ namespace Vortex.Core.Services.Entries
                 // Last update 11/12/2023 updated CurrentEntry from 1 to 0.
                 CurrentEntry = 0,
                 MarkDeleteEntryPosition = 0,
+
+                // We are storing temporary with id T-TemporaryCurrentEntry;
+                // messages which are meant to be distributed to the leader, in case that leader is down.
+                ClusterTemporaryCurrentEntry = 0,
+                ClusterTemporaryMarkDeleteEntryPosition = 0,
+
                 Positions = new Dictionary<string, IndexPosition>()
                 {
                     { DateTime.Now.GenerateAddressIndex(messageIndexType), new IndexPosition() { StartEntryPosition = 0 } }
