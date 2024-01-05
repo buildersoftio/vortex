@@ -13,8 +13,16 @@ namespace Vortex.Infrastructure.Repositories.RocksDb
         private readonly PartitionEntry _partitionEntry;
         private readonly StorageDefaultConfiguration _storageDefaultConfiguration;
 
-        private readonly OptionsHandle dbOptions;
+        private readonly DbOptions dbOptions;
         private readonly RocksDbSharp.RocksDb rocksDb;
+
+        private readonly ColumnFamilyOptions columnFamilyOptions;
+        private readonly string[] cfNames;
+        private readonly ColumnFamilies columnFamilies;
+
+
+        private readonly ColumnFamilyHandle cfDefault;
+        private readonly ColumnFamilyHandle cfTemp;
 
         public RocksDbPartitionDataRepository(Address address, PartitionEntry partitionEntry)
         {
@@ -25,6 +33,7 @@ namespace Vortex.Infrastructure.Repositories.RocksDb
               // figure this out how to name the files.
               //.SetDbLogDir(_logPath)
               .SetCreateIfMissing(true)
+              .SetCreateMissingColumnFamilies(true)
               .SetMaxLogFileSize(address.Settings.StorageSettings.MaxLogFileSizeInBytes)
               .SetStatsDumpPeriodSec(address.Settings.StorageSettings.DumpStatsInSeconds)
               .SetKeepLogFileNum(address.Settings.StorageSettings.KeepLogFileNumber)
@@ -38,9 +47,25 @@ namespace Vortex.Infrastructure.Repositories.RocksDb
 
             string partitionLocation = DataLocations.GetAddressPartitionDirectory(partitionEntry.AddressId, partitionEntry.PartitionId);
 
+
+            // TODO: add settings for column family
+            columnFamilyOptions = new ColumnFamilyOptions();
+            cfNames = new[] { "default", "cluster", "indexes" };
+
+            var columnFamilies = new ColumnFamilies();
+            foreach (var cfName in cfNames)
+            {
+                columnFamilies.Add(cfName, columnFamilyOptions);
+            }
+
+
+
             rocksDb = RocksDbSharp
                 .RocksDb
-                .Open(dbOptions, partitionLocation);
+                .Open(dbOptions, partitionLocation, columnFamilies);
+
+            cfDefault = rocksDb.GetColumnFamily(cfNames[0]);
+            cfTemp = rocksDb.GetColumnFamily(cfNames[1]);
         }
 
         public void CloseConnection()
@@ -51,24 +76,37 @@ namespace Vortex.Infrastructure.Repositories.RocksDb
         public void Delete(byte[] entryId)
         {
             rocksDb
-                .Remove(entryId);
+                .Remove(entryId, cfDefault);
         }
 
         public byte[] Get(byte[] entryId)
         {
             return rocksDb
-                .Get(entryId);
+                .Get(entryId, cfDefault);
         }
 
         public void Put(byte[] entryId, byte[] entity)
         {
             rocksDb
-                .Put(entryId, entity);
+                .Put(entryId, entity, cfDefault);
         }
 
         public void Put(ReadOnlySpan<byte> entryId, ReadOnlySpan<byte> message)
         {
-            rocksDb.Put(entryId, message);
+            rocksDb
+                .Put(entryId, message, cfDefault);
+        }
+
+        public void PutTemporary(byte[] entryId, byte[] message)
+        {
+            rocksDb
+                .Put(entryId, message, cfTemp);
+        }
+
+        public void PutTemporary(ReadOnlySpan<byte> entryId, ReadOnlySpan<byte> message)
+        {
+            rocksDb
+                .Put(entryId, message, cfTemp);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Vortex.Core.Models.Common.Addresses;
 using Vortex.Core.Models.Common.Clients.Applications;
+using Vortex.Core.Models.Data;
 using Vortex.Core.Models.Dtos.Addresses;
 using Vortex.Core.Models.Dtos.Applications;
 using Vortex.Core.Models.Entities.Clients.Applications;
@@ -38,5 +39,7 @@ namespace Vortex.Core.Abstractions.Clustering
         Task<bool> RequestClientConnectionRegister(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, ProductionInstanceTypes? productionInstanceType, SubscriptionTypes? subscriptionType, SubscriptionModes? subscriptionMode, ReadInitialPositions? readInitialPosition);
         Task<bool> RequestClientConnectionHeartbeat(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, string clientId);
         Task<bool> RequestClientConnectionUnregister(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, string clientId);
+
+        Task<bool> RequestDataDistribution(string addressAlias, PartitionMessage partitionMessage);
     }
 }

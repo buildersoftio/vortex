@@ -226,29 +226,87 @@ namespace Vortex.Grpc.Servers
         }
 
 
+        public override async Task<MessageStreamResponse> StreamMessage(IAsyncStreamReader<MessageRequest> requestStream, ServerCallContext context)
+        {
+            int messageCount = 0;
+            try
+            {
+                while (await requestStream.MoveNext())
+                {
+                    messageCount++;
+
+                    MessageRequest request = requestStream.Current;
+
+                    var partitionMessage = new PartitionMessage()
+                    {
+                        MessageId = request.MessageId.ToByteArray(),
+                        MessagePayload = request.MessagePayload.ToByteArray(),
+                        MessageHeaders = new Dictionary<string, string>(request.MessageHeaders),
+                        PartitionIndex = request.PartitionIndex,
+                        HostApplication = context.Peer,
+                        SourceApplication = request.SourceApplication,
+                        SentDate = request.SentDate.ToDateTime(),
+                        StoredDate = DateTime.Now
+                    };
+
+                    (bool success, int? partitionKey, string message) =
+                        _clientCommunicationService.AcceptMessage(Guid.Parse(request.ClientId), new Span<PartitionMessage>(ref partitionMessage));
+                }
+
+                return new MessageStreamResponse()
+                {
+                    Success = true,
+                    Message = $"Producing completed",
+                    MessageCount = messageCount
+                };
+            }
+            catch (Exception ex)
+            {
+                return new MessageStreamResponse()
+                {
+                    Success = false,
+                    Message = $"Streaming of the messages failed, details:{ex.Message}",
+                    MessageCount = messageCount
+                };
+            }
+        }
+
         public override Task<MessageResponse> ProduceMessage(MessageRequest request, ServerCallContext context)
         {
-            var partitionMessage = new PartitionMessage()
+            try
             {
-                MessageId = request.MessageId.ToByteArray(),
-                MessagePayload = request.MessagePayload.ToByteArray(),
-                MessageHeaders = new Dictionary<string, string>(request.MessageHeaders),
-                PartitionIndex = request.PartitionIndex,
-                HostApplication = context.Peer,
-                SourceApplication = request.SourceApplication,
-                SentDate = request.SentDate.ToDateTime(),
-                StoredDate = DateTime.Now
-            };
+                var partitionMessage = new PartitionMessage()
+                {
+                    MessageId = request.MessageId.ToByteArray(),
+                    MessagePayload = request.MessagePayload.ToByteArray(),
+                    MessageHeaders = new Dictionary<string, string>(request.MessageHeaders),
+                    PartitionIndex = request.PartitionIndex,
+                    HostApplication = context.Peer,
+                    SourceApplication = request.SourceApplication,
+                    SentDate = request.SentDate.ToDateTime(),
+                    StoredDate = DateTime.Now
+                };
 
-            (bool success, int? partitionKey, string message) =
-                _clientCommunicationService.AcceptMessage(Guid.Parse(request.ClientId), new Span<PartitionMessage>(ref partitionMessage));
+                (bool success, int? partitionKey, string message) =
+                    _clientCommunicationService.AcceptMessage(Guid.Parse(request.ClientId), new Span<PartitionMessage>(ref partitionMessage));
 
-            return Task.FromResult(new MessageResponse()
+                return Task.FromResult(new MessageResponse()
+                {
+                    Success = success,
+                    Message = message,
+                    PartitionIndex = partitionKey!.Value,
+                });
+
+            }
+            catch (Exception ex)
             {
-                Success = success,
-                Message = message,
-                PartitionIndex = partitionKey!.Value,
-            });
+                return Task.FromResult(new MessageResponse()
+                {
+                    Success = false,
+                    Message = $"Streaming of the message failed, details:{ex.Message}",
+                    PartitionIndex = -1,
+                });
+            }
         }
     }
 }

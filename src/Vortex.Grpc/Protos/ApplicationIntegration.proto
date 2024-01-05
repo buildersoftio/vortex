@@ -13,6 +13,7 @@ service DataTransmissionService {
 	rpc Heartbeat(HeartbeatRequest) returns (ConnectionResponse);
 
 	rpc ProduceMessage(MessageRequest) returns (MessageResponse);
+	rpc StreamMessage(stream MessageRequest) returns (MessageStreamResponse);
 }
 
 enum ApplicationTypes {
@@ -123,4 +124,10 @@ message MessageResponse {
 	bool success = 1;
 	string message = 2;
 	int32 partition_index = 3;
+}
+
+message MessageStreamResponse {
+	bool success = 1;
+	string message = 2;
+	int32 message_count = 3;
 }

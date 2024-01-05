@@ -1,5 +1,6 @@
 ﻿using MessagePack;
 using Vortex.Core.Abstractions.Background;
+using Vortex.Core.Abstractions.Clustering;
 using Vortex.Core.Abstractions.Services;
 using Vortex.Core.Abstractions.Services.Data;
 using Vortex.Core.Models.Configurations;
@@ -17,7 +18,7 @@ namespace Vortex.Core.Services.Data
         private readonly IPartitionDataService<byte> _partitionDataService;
         private readonly NodeConfiguration _nodeConfiguration;
 
-        int k = 0;
+        private readonly IClusterStateRepository _clusterStateRepository;
 
         private static TimeSpan GetPartitionEntityFlushPeriod(NodeConfiguration nodeConfiguration)
         {
@@ -28,7 +29,8 @@ namespace Vortex.Core.Services.Data
             Address address,
             PartitionEntry partitionEntry,
             IPartitionDataService<byte> partitionDataService,
-            NodeConfiguration nodeConfiguration) : base(address.Settings.PartitionSettings.PartitionThreadLimit, period: GetPartitionEntityFlushPeriod(nodeConfiguration))
+            NodeConfiguration nodeConfiguration,
+            IClusterStateRepository clusterStateRepository) : base(address.Settings.PartitionSettings.PartitionThreadLimit, period: GetPartitionEntityFlushPeriod(nodeConfiguration))
         {
             _partitionEntryService = partitionEntryService;
             _address = address;
@@ -36,16 +38,19 @@ namespace Vortex.Core.Services.Data
             _partitionDataService = partitionDataService;
             _nodeConfiguration = nodeConfiguration;
 
+            // adding support for cluster communication
+            _clusterStateRepository = clusterStateRepository;
+
             base.StartTimer();
         }
 
         public override void Handle(PartitionMessage request)
         {
-            k++;
             // check if this message should go to other nodes in the cluster
             if (_partitionEntry.NodeOwner != _nodeConfiguration.NodeId)
             {
-                TransmitMessageToNode(_partitionEntry.NodeOwner, request);
+                var requestAsSpan = new ReadOnlySpan<PartitionMessage>(ref request);
+                TransmitMessageToNode(_partitionEntry.NodeOwner, requestAsSpan);
 
                 return;
             }
@@ -75,16 +80,26 @@ namespace Vortex.Core.Services.Data
             _partitionDataService.Put(entry, message);
         }
 
+
+        int cleanMemoryCount = 0;
         public override void OnTimer_Callback(object? state)
         {
-            Console.WriteLine($"REMOVE addressName:{_address.Name} partitionIndex:{_partitionEntry.PartitionId}: currentEntryPosition:{_partitionEntry.CurrentEntry}, countOfHandleMethod:{k}");
-
             // TODO: In case data is the same store the same state.
 
             // updating the Entry position for the partition.
             _partitionEntry.UpdatedAt = DateTime.UtcNow;
             _partitionEntry.UpdatedBy = "BACKGROUND_data_processor";
             _partitionEntryService.UpdatePartitionEntry(_partitionEntry);
+
+
+            cleanMemoryCount++;
+            if(cleanMemoryCount == 6)
+            {
+                GC.Collect(2);
+                GC.WaitForPendingFinalizers();
+
+                cleanMemoryCount = 0;
+            }
         }
 
         private void CoordinatePositionIndex(long entryId, PartitionEntry partitionEntry)
@@ -116,9 +131,26 @@ namespace Vortex.Core.Services.Data
             }
         }
 
-        private void TransmitMessageToNode(string nodeOwner, PartitionMessage request)
+        private void TransmitMessageToNode(string nodeOwner, ReadOnlySpan<PartitionMessage> request)
         {
+            // call the cluster distribution via gRPC, in case if fails, store it in partition temporary.
+            var result = _clusterStateRepository
+                            .GetNodeClient(nodeOwner)!
+                            .RequestDataDistribution(_address.Alias, request[0]).Result;
 
+            if (result != true)
+            {
+                // store the message temporary in the local side.
+                // prepare the message to store..
+                _partitionEntry.ClusterTemporaryCurrentEntry = _partitionEntry.ClusterTemporaryCurrentEntry + 1;
+                long tempEntryId = _partitionEntry.ClusterTemporaryCurrentEntry;
+
+
+                byte[] entry = MessagePackSerializer.Serialize(tempEntryId);
+                byte[] message = MessagePackSerializer.Serialize(request[0]);
+
+                _partitionDataService.PutTemporaryForDistribution(entry, message);
+            }
         }
     }
 }

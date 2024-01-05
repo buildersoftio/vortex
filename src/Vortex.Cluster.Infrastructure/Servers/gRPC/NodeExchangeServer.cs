@@ -10,8 +10,10 @@ using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using NodeExchange;
 using Vortex.Core.Abstractions.Services.Routing;
+using Vortex.Core.Abstractions.Services.Data;
+using Vortex.Core.Abstractions.Services.Orchestrations;
+using Vortex.Core.Models.Containers;
 using Vortex.Core.Models.Data;
-using System.Xml;
 
 namespace Vortex.Cluster.Infrastructure.Servers.gRPC
 {
@@ -27,17 +29,24 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
         private readonly IApplicationService _applicationService;
         private readonly IClientCommunicationService _clientCommunicationService;
 
+        private readonly IDataDistributionService _dataDistributionService;
+        private readonly IServerCoreStateManager _serverCoreStateManager;
+
         public NodeExchangeServer(ILogger<NodeExchangeServer> logger,
             NodeConfiguration nodeConfiguration,
             IAddressService addressService,
             IApplicationService applicationService,
-            IClientCommunicationService clientCommunicationService)
+            IClientCommunicationService clientCommunicationService, IDataDistributionService dataDistributionService, IServerCoreStateManager serverCoreStateManager)
         {
             _logger = logger;
             _nodeConfiguration = nodeConfiguration;
             _addressService = addressService;
             _applicationService = applicationService;
             _clientCommunicationService = clientCommunicationService;
+
+            // for data distribution
+            _dataDistributionService = dataDistributionService;
+            _serverCoreStateManager = serverCoreStateManager;
 
 
             if (Environment.GetEnvironmentVariable(EnvironmentConstants.VortexClusterConnectionPort) != null)
@@ -374,5 +383,33 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
         }
 
         #endregion
+
+        public override Task<DataDistribution_Response> DistributeData(DataDistributionMessage request, ServerCallContext context)
+        {
+            // check if the address is loaded in memory
+            // loading address in memory should be the last thing ever :p it's me saying it!
+            if (_serverCoreStateManager.IsAddressPartitionsLoaded(request.AddressAlias) != true)
+                _serverCoreStateManager.LoadAddressPartitionsInMemory(request.AddressAlias);
+
+            AddressContainer? address = _serverCoreStateManager.GetAddressContainer(request.AddressAlias);
+
+            if (address == null)
+                return Task.FromResult(new DataDistribution_Response() { Success = false });
+
+            (bool success, int? partition, string message) = _dataDistributionService.Distribute(address.AddressName!, new PartitionMessage()
+            {
+                MessageId = request.MessageId.ToByteArray(),
+                MessagePayload = request.MessagePayload.ToByteArray(),
+                MessageHeaders = new Dictionary<string, string>(request.MessageHeaders),
+                PartitionIndex = request.PartitionIndex,
+                HostApplication = context.Peer,
+                SourceApplication = request.SourceApplication,
+                SentDate = request.SentDate.ToDateTime(),
+                StoredDate = DateTime.Now
+            });
+
+            return Task.FromResult(new DataDistribution_Response() { Success = success });
+        }
     }
 }
+
