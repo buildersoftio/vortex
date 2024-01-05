@@ -1,13 +1,13 @@
-What is Cerebro?
+What is Vortex?
 ============
 
-Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integrations.
+Vortex is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integrations.
 
 ## Get Started
 
-Follow the [Getting Started](https://buildersoftdev.azurewebsites.net/andyx) instructions how to run Andy X.
+Follow the [Getting Started](https://buildersoft.io/cerebro) instructions how to run Vortex.
 
-For local development and testing, you can run Andy X within a Docker container, for more info click [here](https://hub.docker.com/u/buildersoftdev)
+For local development and testing, you can run Vortex within a Docker container, for more info click [here](https://hub.docker.com/u/buildersoftdev)
 
 ## How to Engage, Contribute, and Give Feedback
 
@@ -22,12 +22,12 @@ Security issues and bugs should be reported privately, via email, support@builde
 
 These are some other repos for related projects:
 
-* [Andy X Portal](https://github.com/buildersoftdev/andyx-portal) - Dashboard for Andy X Node
-* [Andy X Cli](https://github.com/buildersoftdev/andyx-cli) - Manage all resources of Andy X
+* [Vortex Portal](https://github.com/buildersoftdev/andyx-portal) - Dashboard for Vortex Cluster
+* [Vortex Cli](https://github.com/buildersoftdev/andyx-cli) - Manage all resources of Vortex
 
-## Deploying Andy X with docker-compose
+## Deploying Vortex with docker-compose
 
-Andy X can be easily deployed on a docker container using docker-compose, for more info click [here](https://hub.docker.com/r/buildersoftdev/andyx)
+Vortex can be easily deployed on a docker container using docker-compose, for more info click [here](https://hub.docker.com/r/buildersoftdev/andyx)
 
 ## Code of conduct
 

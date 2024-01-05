@@ -9,7 +9,6 @@ using Vortex.Core.Models.Entities.Clients.Applications;
 using Vortex.Core.Utilities.Json;
 using Grpc.Core;
 using Vortex.Core.Models.Data;
-using Google.Protobuf.Collections;
 using Google.Protobuf;
 
 namespace Vortex.Cluster.Infrastructure.Clients
@@ -448,8 +447,10 @@ namespace Vortex.Cluster.Infrastructure.Clients
             }
         }
 
+
         public async Task<bool> RequestDataDistribution(string addressAlias, PartitionMessage partitionMessage)
         {
+            // sync communication.
             try
             {
                 var dataDistributionRequest = new NodeExchange.DataDistributionMessage()
@@ -473,7 +474,6 @@ namespace Vortex.Cluster.Infrastructure.Clients
                 var response = await _client.DistributeDataAsync(dataDistributionRequest);
 
                 return response.Success;
-
             }
             catch (Exception ex)
             {

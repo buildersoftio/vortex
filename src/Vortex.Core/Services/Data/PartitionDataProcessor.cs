@@ -133,8 +133,7 @@ namespace Vortex.Core.Services.Data
 
         private void TransmitMessageToNode(string nodeOwner, ReadOnlySpan<PartitionMessage> request)
         {
-            // TODO: Call the cluster distribution via gRPC, in case if fails, store it in partition temporary.
-
+            // call the cluster distribution via gRPC, in case if fails, store it in partition temporary.
             var result = _clusterStateRepository
                             .GetNodeClient(nodeOwner)!
                             .RequestDataDistribution(_address.Alias, request[0]).Result;
@@ -142,15 +141,13 @@ namespace Vortex.Core.Services.Data
             if (result != true)
             {
                 // store the message temporary in the local side.
-
-                //prepare the message to store..
+                // prepare the message to store..
                 _partitionEntry.ClusterTemporaryCurrentEntry = _partitionEntry.ClusterTemporaryCurrentEntry + 1;
                 long tempEntryId = _partitionEntry.ClusterTemporaryCurrentEntry;
 
 
                 byte[] entry = MessagePackSerializer.Serialize(tempEntryId);
                 byte[] message = MessagePackSerializer.Serialize(request[0]);
-
 
                 _partitionDataService.PutTemporaryForDistribution(entry, message);
             }

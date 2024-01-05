@@ -396,7 +396,7 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
             if (address == null)
                 return Task.FromResult(new DataDistribution_Response() { Success = false });
 
-            _dataDistributionService.Distribute(address.AddressName!, new PartitionMessage()
+            (bool success, int? partition, string message) = _dataDistributionService.Distribute(address.AddressName!, new PartitionMessage()
             {
                 MessageId = request.MessageId.ToByteArray(),
                 MessagePayload = request.MessagePayload.ToByteArray(),
@@ -408,7 +408,8 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
                 StoredDate = DateTime.Now
             });
 
-            return Task.FromResult(new DataDistribution_Response() { Success = true });
+            return Task.FromResult(new DataDistribution_Response() { Success = success });
         }
     }
 }
+

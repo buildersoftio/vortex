@@ -48,7 +48,6 @@ service NodeExchangeService {
 
 	// SendData to Distributed Shard (Partition Leader)
 	rpc DistributeData(DataDistributionMessage) returns (DataDistribution_Response);
-
 	// Promote Address to Address in cluster
 	// Promote Application to Application in cluster
 }
