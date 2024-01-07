@@ -69,9 +69,7 @@ namespace Vortex.Core.Services.ServerStates
                     IsConnected = a.IsConnected,
                     LastConnectionDate = a.LastConnectionDate,
                     ProductionInstanceType = a.ProductionInstanceType,
-                    ReadInitialPosition = a.ReadInitialPosition,
-                    SubscriptionMode = a.SubscriptionMode,
-                    SubscriptionType = a.SubscriptionType
+                    ConsumptionSettings = a.ConsumptionSettings
                 }).ToList();
 
 
@@ -142,17 +140,9 @@ namespace Vortex.Core.Services.ServerStates
                     return (status: false, message: $"Application [{clientConnectionRequest.ApplicationName}] cannot read from address [{clientConnectionRequest.Address}], connection cannot be established");
 
 
-                if (clientConnectionRequest.ReadInitialPosition == null)
-                    return (status: false, message: $"ReadInitialPosition can not be null");
-                clientConnection.ReadInitialPosition = clientConnectionRequest.ReadInitialPosition!.Value;
-
-                if (clientConnectionRequest.SubscriptionMode == null)
-                    return (status: false, message: $"SubscriptionMode can not be null");
-                clientConnection.SubscriptionMode = clientConnectionRequest.SubscriptionMode!.Value;
-
-                if (clientConnectionRequest.SubscriptionType == null)
-                    return (status: false, message: $"SubscriptionType can not be null");
-                clientConnection.SubscriptionType = clientConnectionRequest.SubscriptionType!.Value;
+                if (clientConnectionRequest.ConsumptionSettings == null)
+                    return (status: false, message: $"ConsumptionSettings can not be null");
+                clientConnection.ConsumptionSettings = clientConnectionRequest.ConsumptionSettings!;
             }
 
             if (_applicationRepository.AddApplicationAddressConnection(clientConnection))
@@ -195,9 +185,7 @@ namespace Vortex.Core.Services.ServerStates
                 IsConnected = a.IsConnected,
                 LastConnectionDate = a.LastConnectionDate,
                 ProductionInstanceType = a.ProductionInstanceType,
-                ReadInitialPosition = a.ReadInitialPosition,
-                SubscriptionMode = a.SubscriptionMode,
-                SubscriptionType = a.SubscriptionType,
+                ConsumptionSettings = a.ConsumptionSettings,
                 HostsHistory = a.HostsHistory,
             }).ToList();
         }

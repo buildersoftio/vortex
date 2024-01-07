@@ -19,9 +19,7 @@ namespace Vortex.Core.Models.Dtos.Clients
         public bool IsConnected { get; set; }
 
         public ProductionInstanceTypes? ProductionInstanceType { get; set; }
-        public SubscriptionTypes? SubscriptionType { get; set; }
-        public SubscriptionModes? SubscriptionMode { get; set; }
-        public ReadInitialPositions? ReadInitialPosition { get; set; }
+        public ConsumptionSettings ConsumptionSettings { get; set; }
 
         public List<string>? ConnectedHosts { get; set; }
         public Dictionary<string, ApplicationHost> HostsHistory { get; set; }

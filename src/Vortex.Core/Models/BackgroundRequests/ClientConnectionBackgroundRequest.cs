@@ -18,9 +18,7 @@ namespace Vortex.Core.Models.BackgroundRequests
 
         /// Settings
         public ProductionInstanceTypes? ProductionInstanceType { get; set; }
-        public SubscriptionTypes? SubscriptionType { get; set; }
-        public SubscriptionModes? SubscriptionMode { get; set; }
-        public ReadInitialPositions? ReadInitialPosition { get; set; }
+        public ConsumptionSettings ConsumptionSettings { get; set; }
 
         public string ConnectedNode { get; set; }
 

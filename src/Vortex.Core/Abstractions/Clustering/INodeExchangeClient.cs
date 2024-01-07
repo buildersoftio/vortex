@@ -15,7 +15,7 @@ namespace Vortex.Core.Abstractions.Clustering
         Task<bool> RequestHeartBeatAsync();
 
         Task<bool> RequestAddressCreation(AddressClusterScopeRequest request);
-        Task<bool> RequestAddressPartitionChange(string alias, int partitionNumner, string updatedBy);
+        Task<bool> RequestAddressPartitionChange(string alias, int partitionNumber, string updatedBy);
         Task<bool> RequestAddressRetentionSettingsChange(string alias, AddressRetentionSettings addressRetentionSettings, string updatedBy);
         Task<bool> RequestAddressSchemaSettingsChange(string alias, AddressSchemaSettings addressSchemaSettings, string updatedBy);
         Task<bool> RequestAddressStorageSettingsChange(string alias, AddressStorageSettings addressStorageSettings, string updatedBy);
@@ -36,7 +36,7 @@ namespace Vortex.Core.Abstractions.Clustering
         Task<bool> RequestApplicationPermissionChange(string applicationName, string permissionType, string value, string updatedBy);
 
 
-        Task<bool> RequestClientConnectionRegister(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, ProductionInstanceTypes? productionInstanceType, SubscriptionTypes? subscriptionType, SubscriptionModes? subscriptionMode, ReadInitialPositions? readInitialPosition);
+        Task<bool> RequestClientConnectionRegister(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, ProductionInstanceTypes? productionInstanceType, ConsumptionSettings? consumptionSettings);
         Task<bool> RequestClientConnectionHeartbeat(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, string clientId);
         Task<bool> RequestClientConnectionUnregister(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, string clientId);
 

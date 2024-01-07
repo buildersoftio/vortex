@@ -82,9 +82,8 @@ namespace Vortex.Core.Services.Routing
 
             // get default values from application settings if are not provided from the client...
             request.ProductionInstanceType ??= applicationDto.Settings.DefaultProductionInstanceType;
-            request.SubscriptionType ??= applicationDto.Settings.DefaultSubscriptionType;
-            request.SubscriptionMode ??= applicationDto.Settings.DefaultSubscriptionMode;
-            request.ReadInitialPosition ??= applicationDto.Settings.DefaultReadInitialPosition;
+            request.ConsumptionSettings ??= applicationDto.Settings.ConsumptionSettings;
+
 
             (bool isClientConnectionRegistered, string error) = _clientConnectionService.RegisterClientConnection(new Models.Dtos.Clients.ClientConnectionRequest()
             {
@@ -92,9 +91,7 @@ namespace Vortex.Core.Services.Routing
                 ApplicationConnectionType = request.ApplicationType,
                 ApplicationName = applicationDto.Name,
                 ProductionInstanceType = request.ProductionInstanceType,
-                ReadInitialPosition = request.ReadInitialPosition,
-                SubscriptionMode = request.SubscriptionMode,
-                SubscriptionType = request.SubscriptionType
+                ConsumptionSettings = request.ConsumptionSettings
 
             }, request.Application);
 
@@ -150,9 +147,7 @@ namespace Vortex.Core.Services.Routing
                     Credentials = new TokenDetails() { AppKey = request.AppKey, AppSecret = request.AppSecret },
 
                     ProductionInstanceType = request.ProductionInstanceType,
-                    ReadInitialPosition = request.ReadInitialPosition,
-                    SubscriptionMode = request.SubscriptionMode,
-                    SubscriptionType = request.SubscriptionType
+                    ConsumptionSettings = request.ConsumptionSettings
 
                 });
             }

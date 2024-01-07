@@ -8,6 +8,7 @@ using Vortex.Core.Utilities.Consts;
 using Vortex.Core.Utilities.Extensions;
 using Vortex.Core.Utilities.Validators;
 using Microsoft.Extensions.Logging;
+using Vortex.Core.Models.Configurations;
 
 namespace Vortex.Core.Services.ServerStates
 {
@@ -16,15 +17,18 @@ namespace Vortex.Core.Services.ServerStates
         private readonly ILogger<ApplicationService> _logger;
         private readonly IApplicationRepository _applicationRepository;
         private readonly IBackgroundQueueService<ApplicationClusterScopeRequest> _backgroundApplicationClusterService;
+        private readonly NodeConfiguration _nodeConfiguration;
 
         public ApplicationService(ILogger<ApplicationService> logger,
             IApplicationRepository applicationRepository,
-            IBackgroundQueueService<ApplicationClusterScopeRequest> backgroundApplicationClusterService)
+            IBackgroundQueueService<ApplicationClusterScopeRequest> backgroundApplicationClusterService,
+            NodeConfiguration nodeConfiguration)
         {
             _logger = logger;
             _applicationRepository = applicationRepository;
 
             _backgroundApplicationClusterService = backgroundApplicationClusterService;
+            _nodeConfiguration = nodeConfiguration;
         }
 
         public (bool status, string message) CreateApplication(ApplicationDto newApplication, string createdBy, bool requestedByOtherNode = false)
@@ -49,6 +53,20 @@ namespace Vortex.Core.Services.ServerStates
                 Settings = newApplication.Settings,
                 CreatedBy = createdBy,
             };
+
+            // add consumption settings, if there are null from the client
+            if (newApplication.Settings.ConsumptionSettings == null)
+            {
+                application.Settings.ConsumptionSettings = new ConsumptionSettings()
+                {
+                    // registering default settings, in case consumption settings are not provided.
+
+                    AcknowledgmentType = _nodeConfiguration.DefaultAcknowledgmentType,
+                    AutoCommitEntry = _nodeConfiguration.DefaultAutoCommitEntry,
+                    ReadInitialPositions = _nodeConfiguration.DefaultReadInitialPosition
+                };
+            }
+
 
             if (_applicationRepository.AddApplication(application))
             {

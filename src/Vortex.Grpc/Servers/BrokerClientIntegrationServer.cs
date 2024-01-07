@@ -128,20 +128,9 @@ namespace Vortex.Grpc.Servers
             {
                 // check in case the value is null
                 // In case of NULL, in EstablishConnection, store the default value from Application
-                if (request.SubscriptionModes == ConnectionSubscriptionModes.UndefinedValue)
-                    connectionRequest.SubscriptionMode = null;
-                else
-                    connectionRequest.SubscriptionMode = Enum.Parse<SubscriptionModes>(request.SubscriptionModes.ToString());
 
-                if (request.SubscriptionTypes == ConnectionSubscriptionTypes.Null)
-                    connectionRequest.SubscriptionType = null;
-                else
-                    connectionRequest.SubscriptionType = Enum.Parse<SubscriptionTypes>(request.SubscriptionTypes.ToString());
-
-                if (request.SubscriptionInitialPosition == ConnectionReadInitialPositions.Undefined)
-                    connectionRequest.ReadInitialPosition = null;
-                else
-                    connectionRequest.ReadInitialPosition = Enum.Parse<ReadInitialPositions>(request.SubscriptionInitialPosition.ToString());
+                if (request.ConsumptionSettings == null)
+                    connectionRequest.ConsumptionSettings = null;
             }
 
             else

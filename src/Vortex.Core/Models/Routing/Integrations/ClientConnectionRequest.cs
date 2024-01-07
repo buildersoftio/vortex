@@ -19,9 +19,7 @@ namespace Vortex.Core.Models.Routing.Integrations
         public ProductionInstanceTypes? ProductionInstanceType { get; set; }
 
         // In case of Consumption
-        public SubscriptionTypes? SubscriptionType { get; set; }
-        public SubscriptionModes? SubscriptionMode { get; set; }
-        public ReadInitialPositions? ReadInitialPosition { get; set; }
+        public ConsumptionSettings? ConsumptionSettings { get; set; }
 
 
         // NodeId, where the client is connected

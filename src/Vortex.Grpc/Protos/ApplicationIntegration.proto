@@ -14,6 +14,8 @@ service DataTransmissionService {
 
 	rpc ProduceMessage(MessageRequest) returns (MessageResponse);
 	rpc StreamMessage(stream MessageRequest) returns (MessageStreamResponse);
+
+	rpc ConsumeMessage(ConsumeMessageRequest) returns (stream ConsumeMessageResponse);
 }
 
 enum ApplicationTypes {
@@ -29,9 +31,7 @@ message ConnectionRequest{
 
 	// default settings for producer and consumer
 	optional ConnectionProductionInstanceTypes  production_instance_types= 5;
-	optional ConnectionSubscriptionTypes subscription_types = 6;
-	optional ConnectionReadInitialPositions subscription_initial_position = 7;
-	optional ConnectionSubscriptionModes subscription_modes = 8;
+	optional ConnectionConsumptionSettings consumption_settings = 6;
 }
 
 message ConnectionResponse {
@@ -85,11 +85,10 @@ enum ConnectionProductionInstanceTypes {
 	MULTIPLE = 2;
 }
 
-enum ConnectionSubscriptionTypes {
-	NULL = 0;
-	UNIQUE = 1;
-	FAILOVER = 2;
-	SHARED = 3;
+message ConnectionConsumptionSettings {
+	bool AutoCommitEntry = 1;
+	ConnectionReadInitialPositions ConnectionReadInitialPosition = 2;
+	ConnectionAcknowledgmentTypes ConnectionAcknowledgmentType =3;
 }
 
 enum ConnectionReadInitialPositions {
@@ -98,10 +97,10 @@ enum ConnectionReadInitialPositions {
 	LATEST = 2;
 }
 
-enum ConnectionSubscriptionModes{
+enum ConnectionAcknowledgmentTypes{
 	UNDEFINED_VALUE = 0;
-	RESILIENT = 1;
-	NON_RESILIENT = 2;
+	BATCH = 1;
+	RECORD = 2;
 }
 
 
@@ -130,4 +129,26 @@ message MessageStreamResponse {
 	bool success = 1;
 	string message = 2;
 	int32 message_count = 3;
+}
+
+
+message ConsumeMessageRequest {
+	string subscription_name = 1;
+
+	bool read_message = 2;
+	int32 read_partition = 3;
+
+	int64 message_acknolegment_entry = 4;
+}
+
+message ConsumeMessageResponse {
+	bytes message_id = 1;
+	bytes message_payload = 2;
+	map<string, string> message_headers =3;
+
+	int32 partition_index = 4;
+	string source_application = 5;
+	google.protobuf.Timestamp sent_date = 6;
+
+	int64 entry_id = 7;
 }

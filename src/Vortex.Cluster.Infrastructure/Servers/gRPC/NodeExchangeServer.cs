@@ -329,9 +329,7 @@ namespace Vortex.Cluster.Infrastructure.Servers.gRPC
                 ApplicationType = Enum.Parse<ApplicationConnectionTypes>(request.ConnectionType),
 
                 ProductionInstanceType = Enum.Parse<ProductionInstanceTypes>(request.ProductionInstanceType),
-                ReadInitialPosition = Enum.Parse<ReadInitialPositions>(request.ReadInitialPosition),
-                SubscriptionMode = Enum.Parse<SubscriptionModes>(request.SubscriptionMode),
-                SubscriptionType = Enum.Parse<SubscriptionTypes>(request.SubscriptionType)
+                ConsumptionSettings = request.ConsumptionSettings.JsonToObject<ConsumptionSettings>()
 
             }, notifyOtherNodes: false);
 

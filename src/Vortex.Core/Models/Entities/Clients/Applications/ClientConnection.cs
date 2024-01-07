@@ -22,10 +22,7 @@ namespace Vortex.Core.Models.Entities.Clients.Applications
 
 
         public ProductionInstanceTypes ProductionInstanceType { get; set; }
-
-        public SubscriptionTypes SubscriptionType { get; set; }
-        public SubscriptionModes SubscriptionMode { get; set; }
-        public ReadInitialPositions ReadInitialPosition { get; set; }
+        public ConsumptionSettings ConsumptionSettings { get; set; }
 
         public List<string>? ConnectedHosts { get; set; }
         public Dictionary<string, ApplicationHost> HostsHistory { get; set; }
