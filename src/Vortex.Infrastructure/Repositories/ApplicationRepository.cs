@@ -214,7 +214,7 @@ namespace Vortex.Infrastructure.Repositories
         {
             return _serverStateStoreDbContext
                 .ClientConnections!.Query()
-                .Where(x=> x.IsConnected == true)
+                .Where(x => x.IsConnected == true)
                 .ToList();
         }
 
@@ -223,6 +223,18 @@ namespace Vortex.Infrastructure.Repositories
             return _serverStateStoreDbContext
                 .ClientConnections!
                 .FindById(clientConnectionId);
+        }
+
+        public bool DeleteClientConnectionByApplication(int applicationId)
+        {
+            var deletedRecords = _serverStateStoreDbContext
+                .ClientConnections!
+                .DeleteMany(x => x.ApplicationId == applicationId);
+
+            if (deletedRecords > 0)
+                return true;
+
+            return false;
         }
     }
 }

@@ -24,6 +24,8 @@ namespace Vortex.Server.DependencyInjection
             services.AddSingleton<IPartitionEntryRepository, PartitionEntryRepository>();
 
             services.AddSingleton<IClusterStateRepository, ClusterStateRepository>();
+            services.AddSingleton<ISubscriptionEntryRepository, SubscriptionEntryRepository>();
+
         }
     }
 }

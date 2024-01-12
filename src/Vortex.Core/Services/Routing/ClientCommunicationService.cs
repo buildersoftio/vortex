@@ -82,7 +82,7 @@ namespace Vortex.Core.Services.Routing
 
             // get default values from application settings if are not provided from the client...
             request.ProductionInstanceType ??= applicationDto.Settings.DefaultProductionInstanceType;
-            request.ConsumptionSettings ??= applicationDto.Settings.ConsumptionSettings;
+            request.ConsumptionSettings ??= applicationDto.Settings.DefaultConsumptionSettings;
 
 
             (bool isClientConnectionRegistered, string error) = _clientConnectionService.RegisterClientConnection(new Models.Dtos.Clients.ClientConnectionRequest()

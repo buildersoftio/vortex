@@ -20,6 +20,7 @@ namespace Vortex.Core.Models.Dtos.Clients
         public ProductionInstanceTypes? ProductionInstanceType { get; set; }
 
         // In case of Consumption
+        public string? SubscriptionName { get; set; }
         public ConsumptionSettings? ConsumptionSettings { get; set; }
     }
 }

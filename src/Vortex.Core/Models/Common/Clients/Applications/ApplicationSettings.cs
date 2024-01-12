@@ -10,7 +10,7 @@
         public HashSet<string> PrivateIpRange { get; set; }
 
         public ProductionInstanceTypes DefaultProductionInstanceType { get; set; }
-        public ConsumptionSettings? ConsumptionSettings { get; set; }
+        public ConsumptionSettings? DefaultConsumptionSettings { get; set; }
 
         public ApplicationSettings()
         {

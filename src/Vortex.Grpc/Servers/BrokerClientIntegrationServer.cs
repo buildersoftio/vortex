@@ -6,10 +6,8 @@ using Microsoft.Extensions.Logging;
 using Vortex.Core.Abstractions.Services.Routing;
 using Vortex.Core.Models.Common.Clients.Applications;
 using Vortex.Core.Models.Routing.Integrations;
-using System.Reflection.PortableExecutable;
 using Vortex.Core.Models.Configurations;
 using Vortex.Core.Models.Data;
-using Google.Protobuf;
 
 namespace Vortex.Grpc.Servers
 {

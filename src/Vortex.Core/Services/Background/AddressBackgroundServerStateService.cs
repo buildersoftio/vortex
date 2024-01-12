@@ -13,6 +13,7 @@ using Vortex.Core.Repositories;
 using Vortex.Core.Services.Data;
 using Vortex.Core.Utilities.Extensions;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics.Contracts;
 
 namespace Vortex.Core.Services.Background
 {
@@ -24,6 +25,8 @@ namespace Vortex.Core.Services.Background
         private readonly IDataIOService _dataIOService;
         private readonly IPartitionDataFactory _partitionDataFactory;
         private readonly IClusterStateRepository _clusterStateRepository;
+        private readonly ISubscriptionEntryService _subscriptionEntryService;
+        private readonly IApplicationRepository _applicationRepository;
         private readonly NodeConfiguration _nodeConfiguration;
 
         private readonly IBackgroundQueueService<AddressClusterScopeRequest> _backgroundAddressClusterService;
@@ -34,6 +37,8 @@ namespace Vortex.Core.Services.Background
             IDataIOService dataIOService,
             IPartitionDataFactory partitionDataFactory,
             IClusterStateRepository clusterStateRepository,
+            ISubscriptionEntryService subscriptionEntryService,
+            IApplicationRepository applicationRepository,
             NodeConfiguration nodeConfiguration,
             IBackgroundQueueService<AddressClusterScopeRequest> backgroundAddressClusterService)
         {
@@ -45,6 +50,8 @@ namespace Vortex.Core.Services.Background
 
             // resources needed for clustering and node owners
             _clusterStateRepository = clusterStateRepository;
+            _subscriptionEntryService = subscriptionEntryService;
+            _applicationRepository = applicationRepository;
             _nodeConfiguration = nodeConfiguration;
 
             _backgroundAddressClusterService = backgroundAddressClusterService;
@@ -73,6 +80,10 @@ namespace Vortex.Core.Services.Background
 
             if (request.Address.Status == AddressStatuses.CreatePartitionDirectories || request.Address.Status == AddressStatuses.ChangePartitions)
             {
+                List<int> applicationsConnected = _applicationRepository.GetClientConnectionsByAddress(request.Address.Id)!
+                    .Where(x => x.ApplicationConnectionType == Models.Common.Clients.Applications.ApplicationConnectionTypes.Consumption)
+                    .Select(x => x.ApplicationId).ToList();
+
                 var nodesInCluster = _clusterStateRepository.GetNodes().Values.ToList();
 
                 // Inserting this node, for easy implementation of nodeOwnership for Partition Creation
@@ -99,11 +110,12 @@ namespace Vortex.Core.Services.Background
                                 using var partitionDbData = new PartitionDataService(_partitionEntryService, _partitionDataFactory, request.Address, partitionEntry!);
                                 _logger.LogInformation($"Address [{request.Address.Name}] partition [{i}] storage files created");
                             }
+
+                            CreateSubscriptionEntryForPartition(request, applicationsConnected, i);
                         }
                         else
                         {
                             // here we have a bug, in case the creation fails, we should retry the the re-creation by trying the same request again.
-
                             // in case of failing, we are retying the same request again.
                             request.Address.Status = AddressStatuses.Failed;
                             _addressRepository.UpdateAddress(request.Address);
@@ -182,6 +194,22 @@ namespace Vortex.Core.Services.Background
 
                 base.EnqueueRequest(request);
                 return;
+            }
+        }
+
+        private void CreateSubscriptionEntryForPartition(AddressBackgroundRequest request, List<int> applicationsConnected, int partitionId)
+        {
+            // update subscription states for new partition added to the address.
+            foreach (var applicationId in applicationsConnected)
+            {
+                var subscriptions = _subscriptionEntryService.GetSubscriptions(applicationId, request.Address.Id);
+                foreach (var subscription in subscriptions)
+                {
+                    var previousSubscriptionEntry = _subscriptionEntryService.GetSubscriptionEntries(subscription, applicationId, request.Address.Id).FirstOrDefault();
+
+                    _subscriptionEntryService
+                        .CreateSubscriptionEntry(subscription, applicationId, request.Address.Id, partitionId, request.Address.Alias, previousSubscriptionEntry!.ConsumptionSettings, createdBy: "bg_PartitionCreationService");
+                }
             }
         }
 

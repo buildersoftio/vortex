@@ -6,7 +6,6 @@
 
         // in case of Auto Commit is false;
         public AcknowledgmentTypes? AcknowledgmentType { get; set; }
-
         public ReadInitialPositions? ReadInitialPositions { get; set; }
     }
 

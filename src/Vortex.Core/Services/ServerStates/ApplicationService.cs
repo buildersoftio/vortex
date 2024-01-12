@@ -18,17 +18,23 @@ namespace Vortex.Core.Services.ServerStates
         private readonly IApplicationRepository _applicationRepository;
         private readonly IBackgroundQueueService<ApplicationClusterScopeRequest> _backgroundApplicationClusterService;
         private readonly NodeConfiguration _nodeConfiguration;
+        private readonly ISubscriptionEntryService _subscriptionEntryService;
+        private readonly IClientConnectionService _clientConnectionService;
 
         public ApplicationService(ILogger<ApplicationService> logger,
             IApplicationRepository applicationRepository,
             IBackgroundQueueService<ApplicationClusterScopeRequest> backgroundApplicationClusterService,
-            NodeConfiguration nodeConfiguration)
+            NodeConfiguration nodeConfiguration,
+            ISubscriptionEntryService subscriptionEntryService,
+            IClientConnectionService clientConnectionService)
         {
             _logger = logger;
             _applicationRepository = applicationRepository;
 
             _backgroundApplicationClusterService = backgroundApplicationClusterService;
             _nodeConfiguration = nodeConfiguration;
+            _subscriptionEntryService = subscriptionEntryService;
+            _clientConnectionService = clientConnectionService;
         }
 
         public (bool status, string message) CreateApplication(ApplicationDto newApplication, string createdBy, bool requestedByOtherNode = false)
@@ -55,9 +61,9 @@ namespace Vortex.Core.Services.ServerStates
             };
 
             // add consumption settings, if there are null from the client
-            if (newApplication.Settings.ConsumptionSettings == null)
+            if (newApplication.Settings.DefaultConsumptionSettings == null)
             {
-                application.Settings.ConsumptionSettings = new ConsumptionSettings()
+                application.Settings.DefaultConsumptionSettings = new ConsumptionSettings()
                 {
                     // registering default settings, in case consumption settings are not provided.
 
@@ -255,6 +261,12 @@ namespace Vortex.Core.Services.ServerStates
                 _applicationRepository.DeleteApplicationToken(token);
             });
 
+            // deleting all subscriptions entries connected to this application
+            _subscriptionEntryService.DeleteSubscriptionEntriesByApplication(applicationDetails.Id);
+
+            // deleting all client connections connected to this application
+            _applicationRepository.DeleteClientConnectionByApplication(applicationDetails.Id);
+
             if (isDeleted)
             {
                 // Sync with other nodes
@@ -268,7 +280,7 @@ namespace Vortex.Core.Services.ServerStates
                     });
                 }
 
-                return (true, message: $"Application deleted together with tokens");
+                return (true, message: $"Application deleted together with tokens, subscriptions and client connections.");
             }
 
             return (false, message: $"Something went wrong, application couldnot be deleted");
