@@ -28,6 +28,7 @@ namespace Vortex.Server.DependencyInjection
             nodeConfiguration.IdleClientConnectionTimeout = configuration.GetValue<int>(EnvironmentConstants.BackgroundIdleClientConnectionTimeout)!;
             nodeConfiguration.CheckRetryCount = configuration.GetValue<int>(EnvironmentConstants.BackgroundCheckRetryCount)!;
             nodeConfiguration.BackgroundPositionEntry_FlushInterval = configuration.GetValue<int>(EnvironmentConstants.BackgroundPositionEntityFlushInterval)!;
+            nodeConfiguration.BackgroundSubscriptionEntry_FlushInternal = configuration.GetValue<int>(EnvironmentConstants.BackgroundSubscriptionEntityFlushInterval);
 
             nodeConfiguration.DefaultAutoCommitEntry = configuration.GetValue<bool>(EnvironmentConstants.DefaultAutoCommitEntry)!;
             nodeConfiguration.DefaultAcknowledgmentType = Enum.Parse<AcknowledgmentTypes>(configuration.GetValue<string>(EnvironmentConstants.DefaultAcknowledgmentType)!);

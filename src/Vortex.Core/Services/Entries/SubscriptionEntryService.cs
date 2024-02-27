@@ -85,7 +85,7 @@ namespace Vortex.Core.Services.Entries
         {
 
             var entries = _subscriptionEntryRepository.GetSubscriptionEntries(addressId);
-            
+
             foreach (var entry in entries)
             {
                 entry.IsActive = false;
@@ -148,6 +148,12 @@ namespace Vortex.Core.Services.Entries
                 .GroupBy(e => e.SubscriptionName)
                    .Select(group => group.Key)
                    .ToList();
+        }
+
+        public bool UpdateSubscriptionEntries(SubscriptionEntry entry)
+        {
+            return _subscriptionEntryRepository
+                 .UpdateSubscriptionEntity(entry);
         }
     }
 }

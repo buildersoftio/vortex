@@ -21,6 +21,7 @@
 
 
         public const string BackgroundPositionEntityFlushInterval = "VORTEX_POSITION_FLUSH_INTERVAL";
+        public const string BackgroundSubscriptionEntityFlushInterval = "VORTEX_SUBSCRIPTION_ENTRY_FLUSH_INTERVAL";
 
 
         /// <summary>

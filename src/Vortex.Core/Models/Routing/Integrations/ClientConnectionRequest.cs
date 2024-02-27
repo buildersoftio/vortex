@@ -19,6 +19,7 @@ namespace Vortex.Core.Models.Routing.Integrations
         public ProductionInstanceTypes? ProductionInstanceType { get; set; }
 
         // In case of Consumption
+        public string? SubscriptionName { get; set; }
         public ConsumptionSettings? ConsumptionSettings { get; set; }
 
 

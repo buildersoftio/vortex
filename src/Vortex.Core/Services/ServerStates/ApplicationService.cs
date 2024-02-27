@@ -720,5 +720,17 @@ namespace Vortex.Core.Services.ServerStates
 
             return (new ApplicationPermissionDto() { ApplicationName = applicationName, Permissions = applicationPermission.Permissions }, "Permissions returned");
         }
+
+        public (ApplicationDto? application, string message) GetApplicationById(int applicationId)
+        {
+            var applicationDetails = _applicationRepository.GetApplication(applicationId);
+            if (applicationDetails == null)
+                return (application: null, message: $"Application with id {applicationId} doesnot exists");
+
+            if (applicationDetails.IsDeleted == true)
+                return (application: null, message: $"Application with id {applicationId} doesnot exists, is softly deleted");
+
+            return (application: new ApplicationDto(applicationDetails), message: $"Application returned");
+        }
     }
 }

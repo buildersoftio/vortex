@@ -19,5 +19,7 @@ namespace Vortex.Core.Models.Configurations
         public AcknowledgmentTypes DefaultAcknowledgmentType { get; set; }
         public ReadInitialPositions DefaultReadInitialPosition { get; set; }
 
+        public int BackgroundSubscriptionEntry_FlushInternal { get; set; }
+
     }
 }

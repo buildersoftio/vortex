@@ -62,15 +62,6 @@ namespace Vortex.Core.Services
                 "\n     \\ V / (_) | |  | ||  __/>  < " + $"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC." +
                 "\n      \\_/ \\___/|_|   \\__\\___/_/\\_\\" + $"       Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx \n\n");
 
-            //Console.WriteLine("\r\n           ____                  _                 " + $"       Starting {SystemProperties.Name}" +
-            //    "\r\n          / ___| ___  _ __  ___ | |__   _ __  ___  " + "       Set your information in motion." +
-            //    "\r\n         | |    / _ \\| '__|/ _ \\| '_ \\ | '__|/ _ " +
-            //    "\r\n         | |___|  __/| |  |  __/| |_) || |  | (_) |" + $"       {SystemProperties.ShortName} {SystemProperties.Version}. Developed with love by Buildersoft LLC." +
-            //    "\r\n          \\____|\\___||_|   \\___||_.__/ |_|   \\___/ " + $"       Licensed under the Apache License 2.0. See https://bit.ly/3DqVQbx" +
-            //    "\r\n                                                   " + "       Cerebro is an open-source distributed streaming platform designed to deliver the best performance possible for high-performance data pipelines, streaming analytics, streaming between microservices and data integrations." +
-            //    "\r\n");
-
-
             ExposePorts();
 
             Console.WriteLine("");
@@ -123,6 +114,7 @@ namespace Vortex.Core.Services
             _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundIdleClientConnectionTimeout}: {_nodeConfiguration.IdleClientConnectionTimeout}");
             _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundCheckRetryCount}: {_nodeConfiguration.CheckRetryCount}");
             _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundPositionEntityFlushInterval}: {_nodeConfiguration.BackgroundPositionEntry_FlushInterval}");
+            _logger.LogInformation($"Environment variable:{EnvironmentConstants.BackgroundSubscriptionEntityFlushInterval}: {_nodeConfiguration.BackgroundSubscriptionEntry_FlushInternal}");
             _logger.LogInformation($"Environment variable:{EnvironmentConstants.DefaultAutoCommitEntry}: {_nodeConfiguration.DefaultAutoCommitEntry}");
             _logger.LogInformation($"Environment variable:{EnvironmentConstants.DefaultAcknowledgmentType}: {_nodeConfiguration.DefaultAcknowledgmentType}");
             _logger.LogInformation($"Environment variable:{EnvironmentConstants.DefaultReadInitialPosition}: {_nodeConfiguration.DefaultReadInitialPosition}");

@@ -8,6 +8,9 @@ using Vortex.Core.Models.Common.Clients.Applications;
 using Vortex.Core.Models.Routing.Integrations;
 using Vortex.Core.Models.Configurations;
 using Vortex.Core.Models.Data;
+using Vortex.Core.Abstractions.Services;
+using Google.Protobuf;
+using Google.Protobuf.WellKnownTypes;
 
 namespace Vortex.Grpc.Servers
 {
@@ -16,6 +19,7 @@ namespace Vortex.Grpc.Servers
         private readonly ILogger<BrokerClientIntegrationServer> _logger;
         private readonly IClientCommunicationService _clientCommunicationService;
         private readonly NodeConfiguration _nodeConfiguration;
+        private readonly IClientConnectionService _clientConnectionService;
 
         private readonly Server _server;
         private readonly int _port;
@@ -24,11 +28,13 @@ namespace Vortex.Grpc.Servers
         public BrokerClientIntegrationServer(
             ILogger<BrokerClientIntegrationServer> logger,
             IClientCommunicationService clientCommunicationService,
-            NodeConfiguration nodeConfiguration)
+            NodeConfiguration nodeConfiguration,
+            IClientConnectionService clientConnectionService)
         {
             _logger = logger;
             _clientCommunicationService = clientCommunicationService;
             _nodeConfiguration = nodeConfiguration;
+            _clientConnectionService = clientConnectionService;
 
             if (Environment.GetEnvironmentVariable(EnvironmentConstants.BrokerPort) != null)
                 _port = Convert.ToInt32(Environment.GetEnvironmentVariable(EnvironmentConstants.BrokerPort));
@@ -103,7 +109,7 @@ namespace Vortex.Grpc.Servers
         public override Task<ConnectionResponse> Connect(ConnectionRequest request, ServerCallContext context)
         {
             var headers = context.RequestHeaders;
-            var connectionType = Enum.Parse<ApplicationConnectionTypes>(request.ApplicationType.ToString());
+            var connectionType = System.Enum.Parse<ApplicationConnectionTypes>(request.ApplicationType.ToString());
 
             var connectionRequest = new ClientConnectionRequest()
             {
@@ -112,31 +118,42 @@ namespace Vortex.Grpc.Servers
                 Application = request.Application,
                 ApplicationType = connectionType,
                 ClientHost = context.Peer,
-                ConnectedNode = _nodeConfiguration.NodeId
+                ConnectedNode = _nodeConfiguration.NodeId,
             };
 
             // Look for the Authorization header
             var authHeader = headers.FirstOrDefault(h => h.Key.Equals("authorization", StringComparison.OrdinalIgnoreCase));
             if (authHeader != null)
-            {
                 connectionRequest.AppSecret = authHeader.Value;
-            }
 
             if (connectionType == ApplicationConnectionTypes.Consumption)
             {
                 // check in case the value is null
-                // In case of NULL, in EstablishConnection, store the default value from Application
+                // in case of NULL - in EstablishConnection, store the default value from Application
 
                 if (request.ConsumptionSettings == null)
                     connectionRequest.ConsumptionSettings = null;
-            }
+                else
+                {
+                    request.ConsumptionSettings = new ConnectionConsumptionSettings()
+                    {
+                        AutoCommitEntry = request.ConsumptionSettings.AutoCommitEntry,
+                        ConnectionAcknowledgmentType = System.Enum.Parse<ConnectionAcknowledgmentTypes>(request.ConsumptionSettings.ConnectionAcknowledgmentType.ToString()),
+                        ConnectionReadInitialPosition = System.Enum.Parse<ConnectionReadInitialPositions>(request.ConsumptionSettings.ConnectionReadInitialPosition.ToString())
+                    };
+                }
 
+                if (request.SubscriptionName == null)
+                    connectionRequest.SubscriptionName = null;
+                else
+                    connectionRequest.SubscriptionName = request.SubscriptionName;
+            }
             else
             {
                 if (request.ProductionInstanceTypes == ConnectionProductionInstanceTypes.Unknown)
                     connectionRequest.ProductionInstanceType = null;
                 else
-                    connectionRequest.ProductionInstanceType = Enum.Parse<ProductionInstanceTypes>(request.ProductionInstanceTypes.ToString());
+                    connectionRequest.ProductionInstanceType = System.Enum.Parse<ProductionInstanceTypes>(request.ProductionInstanceTypes.ToString());
             }
 
             var result = _clientCommunicationService.EstablishConnection(connectionRequest);
@@ -145,7 +162,7 @@ namespace Vortex.Grpc.Servers
             {
                 ClientId = result.ClientId.ToString(),
                 Message = result.Message,
-                Status = Enum.Parse<Statuses>(result.Status.ToString()),
+                Status = System.Enum.Parse<Statuses>(result.Status.ToString()),
 
                 // Server info
                 VortexServerName = SystemProperties.Name,
@@ -156,7 +173,7 @@ namespace Vortex.Grpc.Servers
         public override Task<DisconnectionResponse> Disconnect(DisconnectionRequest request, ServerCallContext context)
         {
             var headers = context.RequestHeaders;
-            var connectionType = Enum.Parse<ApplicationConnectionTypes>(request.ApplicationType.ToString());
+            var connectionType = System.Enum.Parse<ApplicationConnectionTypes>(request.ApplicationType.ToString());
 
             var disconnectionRequest = new ClientDisconnectionRequest()
             {
@@ -180,7 +197,7 @@ namespace Vortex.Grpc.Servers
             {
                 ClientId = response.ClientId.ToString(),
                 Message = response.Message,
-                Status = Enum.Parse<Statuses>(response.Status.ToString()),
+                Status = System.Enum.Parse<Statuses>(response.Status.ToString()),
             });
         }
 
@@ -204,7 +221,7 @@ namespace Vortex.Grpc.Servers
             {
                 ClientId = response.ClientId.ToString(),
                 Message = response.Message,
-                Status = Enum.Parse<Statuses>(response.Status.ToString()),
+                Status = System.Enum.Parse<Statuses>(response.Status.ToString()),
 
                 // Server info
                 VortexServerName = SystemProperties.Name,
@@ -293,6 +310,69 @@ namespace Vortex.Grpc.Servers
                     Message = $"Streaming of the message failed, details:{ex.Message}",
                     PartitionIndex = -1,
                 });
+            }
+        }
+
+        public override async Task ConsumeMessage(ConsumeMessageRequest request, IServerStreamWriter<ConsumeMessageResponse> responseStream, ServerCallContext context)
+        {
+            // check token validity.
+
+            var isClientIdValid = Guid.TryParse(request.ClientId, out Guid clientId);
+            if (isClientIdValid != true)
+                clientId = Guid.Empty;
+
+            string appKey = request.ApiKey;
+            string appSecret = "";
+
+            var headers = context.RequestHeaders;
+            var authHeader = headers.FirstOrDefault(h => h.Key.Equals("authorization", StringComparison.OrdinalIgnoreCase));
+            if (authHeader != null)
+                appSecret = authHeader.Value;
+
+            if (_clientCommunicationService.ValidateApplicationToken(clientId, appKey, appSecret) != true)
+                throw new RpcException(new Status(StatusCode.Unauthenticated, "Invalid app key or secret for this application"));
+
+
+            var clientConnection = _clientConnectionService.GetClientConnection(clientId);
+            if (clientConnection == null)
+                throw new RpcException(new Status(StatusCode.Aborted, "Application Connection does not exists."));
+
+            try
+            {
+                // read next messages
+                List<int> partitions = request.ReadPartitions.ToList();
+                int currentPartitionIndex = partitions[0];
+
+                // read the same amount of data for each_partition;
+                int readMessageCount = request.ReadMessageCount * partitions.Count;
+
+                for (int i = 0; i < readMessageCount; i++)
+                {
+                    // read and send messages to client.
+                    var messageRead = _clientCommunicationService.ConsumeNextMessage(clientId, clientConnection.AddressId, partitions[i], partitions[currentPartitionIndex]);
+                    if (messageRead != null)
+                    {
+                        // map message to GRPC message.
+                        await responseStream.WriteAsync(new ConsumeMessageResponse()
+                        {
+                            EntryId = messageRead.EntryId,
+                            MessageHeaders = { messageRead.MessageHeader },
+                            MessageId = ByteString.CopyFrom(messageRead.MessageId),
+                            MessagePayload = ByteString.CopyFrom(messageRead.MessagePayload),
+                            Partition = messageRead.PartitionId,
+                            SentDate = messageRead.SentDate.ToTimestamp(),
+                            SourceApplication = messageRead.SourceApplication
+                        });
+                    }
+
+                    currentPartitionIndex++;
+                    if (currentPartitionIndex == partitions.Count())
+                        currentPartitionIndex = 0;
+                }
+            }
+            catch (Exception)
+            {
+                _logger.LogError("Subscription {0} failed pulling data out, using client with id {1}", request.SubscriptionName, request.ClientId);
             }
         }
     }

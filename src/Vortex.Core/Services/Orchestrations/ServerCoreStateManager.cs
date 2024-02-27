@@ -11,6 +11,10 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using Vortex.Core.Models.Configurations;
 using Vortex.Core.Abstractions.Clustering;
+using Vortex.Core.Models.Entities.Clients.Applications;
+using Vortex.Core.Utilities.Ids;
+using Vortex.Core.Models.BackgroundTimerRequests;
+using Vortex.Core.Services.Routing.Background;
 
 namespace Vortex.Core.Services.Orchestrations
 {
@@ -19,30 +23,44 @@ namespace Vortex.Core.Services.Orchestrations
         private readonly ILogger<ServerCoreStateManager> _logger;
         private readonly IPartitionDataFactory _partitionDataFactory;
         private readonly IAddressRepository _addressRepository;
+        private readonly IApplicationRepository _applicationRepository;
         private readonly IPartitionEntryService _partitionEntryService;
+        private readonly ISubscriptionEntryService _subscriptionEntryService;
+
         private readonly NodeConfiguration _nodeConfiguration;
 
         private readonly IClusterStateRepository _clusterStateRepository;
 
         private readonly ConcurrentDictionary<int, AddressContainer> _inMemoryAddresses;
 
+        // id is applicationId:addressId:subscriptionName
+        private readonly ConcurrentDictionary<string, SubscriptionContainer> _inMemorySubscriptions;
+        private readonly ConcurrentDictionary<string, TimedBackgroundServiceBase<SubscriptionEntryTimerRequest>> _subscriptionEntryBackgroundServices;
+
 
         public ServerCoreStateManager(ILogger<ServerCoreStateManager> logger,
             IPartitionDataFactory partitionDataFactory,
             IAddressRepository addressRepository,
+            IApplicationRepository applicationRepository,
             IPartitionEntryService partitionEntryService,
+            ISubscriptionEntryService subscriptionEntryService,
             NodeConfiguration nodeConfiguration,
             IClusterStateRepository clusterStateRepository)
         {
             _logger = logger;
             _partitionDataFactory = partitionDataFactory;
             _addressRepository = addressRepository;
+            _applicationRepository = applicationRepository;
             _partitionEntryService = partitionEntryService;
+            _subscriptionEntryService = subscriptionEntryService;
+
             _nodeConfiguration = nodeConfiguration;
 
             _clusterStateRepository = clusterStateRepository;
-
             _inMemoryAddresses = new ConcurrentDictionary<int, AddressContainer>();
+            _inMemorySubscriptions = new ConcurrentDictionary<string, SubscriptionContainer>();
+
+            _subscriptionEntryBackgroundServices = new ConcurrentDictionary<string, TimedBackgroundServiceBase<SubscriptionEntryTimerRequest>>();
         }
 
         public void LoadAddressPartitionsInMemory(string addressAlias)
@@ -61,6 +79,74 @@ namespace Vortex.Core.Services.Orchestrations
                 return;
 
             LoadPartitionDataServices(address);
+        }
+
+        public void LoadApplicationSubscriptionsInMemory(int applicationId, string addressAlias, string subscriptionName)
+        {
+            var address = _addressRepository.GetAddressByAlias(addressAlias);
+            if (address == null)
+                return;
+
+            var application = _applicationRepository.GetApplication(applicationId);
+            if (application == null)
+                return;
+
+            LoadApplicationSubscriptions(application, address, subscriptionName);
+        }
+
+        private void LoadApplicationSubscriptions(Application application, Address address, string subscriptionName)
+        {
+            var subscriptions = _subscriptionEntryService.GetSubscriptionEntries(application.Id, address.Id);
+            if (subscriptions.Count == 0)
+            {
+                _logger.LogInformation($"There is no subscription linked between application [{application.Name}] and address [{address.Name}] with name [{subscriptionName}]");
+                return;
+            }
+
+            if (_inMemorySubscriptions.ContainsKey(ApplicationAddressIdHelper.ToApplicationAddressId(application.Id, address.Id, subscriptionName)))
+            {
+                _logger.LogInformation($"Subscription [{subscriptionName}] for application [{application.Name}] and address [{address.Name}] is already loaded");
+                return;
+            }
+
+            var key = ApplicationAddressIdHelper.ToApplicationAddressId(application.Id, address.Id, subscriptionName);
+            _inMemorySubscriptions.TryAdd(key, new SubscriptionContainer()
+            {
+                AddressName = address.Name,
+                ApplicationName = application.Name,
+                SubscriptionEntries = subscriptions
+            });
+
+            // initialize the background service
+            var subscriptionBackgroundService = new SubscriptionEntryBackgroundService(_nodeConfiguration, _inMemorySubscriptions[key], _subscriptionEntryService);
+            _subscriptionEntryBackgroundServices.TryAdd(key, subscriptionBackgroundService);
+        }
+
+        public void UnloadApplicationSubscriptionsFromMemory(int applicationId, int addressId, string subscriptionName)
+        {
+            var address = _addressRepository.GetAddressById(addressId);
+            if (address == null)
+                return;
+
+            var application = _applicationRepository.GetApplication(applicationId);
+            if (application == null)
+                return;
+
+
+            UnloadApplicationSubscriptions(application, address, subscriptionName);
+        }
+
+        private void UnloadApplicationSubscriptions(Application application, Address address, string subscriptionName)
+        {
+            var key = ApplicationAddressIdHelper.ToApplicationAddressId(application.Id, address.Id, subscriptionName);
+
+            // TODO: find a way to stop the background time service
+            //       even if we break it.
+            if (_subscriptionEntryBackgroundServices.TryRemove(key, out _))
+            {
+                if (_inMemorySubscriptions.TryRemove(key, out _))
+                    _logger.LogInformation($"Subscription [{subscriptionName}] connected to application [{application.Name}] and address [{address.Name}] is unloaded from memory");
+            }
         }
 
         public void UnloadAddressPartitionsInMemory(string addressAlias)
@@ -92,7 +178,13 @@ namespace Vortex.Core.Services.Orchestrations
                 return;
             }
 
-            _inMemoryAddresses.TryAdd(address.Id, new AddressContainer() { AddressAlias = address.Alias, AddressName = address.Name, PartitionEntries = partitions });
+            _inMemoryAddresses.TryAdd(address.Id, new AddressContainer()
+            {
+                AddressAlias = address.Alias,
+                AddressName = address.Name,
+                PartitionEntries = partitions
+            });
+
             foreach (var partition in partitions)
             {
                 // load the data access now...

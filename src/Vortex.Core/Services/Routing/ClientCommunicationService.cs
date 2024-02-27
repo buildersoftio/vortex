@@ -9,6 +9,7 @@ using Vortex.Core.Models.BackgroundRequests;
 using Vortex.Core.Models.Common.Clients.Applications;
 using Vortex.Core.Models.Configurations;
 using Vortex.Core.Models.Data;
+using Vortex.Core.Models.Dtos.Applications;
 using Vortex.Core.Models.Entities.Clients.Applications;
 using Vortex.Core.Models.Routing.Integrations;
 using Vortex.Core.Utilities.Consts;
@@ -91,7 +92,8 @@ namespace Vortex.Core.Services.Routing
                 ApplicationConnectionType = request.ApplicationType,
                 ApplicationName = applicationDto.Name,
                 ProductionInstanceType = request.ProductionInstanceType,
-                ConsumptionSettings = request.ConsumptionSettings
+                ConsumptionSettings = request.ConsumptionSettings,
+                 SubscriptionName = request.SubscriptionName,
 
             }, request.Application);
 
@@ -147,7 +149,7 @@ namespace Vortex.Core.Services.Routing
                     Credentials = new TokenDetails() { AppKey = request.AppKey, AppSecret = request.AppSecret },
 
                     ProductionInstanceType = request.ProductionInstanceType,
-                    ConsumptionSettings = request.ConsumptionSettings
+                    ConsumptionSettings = request.ConsumptionSettings!
 
                 });
             }
@@ -155,9 +157,14 @@ namespace Vortex.Core.Services.Routing
             // loading address in memory should be the last thing ever :p it's me saying it!
             _serverCoreStateManager.LoadAddressPartitionsInMemory(address.Alias);
 
+            // TODO:
+            // load subscription to memory
+            _serverCoreStateManager.LoadApplicationSubscriptionsInMemory(applicationDto.Id, address.Alias, request.SubscriptionName);
+
             return new ClientConnectionResponse()
             {
                 ClientId = clientConnection!.Id,
+                AddressPartitionCount = address.Settings.PartitionSettings.PartitionNumber,
                 Status = Models.Routing.Common.ConnectionStatuses.Connected,
                 Message = $"[{request.Application}] is connected to [{request.Address}]"
             };
@@ -345,6 +352,44 @@ namespace Vortex.Core.Services.Routing
                 return _clientProducerAddressCache.TryRemove(clientId, out _);
 
             return true;
+        }
+
+
+
+
+        public bool ValidateApplicationToken(Guid clientId, string appKeyString, string appSecret)
+        {
+            var clientConnection = _clientConnectionService.GetClientConnection(clientId);
+            if (clientConnection == null)
+                return false;
+
+
+            (var applicationDto, string message) = _applicationService.GetApplicationById(clientConnection.ApplicationId);
+            if (applicationDto == null)
+                return false;
+
+
+
+            if (applicationDto!.Settings.IsAuthorizationEnabled == true)
+            {
+                var isAppKeyValid = Guid.TryParse(appKeyString, out Guid appKey);
+                if (isAppKeyValid != true)
+                    appKey = Guid.Empty;
+
+                if (_applicationService.IsValidToken(applicationDto.Name, appKey, appSecret) != true)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public InternalConsumeMessageResponse ConsumeNextMessage(Guid clientId, int addressId, int partitionId, long acknowledgedEntry)
+        {
+            // implement next messageConsume.
+
+            throw new NotImplementedException();
         }
     }
 }

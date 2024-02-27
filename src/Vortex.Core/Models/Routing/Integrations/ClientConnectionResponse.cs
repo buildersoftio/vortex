@@ -6,6 +6,8 @@ namespace Vortex.Core.Models.Routing.Integrations
     {
         public Guid ClientId { get; set; }
 
+        public int AddressPartitionCount { get; set; }
+
         public ConnectionStatuses Status { get; set; }
         public string Message { get; set; }
 

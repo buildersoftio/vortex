@@ -17,5 +17,7 @@ namespace Vortex.Core.Abstractions.Services
         List<SubscriptionEntry> GetSubscriptionEntries(int addressId, int partitionId);
 
         List<string> GetSubscriptions(int applicationId, int addressId);
+
+        bool UpdateSubscriptionEntries(SubscriptionEntry entry);
     }
 }
