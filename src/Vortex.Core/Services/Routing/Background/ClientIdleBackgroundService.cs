@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Runtime.InteropServices;
 using Vortex.Core.Abstractions.Background;
 using Vortex.Core.Abstractions.Clustering;
 using Vortex.Core.Abstractions.Services;
@@ -8,9 +7,7 @@ using Vortex.Core.Models.BackgroundRequests;
 using Vortex.Core.Models.BackgroundTimerRequests;
 using Vortex.Core.Models.Common.Clients.Applications;
 using Vortex.Core.Models.Configurations;
-using Vortex.Core.Models.Entities.Addresses;
 using Vortex.Core.Repositories;
-using Vortex.Core.Services.ServerStates;
 
 namespace Vortex.Core.Services.Routing.Background
 {

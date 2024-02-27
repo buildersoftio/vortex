@@ -14,6 +14,8 @@ service DataTransmissionService {
 
 	rpc ProduceMessage(MessageRequest) returns (MessageResponse);
 	rpc StreamMessage(stream MessageRequest) returns (MessageStreamResponse);
+
+	rpc ConsumeMessage(ConsumeMessageRequest) returns (stream ConsumeMessageResponse);
 }
 
 enum ApplicationTypes {
@@ -27,11 +29,10 @@ message ConnectionRequest{
 	ApplicationTypes application_type = 3;
 	string app_key = 4;
 
+	optional string subscription_name = 5;
 	// default settings for producer and consumer
-	optional ConnectionProductionInstanceTypes  production_instance_types= 5;
-	optional ConnectionSubscriptionTypes subscription_types = 6;
-	optional ConnectionReadInitialPositions subscription_initial_position = 7;
-	optional ConnectionSubscriptionModes subscription_modes = 8;
+	optional ConnectionProductionInstanceTypes  production_instance_types= 6;
+	optional ConnectionConsumptionSettings consumption_settings = 7;
 }
 
 message ConnectionResponse {
@@ -39,8 +40,10 @@ message ConnectionResponse {
 	string message = 2;
 	string client_id = 3;
 
-	string vortex_server_name = 4;
-	string vortex_server_version = 5;
+	int32 address_partition_count = 4;
+
+	string vortex_server_name = 5;
+	string vortex_server_version = 6;
 }
 
 message DisconnectionRequest { 
@@ -85,11 +88,10 @@ enum ConnectionProductionInstanceTypes {
 	MULTIPLE = 2;
 }
 
-enum ConnectionSubscriptionTypes {
-	NULL = 0;
-	UNIQUE = 1;
-	FAILOVER = 2;
-	SHARED = 3;
+message ConnectionConsumptionSettings {
+	bool AutoCommitEntry = 1;
+	ConnectionReadInitialPositions ConnectionReadInitialPosition = 2;
+	ConnectionAcknowledgmentTypes ConnectionAcknowledgmentType =3;
 }
 
 enum ConnectionReadInitialPositions {
@@ -98,10 +100,10 @@ enum ConnectionReadInitialPositions {
 	LATEST = 2;
 }
 
-enum ConnectionSubscriptionModes{
+enum ConnectionAcknowledgmentTypes{
 	UNDEFINED_VALUE = 0;
-	RESILIENT = 1;
-	NON_RESILIENT = 2;
+	BATCH = 1;
+	RECORD = 2;
 }
 
 
@@ -130,4 +132,31 @@ message MessageStreamResponse {
 	bool success = 1;
 	string message = 2;
 	int32 message_count = 3;
+}
+
+
+message ConsumeMessageRequest {
+	string api_key = 1;
+	string client_id = 2;	
+	string subscription_name = 3;
+
+
+	int32 read_message_count = 4;
+
+	// we are using a array of partitions, in case the consumer will consume from all partition data.
+	repeated int32 read_partitions = 5;
+
+	int64 message_acknowledgement_entry = 6;
+}
+
+message ConsumeMessageResponse {
+	bytes message_id = 1;
+	bytes message_payload = 2;
+	map<string, string> message_headers =3;
+
+	int32 partition = 4;
+	string source_application = 5;
+	google.protobuf.Timestamp sent_date = 6;
+
+	int64 entry_id = 7;
 }

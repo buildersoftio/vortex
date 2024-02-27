@@ -15,14 +15,20 @@ namespace Vortex.Core.Services.ServerStates
         private readonly IAddressRepository _addressRepository;
         private readonly IApplicationRepository _applicationRepository;
         private readonly IAddressService _addressService;
+        private readonly ISubscriptionEntryService _subscriptionEntryService;
 
-        public ClientConnectionService(ILogger<ClientConnectionService> logger, IAddressRepository addressRepository, IApplicationRepository applicationRepository, IAddressService addressService)
+        public ClientConnectionService(ILogger<ClientConnectionService> logger,
+            IAddressRepository addressRepository,
+            IApplicationRepository applicationRepository,
+            IAddressService addressService,
+            ISubscriptionEntryService subscriptionEntryService)
         {
             _logger = logger;
             _addressRepository = addressRepository;
             _applicationRepository = applicationRepository;
 
             _addressService = addressService;
+            _subscriptionEntryService = subscriptionEntryService;
         }
 
         public (List<ClientConnectionDto>? clientConnections, string message) GetClientConnectionsByAddressAlias(string addressAlias)
@@ -69,9 +75,7 @@ namespace Vortex.Core.Services.ServerStates
                     IsConnected = a.IsConnected,
                     LastConnectionDate = a.LastConnectionDate,
                     ProductionInstanceType = a.ProductionInstanceType,
-                    ReadInitialPosition = a.ReadInitialPosition,
-                    SubscriptionMode = a.SubscriptionMode,
-                    SubscriptionType = a.SubscriptionType
+                    ConsumptionSettings = a.ConsumptionSettings
                 }).ToList();
 
 
@@ -135,32 +139,35 @@ namespace Vortex.Core.Services.ServerStates
 
                 clientConnection.ProductionInstanceType = clientConnectionRequest.ProductionInstanceType!.Value;
             }
-
             else
             {
                 if (IsReadOrWritePermission(applicationPermission.Permissions![DefaultApplicationPermissions.READ_ADDRESS_PERMISSION_KEY], clientConnectionRequest.Address) != true)
                     return (status: false, message: $"Application [{clientConnectionRequest.ApplicationName}] cannot read from address [{clientConnectionRequest.Address}], connection cannot be established");
 
+                if (clientConnectionRequest.ConsumptionSettings == null)
+                {
+                    clientConnectionRequest.ConsumptionSettings = application.Settings.DefaultConsumptionSettings;
+                }
 
-                if (clientConnectionRequest.ReadInitialPosition == null)
-                    return (status: false, message: $"ReadInitialPosition can not be null");
-                clientConnection.ReadInitialPosition = clientConnectionRequest.ReadInitialPosition!.Value;
-
-                if (clientConnectionRequest.SubscriptionMode == null)
-                    return (status: false, message: $"SubscriptionMode can not be null");
-                clientConnection.SubscriptionMode = clientConnectionRequest.SubscriptionMode!.Value;
-
-                if (clientConnectionRequest.SubscriptionType == null)
-                    return (status: false, message: $"SubscriptionType can not be null");
-                clientConnection.SubscriptionType = clientConnectionRequest.SubscriptionType!.Value;
+                clientConnection.ConsumptionSettings = clientConnectionRequest.ConsumptionSettings!;
             }
 
             if (_applicationRepository.AddApplicationAddressConnection(clientConnection))
-                return (status: true, message: $"Application [{clientConnectionRequest.ApplicationName}] is integrated with address [{clientConnectionRequest.Address}]");
+            {
+                // adding default subscription... only for CONSUMPTION connection type.
+                if (clientConnectionRequest.ApplicationConnectionType == ApplicationConnectionTypes.Consumption)
+                {
+                    string subscriptionName = clientConnectionRequest.SubscriptionName ?? "default";
+                    for (int i = 0; i < address.Settings.PartitionSettings.PartitionNumber; i++)
+                    {
+                        _subscriptionEntryService.CreateSubscriptionEntry(subscriptionName, application.Id, address.Id, partitionId: i, address.Alias, clientConnection.ConsumptionSettings, createdBy);
+                    }
+                }
 
+                return (status: true, message: $"Application [{clientConnectionRequest.ApplicationName}] is integrated with address [{clientConnectionRequest.Address}]");
+            }
 
             return (status: false, message: $"Something went wrong, application [{clientConnectionRequest.ApplicationName}] cannot integrate with address [{clientConnectionRequest.Address}] at this moment");
-
         }
 
         public (bool status, string message) VerifyClientConnectionByAddressAlias(string applicationName, string addressAlias, ApplicationConnectionTypes applicationType)
@@ -195,9 +202,7 @@ namespace Vortex.Core.Services.ServerStates
                 IsConnected = a.IsConnected,
                 LastConnectionDate = a.LastConnectionDate,
                 ProductionInstanceType = a.ProductionInstanceType,
-                ReadInitialPosition = a.ReadInitialPosition,
-                SubscriptionMode = a.SubscriptionMode,
-                SubscriptionType = a.SubscriptionType,
+                ConsumptionSettings = a.ConsumptionSettings,
                 HostsHistory = a.HostsHistory,
             }).ToList();
         }

@@ -19,6 +19,7 @@ namespace Vortex.Core.Abstractions.Services
         (bool status, string message) HardDeleteApplication(string applicationName, bool requestedByOtherNode = false);
 
         (ApplicationDto? application, string message) GetApplication(string applicationName);
+        (ApplicationDto? application, string message) GetApplicationById(int applicationId);
         (List<ApplicationDto> applicationDtos, string message) GetApplications();
         (List<ApplicationDto> applicationDtos, string message) GetActiveApplications();
 

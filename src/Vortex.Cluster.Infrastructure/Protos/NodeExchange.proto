@@ -180,12 +180,10 @@ message ClientConnection_Registration {
 
 	// these are enums, we are sending as string; do the parsing in the server side.
 	optional string production_instance_type = 6;
-	optional string subscription_type = 7;
-	optional string subscription_mode = 8;
-	optional string read_initial_position = 9;
+	optional string consumptionSettings = 7;
 
-	optional string appKey = 10;
-	optional string appToken = 11;
+	optional string appKey = 8;
+	optional string appToken = 9;
 }
 
 message ClientConnection_Heartbeat {

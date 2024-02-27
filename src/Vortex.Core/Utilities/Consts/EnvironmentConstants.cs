@@ -21,8 +21,7 @@
 
 
         public const string BackgroundPositionEntityFlushInterval = "VORTEX_POSITION_FLUSH_INTERVAL";
-
-
+        public const string BackgroundSubscriptionEntityFlushInterval = "VORTEX_SUBSCRIPTION_ENTRY_FLUSH_INTERVAL";
 
 
         /// <summary>
@@ -47,5 +46,13 @@
 
         public const string CertificateFileName = "VORTEX_X509CERTIFICATE_PATH";
         public const string CertificatePassword = "VORTEX_X509CERTIFICATE_PASSWORD";
+
+
+        /// <summary>
+        /// Default Values for Consumption
+        /// </summary>
+        public const string DefaultAutoCommitEntry = "VORTEX_DEFAULT_AUTO_COMMIT_ENTRY";
+        public const string DefaultAcknowledgmentType = "VORTEX_DEFAULT_ACKNOWLEDGMENT_TYPE";
+        public const string DefaultReadInitialPosition = "VORTEX_DEFAULT_READ_INITIAL_POSITION";
     }
 }

@@ -1,5 +1,4 @@
-﻿using Vortex.Core.Abstractions.Services.Data;
-using Vortex.Core.Models.Data;
+﻿using Vortex.Core.Models.Data;
 using Vortex.Core.Models.Entities.Entries;
 using System.Collections.Concurrent;
 using Vortex.Core.Abstractions.Background;
@@ -12,7 +11,6 @@ namespace Vortex.Core.Models.Containers
         public string? AddressName { get; set; }
         public List<PartitionEntry>? PartitionEntries { get; set; }
 
-        // Adding priority queues.
         public ConcurrentDictionary<int, ParallelBackgroundQueueServiceBase<PartitionMessage>> PartitionDataProcessors { get; set; }
 
 

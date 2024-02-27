@@ -16,5 +16,9 @@ namespace Vortex.Core.Abstractions.Services.Routing
         (bool success, int? partitionKey, string message) AcceptMessage(Guid clientId, Span<PartitionMessage> partitionMessages);
 
         bool DeleteClientProducerFromCache(Guid clientId);
+
+        InternalConsumeMessageResponse ConsumeNextMessage(Guid clientId, int addressId, int partitionId, long acknowledgedEntry);
+
+        bool ValidateApplicationToken(Guid clientId, string appKey, string appSecret);
     }
 }

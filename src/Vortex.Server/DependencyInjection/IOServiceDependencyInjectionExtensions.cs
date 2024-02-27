@@ -1,6 +1,7 @@
 ﻿using Vortex.Core.Abstractions.IO.Services;
 using Vortex.Core.IO;
 using Vortex.Core.IO.Services;
+using Vortex.Core.Models.Common.Clients.Applications;
 using Vortex.Core.Models.Configurations;
 using Vortex.Core.Utilities.Consts;
 using Vortex.Infrastructure.IO.Services;
@@ -27,6 +28,11 @@ namespace Vortex.Server.DependencyInjection
             nodeConfiguration.IdleClientConnectionTimeout = configuration.GetValue<int>(EnvironmentConstants.BackgroundIdleClientConnectionTimeout)!;
             nodeConfiguration.CheckRetryCount = configuration.GetValue<int>(EnvironmentConstants.BackgroundCheckRetryCount)!;
             nodeConfiguration.BackgroundPositionEntry_FlushInterval = configuration.GetValue<int>(EnvironmentConstants.BackgroundPositionEntityFlushInterval)!;
+            nodeConfiguration.BackgroundSubscriptionEntry_FlushInternal = configuration.GetValue<int>(EnvironmentConstants.BackgroundSubscriptionEntityFlushInterval);
+
+            nodeConfiguration.DefaultAutoCommitEntry = configuration.GetValue<bool>(EnvironmentConstants.DefaultAutoCommitEntry)!;
+            nodeConfiguration.DefaultAcknowledgmentType = Enum.Parse<AcknowledgmentTypes>(configuration.GetValue<string>(EnvironmentConstants.DefaultAcknowledgmentType)!);
+            nodeConfiguration.DefaultReadInitialPosition = Enum.Parse<ReadInitialPositions>(configuration.GetValue<string>(EnvironmentConstants.DefaultReadInitialPosition)!);
 
             services.AddSingleton(nodeConfiguration);
         }

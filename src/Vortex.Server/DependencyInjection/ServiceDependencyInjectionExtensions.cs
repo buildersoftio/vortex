@@ -27,12 +27,12 @@ namespace Vortex.Server.DependencyInjection
             services.AddSingleton<IAddressService, AddressService>();
             services.AddSingleton<IPartitionEntryService, PartitionEntryService>();
             services.AddSingleton<IClientConnectionService, ClientConnectionService>();
+            services.AddSingleton<ISubscriptionEntryService, SubscriptionEntryService>();
         }
 
-        public static  void AddRoutingServices(this IServiceCollection services)
+        public static void AddRoutingServices(this IServiceCollection services)
         {
             services.AddSingleton<IClientCommunicationService, ClientCommunicationService>();
-            
         }
 
         public static void AddOrchestrators(this IServiceCollection services)

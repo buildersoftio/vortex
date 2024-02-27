@@ -8,6 +8,7 @@ using Vortex.Core.Utilities.Consts;
 using Vortex.Core.Utilities.Extensions;
 using Vortex.Core.Utilities.Validators;
 using Microsoft.Extensions.Logging;
+using Vortex.Core.Models.Configurations;
 
 namespace Vortex.Core.Services.ServerStates
 {
@@ -16,15 +17,24 @@ namespace Vortex.Core.Services.ServerStates
         private readonly ILogger<ApplicationService> _logger;
         private readonly IApplicationRepository _applicationRepository;
         private readonly IBackgroundQueueService<ApplicationClusterScopeRequest> _backgroundApplicationClusterService;
+        private readonly NodeConfiguration _nodeConfiguration;
+        private readonly ISubscriptionEntryService _subscriptionEntryService;
+        private readonly IClientConnectionService _clientConnectionService;
 
         public ApplicationService(ILogger<ApplicationService> logger,
             IApplicationRepository applicationRepository,
-            IBackgroundQueueService<ApplicationClusterScopeRequest> backgroundApplicationClusterService)
+            IBackgroundQueueService<ApplicationClusterScopeRequest> backgroundApplicationClusterService,
+            NodeConfiguration nodeConfiguration,
+            ISubscriptionEntryService subscriptionEntryService,
+            IClientConnectionService clientConnectionService)
         {
             _logger = logger;
             _applicationRepository = applicationRepository;
 
             _backgroundApplicationClusterService = backgroundApplicationClusterService;
+            _nodeConfiguration = nodeConfiguration;
+            _subscriptionEntryService = subscriptionEntryService;
+            _clientConnectionService = clientConnectionService;
         }
 
         public (bool status, string message) CreateApplication(ApplicationDto newApplication, string createdBy, bool requestedByOtherNode = false)
@@ -49,6 +59,20 @@ namespace Vortex.Core.Services.ServerStates
                 Settings = newApplication.Settings,
                 CreatedBy = createdBy,
             };
+
+            // add consumption settings, if there are null from the client
+            if (newApplication.Settings.DefaultConsumptionSettings == null)
+            {
+                application.Settings.DefaultConsumptionSettings = new ConsumptionSettings()
+                {
+                    // registering default settings, in case consumption settings are not provided.
+
+                    AcknowledgmentType = _nodeConfiguration.DefaultAcknowledgmentType,
+                    AutoCommitEntry = _nodeConfiguration.DefaultAutoCommitEntry,
+                    ReadInitialPositions = _nodeConfiguration.DefaultReadInitialPosition
+                };
+            }
+
 
             if (_applicationRepository.AddApplication(application))
             {
@@ -237,6 +261,12 @@ namespace Vortex.Core.Services.ServerStates
                 _applicationRepository.DeleteApplicationToken(token);
             });
 
+            // deleting all subscriptions entries connected to this application
+            _subscriptionEntryService.DeleteSubscriptionEntriesByApplication(applicationDetails.Id);
+
+            // deleting all client connections connected to this application
+            _applicationRepository.DeleteClientConnectionByApplication(applicationDetails.Id);
+
             if (isDeleted)
             {
                 // Sync with other nodes
@@ -250,7 +280,7 @@ namespace Vortex.Core.Services.ServerStates
                     });
                 }
 
-                return (true, message: $"Application deleted together with tokens");
+                return (true, message: $"Application deleted together with tokens, subscriptions and client connections.");
             }
 
             return (false, message: $"Something went wrong, application couldnot be deleted");
@@ -689,6 +719,18 @@ namespace Vortex.Core.Services.ServerStates
                 return (null, message: "Something went wrong, permission didnot change");
 
             return (new ApplicationPermissionDto() { ApplicationName = applicationName, Permissions = applicationPermission.Permissions }, "Permissions returned");
+        }
+
+        public (ApplicationDto? application, string message) GetApplicationById(int applicationId)
+        {
+            var applicationDetails = _applicationRepository.GetApplication(applicationId);
+            if (applicationDetails == null)
+                return (application: null, message: $"Application with id {applicationId} doesnot exists");
+
+            if (applicationDetails.IsDeleted == true)
+                return (application: null, message: $"Application with id {applicationId} doesnot exists, is softly deleted");
+
+            return (application: new ApplicationDto(applicationDetails), message: $"Application returned");
         }
     }
 }

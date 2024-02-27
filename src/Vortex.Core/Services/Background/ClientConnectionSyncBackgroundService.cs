@@ -51,8 +51,7 @@ namespace Vortex.Core.Services.Background
                         continue;
 
                     var success = await nodeClient.Value.RequestClientConnectionRegister(request.Application,
-                        request.Address, request.ApplicationType, request.Credentials, request.ClientHost, request.ConnectedNode, request.ProductionInstanceType,
-                        request.SubscriptionType, request.SubscriptionMode, request.ReadInitialPosition);
+                        request.Address, request.ApplicationType, request.Credentials, request.ClientHost, request.ConnectedNode, request.ProductionInstanceType, request.ConsumptionSettings);
 
                     if (success == true)
                         continue;
@@ -127,9 +126,6 @@ namespace Vortex.Core.Services.Background
             {
                 RequestState = request.RequestState,
                 NodeId = nodeId,
-                SubscriptionType = request.SubscriptionType,
-                SubscriptionMode = request.SubscriptionMode,
-                ReadInitialPosition = request.ReadInitialPosition,
                 ProductionInstanceType = request.ProductionInstanceType,
                 Credentials = request.Credentials,
                 Address = request.Address,

@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Vortex.Core.Models.Common.Clients.Applications
+﻿namespace Vortex.Core.Models.Common.Clients.Applications
 {
     public class ApplicationSettings
     {
@@ -12,9 +10,7 @@ namespace Vortex.Core.Models.Common.Clients.Applications
         public HashSet<string> PrivateIpRange { get; set; }
 
         public ProductionInstanceTypes DefaultProductionInstanceType { get; set; }
-        public SubscriptionTypes DefaultSubscriptionType { get; set; }
-        public SubscriptionModes DefaultSubscriptionMode { get; set; }
-        public ReadInitialPositions DefaultReadInitialPosition { get; set; }
+        public ConsumptionSettings? DefaultConsumptionSettings { get; set; }
 
         public ApplicationSettings()
         {

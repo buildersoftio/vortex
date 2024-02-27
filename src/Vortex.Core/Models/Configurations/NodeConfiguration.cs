@@ -1,4 +1,6 @@
-﻿namespace Vortex.Core.Models.Configurations
+﻿using Vortex.Core.Models.Common.Clients.Applications;
+
+namespace Vortex.Core.Models.Configurations
 {
     public class NodeConfiguration
     {
@@ -11,5 +13,13 @@
 
         //VORTEX_POSITION_FLUSH_PERIOD_SEC
         public int BackgroundPositionEntry_FlushInterval { get; set; }
+
+
+        public bool DefaultAutoCommitEntry { get; set; }
+        public AcknowledgmentTypes DefaultAcknowledgmentType { get; set; }
+        public ReadInitialPositions DefaultReadInitialPosition { get; set; }
+
+        public int BackgroundSubscriptionEntry_FlushInternal { get; set; }
+
     }
 }

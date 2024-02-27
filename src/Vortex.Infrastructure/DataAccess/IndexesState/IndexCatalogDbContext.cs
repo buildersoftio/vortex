@@ -19,6 +19,7 @@ namespace Vortex.Infrastructure.DataAccess.IndexesState
         private void InitializeCollections()
         {
             PartitionEntries = db.GetCollection<PartitionEntry>("partition_entries", BsonAutoId.Int32);
+            SubscriptionEntries = db.GetCollection<SubscriptionEntry>("subscription_state_entries", BsonAutoId.Int32);
         }
 
         private void EnsureKeys()
@@ -27,5 +28,6 @@ namespace Vortex.Infrastructure.DataAccess.IndexesState
         }
 
         public ILiteCollection<PartitionEntry>? PartitionEntries { get; set; }
+        public ILiteCollection<SubscriptionEntry>? SubscriptionEntries { get; set; }
     }
 }

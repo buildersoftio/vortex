@@ -372,7 +372,7 @@ namespace Vortex.Cluster.Infrastructure.Clients
 
         #region Client connection
 
-        public async Task<bool> RequestClientConnectionRegister(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, ProductionInstanceTypes? productionInstanceType, SubscriptionTypes? subscriptionType, SubscriptionModes? subscriptionMode, ReadInitialPositions? readInitialPosition)
+        public async Task<bool> RequestClientConnectionRegister(string application, string address, ApplicationConnectionTypes connectionTypes, TokenDetails credentials, string clientHost, string connectedNode, ProductionInstanceTypes? productionInstanceType, ConsumptionSettings? consumptionSettings)
         {
             try
             {
@@ -384,9 +384,7 @@ namespace Vortex.Cluster.Infrastructure.Clients
                     ConnectedNode = connectedNode,
                     ConnectionType = connectionTypes.ToString(),
                     ProductionInstanceType = productionInstanceType.ToString(),
-                    ReadInitialPosition = readInitialPosition.ToString(),
-                    SubscriptionMode = subscriptionMode.ToString(),
-                    SubscriptionType = subscriptionType.ToString(),
+                    ConsumptionSettings = consumptionSettings!.ToJson(),
                     AppKey = credentials.AppKey,
                     AppToken = credentials.AppSecret
                 });

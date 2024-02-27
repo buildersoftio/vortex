@@ -8,6 +8,7 @@ using Vortex.Core.Models.Dtos.Addresses;
 using Vortex.Core.Models.Entities.Addresses;
 using Vortex.Core.Repositories;
 using Microsoft.Extensions.Logging;
+using Vortex.Core.Services.Entries;
 
 namespace Vortex.Core.Services.ServerStates
 {
@@ -20,6 +21,7 @@ namespace Vortex.Core.Services.ServerStates
         private readonly NodeConfiguration _nodeConfiguration;
         private readonly StorageDefaultConfiguration _storageDefaultConfiguration;
         private readonly IClusterStateRepository _clusterStateRepository;
+        private readonly ISubscriptionEntryService _subscriptionEntryService;
 
         public AddressService(ILogger<AddressService> logger,
             IAddressRepository addressRepository,
@@ -27,7 +29,8 @@ namespace Vortex.Core.Services.ServerStates
             IBackgroundQueueService<AddressClusterScopeRequest> backgroundAddressClusterService,
             NodeConfiguration nodeConfiguration,
             StorageDefaultConfiguration storageDefaultConfiguration,
-            IClusterStateRepository clusterStateRepository)
+            IClusterStateRepository clusterStateRepository,
+            ISubscriptionEntryService subscriptionEntryService)
         {
             _logger = logger;
             _addressRepository = addressRepository;
@@ -39,6 +42,7 @@ namespace Vortex.Core.Services.ServerStates
             _storageDefaultConfiguration = storageDefaultConfiguration;
 
             _clusterStateRepository = clusterStateRepository;
+            _subscriptionEntryService = subscriptionEntryService;
         }
 
         public (bool status, string message) CreateAddress(AddressCreationRequest addressCreationRequest, string createdBy, bool requestedByOtherNode = false)
@@ -120,6 +124,9 @@ namespace Vortex.Core.Services.ServerStates
 
             if (_addressRepository.DeleteAddress(address))
             {
+
+                // delete connections and subscriptions.
+                _subscriptionEntryService.DeleteSubscriptionEntriesByAddress(address.Id);
 
                 address.Status = AddressStatuses.DeletePartitions;
                 _backgroundServerStateService.EnqueueRequest(new AddressBackgroundRequest() { Address = address });
